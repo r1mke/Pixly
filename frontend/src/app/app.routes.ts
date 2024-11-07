@@ -1,17 +1,18 @@
 import { Routes } from '@angular/router';
 
+
 export const routes: Routes = [
     {
         path: 'public',
-        loadChildren: () => import('./modules/public/public.module').then(m => m.PublicModule)
+        loadComponent: () => import('./features/public/public/public.component').then(m => m.PublicComponent)
       },
       {
         path: 'auth',
-        loadChildren: () => import('./modules/auth/auth.module').then(m => m.AuthModule)
+        loadComponent: () => import('./features/auth/auth/auth.component').then(m => m.AuthComponent)
       },
       {
         path: 'admin',
-        loadChildren: () => import('./modules/admin/admin.module').then(m => m.AdminModule)  
+        loadComponent: () => import('./features/admin/admin/admin.component').then(m => m.AdminComponent)  
       },
       {path: '**', redirectTo: 'public', pathMatch: 'full'}
 ];
