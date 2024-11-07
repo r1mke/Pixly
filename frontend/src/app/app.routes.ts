@@ -1,18 +1,15 @@
 import { Routes } from '@angular/router';
 
-
 export const routes: Routes = [
-    {
-        path: 'public',
-        loadComponent: () => import('./features/public/public/public.component').then(m => m.PublicComponent)
-      },
+  {
+    path: 'auth',
+    children: [
       {
-        path: 'auth',
-        loadComponent: () => import('./features/auth/auth/auth.component').then(m => m.AuthComponent)
+        path: 'register',
+        loadComponent: () => import('./features/auth/pages/register-page/register-page.component').then(m => m.RegisterPageComponent)
       },
-      {
-        path: 'admin',
-        loadComponent: () => import('./features/admin/admin/admin.component').then(m => m.AdminComponent)  
-      },
-      {path: '**', redirectTo: 'public', pathMatch: 'full'}
+      { path: '**', redirectTo: 'register', pathMatch: 'full' }
+    ]
+  },
+  { path: '**', redirectTo: 'public', pathMatch: 'full' }
 ];
