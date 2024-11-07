@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.Data;
 
@@ -11,9 +12,11 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241107201947_new-entities")]
+    partial class newentities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,38 +68,6 @@ namespace backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Photos");
-                });
-
-            modelBuilder.Entity("backend.Models.PhotoResolution", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PhotoId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Resolution")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long?>("Size")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PhotoId");
-
-                    b.ToTable("PhotoResolutions");
                 });
 
             modelBuilder.Entity("backend.Models.PhotoTag", b =>
@@ -155,17 +126,6 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("backend.Models.PhotoResolution", b =>
-                {
-                    b.HasOne("backend.Models.Photo", "Photo")
-                        .WithMany("Resolutions")
-                        .HasForeignKey("PhotoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Photo");
-                });
-
             modelBuilder.Entity("backend.Models.PhotoTag", b =>
                 {
                     b.HasOne("backend.Models.Photo", "Photo")
@@ -188,8 +148,6 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Models.Photo", b =>
                 {
                     b.Navigation("PhotoTags");
-
-                    b.Navigation("Resolutions");
                 });
 
             modelBuilder.Entity("backend.Models.Tag", b =>
