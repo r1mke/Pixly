@@ -1,0 +1,73 @@
+<nav [ngClass]="{'open': menuOpen}">
+    <div [ngClass]="windowWidth>900 ? 'container' : 'container-fluid'">
+ 
+        <div class="logo" (click)="goToHome()">
+            <img src="../../../../../assets/img/logo.png" width="50px" height="50px" alt="">
+        </div>
+   
+        <div class="search">
+            <input type="text" placeholder="Search...">
+            <img src="../../../../../assets/img/loupe.png" width="15px" height="15px" alt="">
+        </div>
+
+        <div class="menu" *ngIf="windowWidth>900">
+            <div class="resources">
+                <button>Explore</button>
+                <div class="dropdown-content">
+                    <a href="#">Home</a>
+                    <a href="#">Leaderboard</a>
+                    <a href="#">Popular Searches</a>
+                    <a href="#">Pricing</a>
+                </div>
+            </div>
+            <div class="resources" *ngIf="user">
+                <button>Profile</button>
+                <div class="dropdown-content">
+                    <a href="#">Your Profile</a>
+                    <a href="#">Your Collection</a>
+                    <a href="#">Downolad History</a>
+                    <a href="#">Change Language</a>
+                    <a href="#">Settings</a>
+                    <a href="#">Log out</a>
+                </div>
+            </div>
+
+            <div class="resources" *ngIf="!user">
+                <button>...</button>
+                <div class="dropdown-content">
+                    <a href="#">Change Language</a>
+                    <a href="#">Join</a>
+                </div>
+            </div>
+    
+            <button class="login" routerLink="/login">Log in</button>
+        </div>
+   
+        <div class="menu-icon" *ngIf="windowWidth<=900" (click)="menuOpen = !menuOpen">
+            <img [src]="menuOpen ? '../../../../../assets/img/more.png' :  '../../../../../assets/img/more-black.png'" [src]="menuOpen ? '../../../../../assets/img/more.png' :  '../../../../../assets/img/more-black.png'" width="30px" height="30px" alt="">
+        </div>
+
+        <div class="hamburger-menu" *ngIf="menuOpen">
+            <div class="explore menu">
+                    <a href="#">Home</a>
+                    <a href="#">Leaderboard</a>
+                    <a href="#">Popular Searches</a>
+                    <a href="#">Pricing</a>
+            </div>
+            <div class="line"></div>
+            <div class="profile-user menu" *ngIf="user">
+                    <a href="#">Your Profile</a>
+                    <a href="#">Your Collection</a>
+                    <a href="#">Downolad History</a>
+                    <a href="#">Change Language</a>
+                    <a href="#">Settings</a>
+                    <a href="#">Log out</a>
+            </div>
+            <div class="profile-non-user menu" *ngIf="!user">
+                <a href="#">Change Language</a>
+                <a href="#">Join</a>
+            </div>
+        </div>
+    </div>
+ 
+</nav>
