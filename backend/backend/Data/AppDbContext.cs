@@ -1,4 +1,4 @@
-﻿using backend.Models;
+﻿using backend.Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data

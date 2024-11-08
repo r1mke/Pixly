@@ -33,8 +33,6 @@ namespace backend
 
             app.UseAuthorization();
 
-            
-
             app.Run();
         }
     }
