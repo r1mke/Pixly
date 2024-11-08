@@ -1,4 +1,5 @@
 ﻿using backend.Data.Models;
+using backend.Data.Models.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data
@@ -39,6 +40,14 @@ namespace backend.Data
                .WithMany(p => p.Resolutions)
                .HasForeignKey(pr => pr.PhotoId)
                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(u => u.Username)
+                .IsUnique();
         }
     }
 }
