@@ -22,7 +22,49 @@ namespace backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("backend.Models.Photo", b =>
+            modelBuilder.Entity("backend.Data.Models.Auth.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCreator")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("ProfileImg")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("backend.Data.Models.Photo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -67,7 +109,7 @@ namespace backend.Migrations
                     b.ToTable("Photos");
                 });
 
-            modelBuilder.Entity("backend.Models.PhotoResolution", b =>
+            modelBuilder.Entity("backend.Data.Models.PhotoResolution", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -99,7 +141,7 @@ namespace backend.Migrations
                     b.ToTable("PhotoResolutions");
                 });
 
-            modelBuilder.Entity("backend.Models.PhotoTag", b =>
+            modelBuilder.Entity("backend.Data.Models.PhotoTag", b =>
                 {
                     b.Property<int>("PhotoId")
                         .HasColumnType("int");
@@ -114,7 +156,7 @@ namespace backend.Migrations
                     b.ToTable("PhotoTags");
                 });
 
-            modelBuilder.Entity("backend.Models.Tag", b =>
+            modelBuilder.Entity("backend.Data.Models.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -131,22 +173,9 @@ namespace backend.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("backend.Models.User", b =>
+            modelBuilder.Entity("backend.Data.Models.Photo", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
-            modelBuilder.Entity("backend.Models.Photo", b =>
-                {
-                    b.HasOne("backend.Models.User", "User")
+                    b.HasOne("backend.Data.Models.Auth.User", "User")
                         .WithMany("Photos")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -155,9 +184,9 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("backend.Models.PhotoResolution", b =>
+            modelBuilder.Entity("backend.Data.Models.PhotoResolution", b =>
                 {
-                    b.HasOne("backend.Models.Photo", "Photo")
+                    b.HasOne("backend.Data.Models.Photo", "Photo")
                         .WithMany("Resolutions")
                         .HasForeignKey("PhotoId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -166,15 +195,15 @@ namespace backend.Migrations
                     b.Navigation("Photo");
                 });
 
-            modelBuilder.Entity("backend.Models.PhotoTag", b =>
+            modelBuilder.Entity("backend.Data.Models.PhotoTag", b =>
                 {
-                    b.HasOne("backend.Models.Photo", "Photo")
+                    b.HasOne("backend.Data.Models.Photo", "Photo")
                         .WithMany("PhotoTags")
                         .HasForeignKey("PhotoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("backend.Models.Tag", "Tag")
+                    b.HasOne("backend.Data.Models.Tag", "Tag")
                         .WithMany("PhotoTags")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -185,21 +214,21 @@ namespace backend.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("backend.Models.Photo", b =>
+            modelBuilder.Entity("backend.Data.Models.Auth.User", b =>
+                {
+                    b.Navigation("Photos");
+                });
+
+            modelBuilder.Entity("backend.Data.Models.Photo", b =>
                 {
                     b.Navigation("PhotoTags");
 
                     b.Navigation("Resolutions");
                 });
 
-            modelBuilder.Entity("backend.Models.Tag", b =>
+            modelBuilder.Entity("backend.Data.Models.Tag", b =>
                 {
                     b.Navigation("PhotoTags");
-                });
-
-            modelBuilder.Entity("backend.Models.User", b =>
-                {
-                    b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
         }

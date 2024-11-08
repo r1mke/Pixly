@@ -1,4 +1,6 @@
-﻿namespace backend.Data.Models
+﻿using backend.Data.Models.Auth;
+
+namespace backend.Data.Models
 {
     public class Photo
     {

@@ -1,4 +1,3 @@
-
 using backend.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,12 +12,16 @@ namespace backend
             // Add services to the container.
             builder.Services.AddAuthorization();
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            // Add services for MVC Controllers (API)
+            builder.Services.AddControllers();
+
+            // Configure Swagger/OpenAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // Add DbContext with SQL Server configuration
             builder.Services.AddDbContext<AppDbContext>(options =>
-            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             var app = builder.Build();
 
@@ -31,8 +34,13 @@ namespace backend
 
             app.UseHttpsRedirection();
 
+            // Add authorization middleware
             app.UseAuthorization();
 
+            // Map controllers to routes
+            app.MapControllers();
+
+            // Start the application
             app.Run();
         }
     }
