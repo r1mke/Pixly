@@ -7,6 +7,8 @@ using backend.Heleper.Api;
 using System.ComponentModel.DataAnnotations;
 using static backend.Endpoints.UserEndpoints.UserPostEndpoint;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using backend.Helper;
 
 namespace backend.Endpoints.UserEndpoints
 {
@@ -40,7 +42,7 @@ namespace backend.Endpoints.UserEndpoints
                 LastName = request.LastName,
                 Username = request.Username,
                 Email = request.Email,
-                Password = request.Password,
+                Password = PasswordHasher.Hash(request.Password),
                 IsAdmin = request.IsAdmin,
                 IsCreator = request.IsCreator
             };
