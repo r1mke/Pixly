@@ -15,6 +15,9 @@
   --pixly-color-hover:#027d65;
 }
 
+body{
+  padding-top: 100px;
+}
 
 button
 {
