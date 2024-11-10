@@ -1,135 +1,151 @@
 <div class="container p-3">
-    <div class="row justify-content-center">
-      <div class="col-12 col-sm-8 col-md-6 col-lg-4">
-        <div class="card">
-          <div class="card-header fw-bold custom-header text-white text-center p-2 fs-2">Pixly</div>
-          <div class="card-body mt-2">
-            <h4 class="text-start fw-medium">Join</h4>
-            <p class="text-start m-0 small">Already a member? <a routerLink="/login">Sign in</a></p>
-  
-            <form [formGroup]="frmSignup" (submit)="submit()">
-              <div class="row">
-                <!-- First Name Field -->
-                <div class="col-md-6 mb-1 pe-1">
-                  <label for="firstName"></label>
-                  <input id="firstName" formControlName="firstName" type="text" class="form-control" 
-                      [ngClass]="{'is-invalid': frmSignup.controls['firstName'].invalid && frmSignup.controls['firstName'].touched}" 
-                      placeholder="First Name" required>
-                  <div class="mt-1">
-                    <div class="text-danger small" 
-                         *ngIf="frmSignup.controls['firstName'].touched && frmSignup.controls['firstName'].hasError('required')">
-                         Required!
-                    </div>
-                    <div class="text-danger small" 
-                         *ngIf="frmSignup.controls['firstName'].touched && frmSignup.controls['firstName'].hasError('minlength')">
-                         Minimum 2 characters
-                    </div>
-                    <div class="text-danger small" 
-                         *ngIf="frmSignup.controls['firstName'].touched && frmSignup.controls['firstName'].hasError('maxlength')">
-                         Limited to 20 characters
-                    </div>
-                  </div>
-                </div>
-  
-                <!-- Last Name Field -->
-                <div class="col-md-6 mb-1 ps-1">
-                  <label for="lastName"></label>
-                  <input id="lastName" formControlName="lastName" type="text" class="form-control" 
-                      [ngClass]="{'is-invalid': frmSignup.controls['lastName'].invalid && frmSignup.controls['lastName'].touched}" 
-                      placeholder="Last Name" required>
-                  <div class="mt-1">
-                    <div class="text-danger small" 
-                         *ngIf="frmSignup.controls['lastName'].touched && frmSignup.controls['lastName'].hasError('required')">
-                         Required!
-                    </div>
-                    <div class="text-danger small" 
-                         *ngIf="frmSignup.controls['lastName'].touched && frmSignup.controls['lastName'].hasError('minlength')">
-                         Minimum 2 characters
-                    </div>
-                    <div class="text-danger small" 
-                         *ngIf="frmSignup.controls['lastName'].touched && frmSignup.controls['lastName'].hasError('maxlength')">
-                         Limited to 20 characters
-                    </div>
-                  </div>
+  <div class="row justify-content-center">
+    <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+      <div class="card">
+        <div class="card-header fw-bold custom-header text-white text-center p-2 fs-3">Pixly</div>
+        <div class="card-body">
+          <h4 class="text-start fw-medium">Join</h4>
+          <p class="text-start m-0 small mb-3">
+            Already a member? <a routerLink="/login">Sign in</a>
+          </p>
+
+          <form [formGroup]="frmSignup" (submit)="submit()">
+            <div class="row">
+              <!-- First Name Field -->
+              <div class="col-md-6 mb-3 pe-md-1">
+                <input
+                  id="firstName"
+                  formControlName="firstName"
+                  type="text"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': frmSignup.controls['firstName'].invalid && (frmSignup.controls['firstName'].touched || frmSignup.controls['firstName'].dirty)}"
+                  placeholder="First Name"
+                  required
+                />
+                <div class="invalid-feedback">
+                  <span *ngIf="frmSignup.controls['firstName'].hasError('required')">Required!</span>
+                  <span *ngIf="frmSignup.controls['firstName'].hasError('minlength')">Minimum 2 characters</span>
+                  <span *ngIf="frmSignup.controls['firstName'].hasError('maxlength')">Limited to 20 characters</span>
                 </div>
               </div>
-  
-              <!-- Username Field -->
-              <div class="mb-1">
-                <label for="username"></label>
-                <input id="username" formControlName="username" type="text" class="form-control" 
-                    [ngClass]="{'is-invalid': frmSignup.controls['username'].invalid && frmSignup.controls['username'].touched}" 
-                    placeholder="Username" required>
-                <div class="mt-1">
-                  <div class="text-danger small" 
-                       *ngIf="frmSignup.controls['username'].touched && frmSignup.controls['username'].hasError('required')">
-                       Required!
-                  </div>
-                  <div class="text-danger small" 
-                       *ngIf="frmSignup.controls['username'].touched && frmSignup.controls['username'].hasError('minlength')">
-                       Minimum 5 characters
-                  </div>
-                  <div class="text-danger small" 
-                       *ngIf="frmSignup.controls['username'].touched && frmSignup.controls['username'].hasError('maxlength')">
-                       Limited to 20 characters
-                  </div>
+
+              <!-- Last Name Field -->
+              <div class="col-md-6 mb-3 ps-md-1">
+                <input
+                  id="lastName"
+                  formControlName="lastName"
+                  type="text"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': frmSignup.controls['lastName'].invalid && (frmSignup.controls['lastName'].touched || frmSignup.controls['lastName'].dirty)}"
+                  placeholder="Last Name"
+                  required
+                />
+                <div class="invalid-feedback">
+                  <span *ngIf="frmSignup.controls['lastName'].hasError('required')">Required!</span>
+                  <span *ngIf="frmSignup.controls['lastName'].hasError('minlength')">Minimum 2 characters</span>
+                  <span *ngIf="frmSignup.controls['lastName'].hasError('maxlength')">Limited to 20 characters</span>
                 </div>
               </div>
-  
-              <!-- Email Field -->
-              <div class="mb-1">
-                <label for="email"></label>
-                <input id="email" formControlName="email" type="email" class="form-control" 
-                    [ngClass]="{'is-invalid': frmSignup.controls['email'].invalid && frmSignup.controls['email'].touched}" 
-                    placeholder="Email" required>
-                <div class="text-danger small" 
-                     *ngIf="frmSignup.controls['email'].touched && frmSignup.controls['email'].hasError('required')">
-                     Required!
-                </div>
-                <div class="text-danger small" 
-                     *ngIf="frmSignup.controls['email'].touched && frmSignup.controls['email'].hasError('email')">
-                     Enter a valid email address!
+            </div>
+
+            <!-- Username Field -->
+            <div class="mb-3">
+              <input
+                id="username"
+                formControlName="username"
+                type="text"
+                class="form-control"
+                [ngClass]="{'is-invalid': frmSignup.controls['username'].invalid && (frmSignup.controls['username'].touched || frmSignup.controls['username'].dirty)}"
+                placeholder="Username"
+                required
+              />
+              <div class="invalid-feedback">
+                <span *ngIf="frmSignup.controls['username'].hasError('required')">Required!</span>
+                <span *ngIf="frmSignup.controls['username'].hasError('minlength')">Minimum 5 characters</span>
+                <span *ngIf="frmSignup.controls['username'].hasError('maxlength')">Limited to 20 characters</span>
+              </div>
+            </div>
+
+            <!-- Email Field -->
+            <div class="mb-3">
+              <input
+                id="email"
+                formControlName="email"
+                type="email"
+                class="form-control"
+                [ngClass]="{'is-invalid': frmSignup.controls['email'].invalid && (frmSignup.controls['email'].touched || frmSignup.controls['email'].dirty)}"
+                placeholder="Email"
+                required
+              />
+              <div class="invalid-feedback">
+                <span *ngIf="frmSignup.controls['email'].hasError('required')">Required!</span>
+                <span *ngIf="frmSignup.controls['email'].hasError('email')">Enter a valid email address!</span>
+              </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="mb-3">
+              <div class="input-group">
+                <input
+                  id="password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  formControlName="password"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': frmSignup.controls['password'].invalid && (frmSignup.controls['password'].touched || frmSignup.controls['password'].dirty)}"
+                  placeholder="Password"
+                  required
+                />
+                <button type="button" class="p-2" (click)="togglePasswordVisibility()">
+                  <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+              </div>
+              <div class="invalid-feedback">
+                <span *ngIf="frmSignup.controls['password'].hasError('required')">Required!</span>
+              </div>
+              <ul *ngIf="frmSignup.controls['password'].touched || frmSignup.controls['password'].dirty" class="text-danger small mt-1" style="padding-left: 1rem; list-style-position: inside;">
+                <li *ngIf="frmSignup.controls['password'].hasError('minlength')">• Minimum 8 characters</li>
+                <li *ngIf="frmSignup.controls['password'].hasError('hasNumber')">• Minimum 1 number</li>
+                <li *ngIf="frmSignup.controls['password'].hasError('hasCapitalCase')">• Minimum 1 capital letter</li>
+                <li *ngIf="frmSignup.controls['password'].hasError('hasSmallCase')">• Minimum 1 lowercase letter</li>
+                <li *ngIf="frmSignup.controls['password'].hasError('hasSpecialCharacters')">• Minimum 1 special character</li>
+                <li *ngIf="frmSignup.controls['password'].hasError('maxlength')">• Maximum 64 characters</li>
+              </ul>
+            </div>
+            
+            <!-- Confirm Password Field -->
+            <div class="mb-4">
+              <div class="input-group">
+                <input
+                  id="confirmPassword"
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  formControlName="confirmPassword"
+                  class="form-control"
+                  [ngClass]="{'is-invalid': frmSignup.errors?.['NoPasswordMatch'] && (frmSignup.controls['confirmPassword'].touched || frmSignup.controls['confirmPassword'].dirty)}"
+                  placeholder="Confirm Password"
+                  required
+                />
+                <button type="button" class="p-2" (click)="toggleConfirmPasswordVisibility()">
+                  <i [class]="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                </button>
+                <div class="invalid-feedback">
+                  <span *ngIf="frmSignup.errors?.['NoPasswordMatch']">Passwords do not match</span>
                 </div>
               </div>
-  
-              <!-- Password Field -->
-              <div class="mb-1">
-                <label for="password"></label>
-                <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password" class="form-control" 
-                    [ngClass]="{'is-invalid': frmSignup.controls['password'].invalid && frmSignup.controls['password'].touched}" 
-                    placeholder="Password">
-                <div class="text-danger small" 
-                     *ngIf="frmSignup.controls['password'].touched && frmSignup.controls['password'].hasError('required')">
-                     Required!
-                </div>
-              </div>
-  
-              <!-- Confirm Password Field -->
-              <div class="mb-4">
-                <label for="confirmPassword"></label>
-                <input id="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" formControlName="confirmPassword" 
-                       class="form-control" 
-                       [ngClass]="{'is-invalid': frmSignup.controls['confirmPassword'].invalid && frmSignup.controls['confirmPassword'].touched}" 
-                       placeholder="Confirm Password">
-                <div class="text-danger small" 
-                     *ngIf="frmSignup.errors?.['NoPasswordMatch'] && frmSignup.controls['confirmPassword'].touched">
-                     Passwords do not match
-                </div>
-              </div>                        
-  
-              <!-- Submit Button -->
-              <div class="mb-3">
-                <button [disabled]="frmSignup.invalid" type="submit" class="w-100 fw-bold p-2">Sign Up</button>
-              </div>
-  
-              <!-- Terms and Conditions -->
-              <div class="text-center small">
-                <p>By joining Pixly, you accept our <a class="pixly">Privacy Policy</a> and <a class="pixly">Terms of Use</a>.</p>
-              </div>
-            </form>
-          </div>
+            </div>
+            
+
+            <!-- Submit Button -->
+            <div class="mb-3">
+              <button [disabled]="frmSignup.invalid" type="submit" class="w-100 fw-bold p-2">Sign Up</button>
+            </div>
+
+            <!-- Terms and Conditions -->
+            <div class="text-center small">
+              <p>By joining Pixly, you accept our <a class="pixly">Privacy Policy</a> and <a class="pixly">Terms of Use</a>.</p>
+            </div>
+          </form>
         </div>
       </div>
     </div>
   </div>
-  
+</div>
