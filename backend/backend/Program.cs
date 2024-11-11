@@ -1,4 +1,5 @@
 using backend.Data;
+using backend.Data.Models.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend
@@ -11,6 +12,7 @@ namespace backend
 
             // Add services to the container.
             builder.Services.AddAuthorization();
+            builder.Services.AddScoped<IEmailSender, EmailSender>();
 
             // Add services for MVC Controllers (API)
             builder.Services.AddControllers();
