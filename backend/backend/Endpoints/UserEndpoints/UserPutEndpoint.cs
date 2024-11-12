@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using backend.Data;
-using backend.Data.Models.Auth;
 using System.Threading;
 using System.Threading.Tasks;
 using backend.Heleper.Api;
 using System.ComponentModel.DataAnnotations;
 using static backend.Endpoints.UserEndpoints.UserPutEndpoint;
 using Microsoft.IdentityModel.Tokens;
+using backend.Data.Models;
 
 namespace backend.Endpoints.UserEndpoints
 {

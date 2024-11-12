@@ -1,4 +1,4 @@
-﻿namespace backend.Data.Models.Auth
+﻿namespace backend.Helper.Auth.EmailSender
 {
     public interface IEmailSender
     {

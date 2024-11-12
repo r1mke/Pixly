@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using backend.Data;
-using backend.Data.Models.Auth;
+using backend.Data.Models;
 using System.Threading;
 using System.Threading.Tasks;
 using backend.Heleper.Api;

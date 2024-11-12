@@ -1,5 +1,6 @@
 using backend.Data;
-using backend.Data.Models.Auth;
+using backend.Helper.Auth.EmailSender;
+using backend.Helper.Auth.PasswordHasher;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend
@@ -10,9 +11,12 @@ namespace backend
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.AddMemoryCache();
+
             // Add services to the container.
             builder.Services.AddAuthorization();
             builder.Services.AddScoped<IEmailSender, EmailSender>();
+            builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 
             // Add services for MVC Controllers (API)
             builder.Services.AddControllers();

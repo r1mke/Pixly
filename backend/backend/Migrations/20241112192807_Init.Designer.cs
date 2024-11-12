@@ -12,8 +12,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241108145000_user-entity")]
-    partial class userentity
+    [Migration("20241112192807_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("backend.Data.Models.Auth.User", b =>
+            modelBuilder.Entity("backend.Data.Models.EmailVerificationCode", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -33,38 +33,28 @@ namespace backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
+                    b.Property<string>("ActivateCode")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<bool>("IsAdmin")
+                    b.Property<bool>("IsUsed")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsCreator")
-                        .HasColumnType("bit");
+                    b.Property<DateTime>("SentAt")
+                        .HasColumnType("datetime2");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("ProfileImg")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("Username")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.HasIndex("UserId", "ActivateCode")
+                        .IsUnique();
+
+                    b.ToTable("EmailVerificationCodes");
                 });
 
             modelBuilder.Entity("backend.Data.Models.Photo", b =>
@@ -176,9 +166,74 @@ namespace backend.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("backend.Data.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAdmin")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCreator")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("ProfileImg")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Username")
+                        .IsUnique();
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("backend.Data.Models.EmailVerificationCode", b =>
+                {
+                    b.HasOne("backend.Data.Models.User", "User")
+                        .WithMany("EmailVerificationCodes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("backend.Data.Models.Photo", b =>
                 {
-                    b.HasOne("backend.Data.Models.Auth.User", "User")
+                    b.HasOne("backend.Data.Models.User", "User")
                         .WithMany("Photos")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -217,11 +272,6 @@ namespace backend.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("backend.Data.Models.Auth.User", b =>
-                {
-                    b.Navigation("Photos");
-                });
-
             modelBuilder.Entity("backend.Data.Models.Photo", b =>
                 {
                     b.Navigation("PhotoTags");
@@ -232,6 +282,13 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Data.Models.Tag", b =>
                 {
                     b.Navigation("PhotoTags");
+                });
+
+            modelBuilder.Entity("backend.Data.Models.User", b =>
+                {
+                    b.Navigation("EmailVerificationCodes");
+
+                    b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
         }
