@@ -2,8 +2,8 @@
 using System.Net.Mail;
 using System.Threading.Tasks;
 
-namespace backend.Data.Models.Auth
-{ 
+namespace backend.Helper.Auth.EmailSender
+{
     public class EmailSender(IConfiguration _config) : IEmailSender
     {
         public async Task SendEmailAsync(string toEmail, string subject, string message)

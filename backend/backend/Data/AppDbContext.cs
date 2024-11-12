@@ -1,5 +1,4 @@
 ﻿using backend.Data.Models;
-using backend.Data.Models.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace backend.Data
@@ -13,12 +12,13 @@ namespace backend.Data
         public DbSet <Tag> Tags { get; set; }
         public DbSet <PhotoTag> PhotoTags { get; set; }
         public DbSet <PhotoResolution> PhotoResolutions { get; set; }
+        public DbSet <EmailVerificationCode> EmailVerificationCodes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Photo>()
                 .HasOne(p => p.User)
-                .WithMany(u=>u.Photos)
+                .WithMany(u => u.Photos)
                 .HasForeignKey(p => p.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -37,9 +37,9 @@ namespace backend.Data
 
             modelBuilder.Entity<PhotoResolution>()
                 .HasOne(pr => pr.Photo)
-               .WithMany(p => p.Resolutions)
-               .HasForeignKey(pr => pr.PhotoId)
-               .OnDelete(DeleteBehavior.Cascade);
+                .WithMany(p => p.Resolutions)
+                .HasForeignKey(pr => pr.PhotoId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
@@ -47,6 +47,10 @@ namespace backend.Data
 
             modelBuilder.Entity<User>()
                 .HasIndex(u => u.Username)
+                .IsUnique();
+
+            modelBuilder.Entity<EmailVerificationCode>()
+                .HasIndex(evc => new { evc.UserId, evc.ActivateCode })
                 .IsUnique();
         }
     }

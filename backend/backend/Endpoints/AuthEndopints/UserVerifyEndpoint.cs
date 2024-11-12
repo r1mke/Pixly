@@ -1,19 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using backend.Data;
-using backend.Data.Models.Auth;
+using backend.Data.Models;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using static backend.Endpoints.UserEndpoints.UserVerifyEmailEndpoint;
 using backend.Heleper.Api;
+using static backend.Endpoints.UserEndpoints.UserVerifyEmailEndpoint;
 
 namespace backend.Endpoints.UserEndpoints
 {
-    [Route("api/users")]
+    [Route("auth")]
     public class UserVerifyEmailEndpoint(AppDbContext _db) : MyEndpointBaseAsync
-        .WithRequest<VerifyEmailRequest> 
-        .WithResult<string>               
+        .WithRequest<VerifyEmailRequest>
+        .WithResult<string>
     {
         [HttpPost("verify-email")]
         public override async Task<string> HandleAsync(VerifyEmailRequest request, CancellationToken cancellationToken = default)
@@ -24,10 +24,24 @@ namespace backend.Endpoints.UserEndpoints
             var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
             if (user == null)
                 throw new InvalidOperationException("User not found.");
-            
-            if (user.RegisterCode != request.VerificationCode)
+
+
+            if (user.IsVerified)
+                throw new InvalidOperationException("User has already been verified.");
+
+            var verificationCode = await _db.EmailVerificationCodes
+                .FirstOrDefaultAsync(c => c.UserId == user.Id && c.ActivateCode == request.VerificationCode, cancellationToken);
+
+            if (verificationCode == null)
                 throw new InvalidOperationException("Invalid verification code.");
 
+            if (verificationCode.ExpiryDate < DateTime.UtcNow)
+                throw new InvalidOperationException("Verification code has expired.");
+
+            if (verificationCode.IsUsed)
+                throw new InvalidOperationException("Verification code has already been used.");
+
+            verificationCode.IsUsed = true;
             user.IsVerified = true;
             await _db.SaveChangesAsync(cancellationToken);
 

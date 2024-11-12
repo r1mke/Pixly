@@ -1,7 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace backend.Data.Models.Auth
+namespace backend.Data.Models
 {
     public class User
     {
@@ -16,9 +17,9 @@ namespace backend.Data.Models.Auth
         public byte[]? ProfileImg { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsVerified { get; set; }
-        public string RegisterCode { get; set; }
-        public bool IsAdmin { get; set; } = false;
-        public bool IsCreator { get; set; } = false;
+        [JsonIgnore]
+        public bool IsAdmin { get; set; }
+        public bool IsCreator { get; set; }
         public ICollection<Photo> Photos { get; set; }
     }
 }
