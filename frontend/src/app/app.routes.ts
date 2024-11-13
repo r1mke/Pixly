@@ -8,6 +8,10 @@ export const routes: Routes = [
         path: 'register',
         loadComponent: () => import('./features/auth/pages/register-page/register-page.component').then(m => m.RegisterPageComponent)
       },
+      {
+        path: 'verify-email',
+        loadComponent: () => import('./features/auth/pages/verify-email-page/verify-email-page.component').then(m => m.VerifyEmailPageComponent)
+      },
       { path: '**', redirectTo: 'register', pathMatch: 'full' }
     ]
   },
