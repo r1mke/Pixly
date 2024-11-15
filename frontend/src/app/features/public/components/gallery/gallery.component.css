@@ -1,0 +1,32 @@
+.container {
+	width: 1400px;
+	margin:20px auto;
+	columns: 3;
+	column-gap: 20px;
+}
+
+.container .box{
+	width: 100%;
+	margin-bottom: 10px;
+	break-inside: avoid;
+}
+
+.container .box img{
+	max-width: 100%;
+	border-radius: 15px;
+}
+
+@media (max-width:900px){
+	.container{
+		width: calc(100% - 40px);
+		columns: 2;
+	}
+}
+
+
+@media (max-width:480px){
+	.container{
+		width: calc(100% - 40px);
+		columns: 1;
+	}
+}

@@ -1,8 +1,11 @@
 using backend.Data;
 using backend.Helper.Auth.EmailSender;
 using backend.Helper.Auth.PasswordHasher;
-using Microsoft.EntityFrameworkCore;
 
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using CloudinaryDotNet;
+using backend.Helper;
 namespace backend
 {
     public class Program
@@ -17,7 +20,7 @@ namespace backend
             builder.Services.AddAuthorization();
             builder.Services.AddScoped<IEmailSender, EmailSender>();
             builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-
+            builder.Services.AddScoped<PhotoService>();
             // Add services for MVC Controllers (API)
             builder.Services.AddControllers();
 
@@ -28,6 +31,9 @@ namespace backend
             // Add DbContext with SQL Server configuration
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
+
 
             var app = builder.Build();
 
