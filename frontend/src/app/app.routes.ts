@@ -15,5 +15,15 @@ export const routes: Routes = [
       { path: '**', redirectTo: 'register', pathMatch: 'full' }
     ]
   },
+  {
+    path: 'public',
+    children: [
+      {
+        path: 'home',
+        loadComponent: () => import('./features/public/pages/home-page/home-page.component').then(m => m.HomePageComponent)
+      },
+      { path: '**', redirectTo: 'home', pathMatch: 'full' }
+    ] 
+  },
   { path: '**', redirectTo: 'public', pathMatch: 'full' }
 ];
