@@ -1,35 +1,30 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using backend.Data;
-using backend.Data.Models;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using backend.Data;
 using backend.Heleper.Api;
-using static backend.Endpoints.UserEndpoints.UserVerifyEmailEndpoint;
+using backend.Services.JwtService;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using static backend.Endpoints.AuthEndopints.UserVerifyEmailEndpoint;
 
-namespace backend.Endpoints.UserEndpoints
+namespace backend.Endpoints.AuthEndopints
 {
-    [Route("auth")]
-    public class UserVerifyEmailEndpoint(AppDbContext _db) : MyEndpointBaseAsync
+    public class UserVerifyEmailEndpoint(AppDbContext db, IJwtService jwtService) : MyEndpointBaseAsync
         .WithRequest<VerifyEmailRequest>
-        .WithResult<string>
+        .WithResult<VerificationResponse>
     {
         [HttpPost("verify-email")]
-        public override async Task<string> HandleAsync(VerifyEmailRequest request, CancellationToken cancellationToken = default)
+        public override async Task<VerificationResponse> HandleAsync(VerifyEmailRequest request, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(request.VerificationCode) || string.IsNullOrEmpty(request.Email))
                 throw new InvalidOperationException("Invalid verification request.");
 
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
             if (user == null)
                 throw new InvalidOperationException("User not found.");
-
 
             if (user.IsVerified)
                 throw new InvalidOperationException("User has already been verified.");
 
-            var verificationCode = await _db.EmailVerificationCodes
+            var verificationCode = await db.EmailVerificationCodes
                 .FirstOrDefaultAsync(c => c.UserId == user.Id && c.ActivateCode == request.VerificationCode, cancellationToken);
 
             if (verificationCode == null)
@@ -43,15 +38,29 @@ namespace backend.Endpoints.UserEndpoints
 
             verificationCode.IsUsed = true;
             user.IsVerified = true;
-            await _db.SaveChangesAsync(cancellationToken);
+            await db.SaveChangesAsync(cancellationToken);
 
-            return "Email successfully verified.";
+            var jwtToken = jwtService.GenerateJwtToken(user);
+
+            var response = new VerificationResponse
+            {
+                Message = "Email successfully verified.",
+                JwtToken = jwtToken
+            };
+
+            return response;
         }
 
         public class VerifyEmailRequest
         {
             public string VerificationCode { get; set; }
             public string Email { get; set; }
+        }
+
+        public class VerificationResponse
+        {
+            public string Message { get; set; }
+            public string JwtToken { get; set; }
         }
     }
 }
