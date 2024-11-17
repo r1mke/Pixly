@@ -1,52 +1,75 @@
 ﻿using backend.Data.Models;
-using Microsoft.Extensions.Configuration;
+using backend.Services.JwtService;
 using Microsoft.IdentityModel.Tokens;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Security.Cryptography;
 
-namespace backend.Services.JwtService
+public class JwtService : IJwtService
 {
-    public class JwtService : IJwtService
+    private readonly string _secretKey;
+    private readonly string _issuer;
+    private readonly string _audience;
+
+    public JwtService(IConfiguration configuration)
     {
-        private readonly string _secretKey;
-        private readonly string _issuer;
-        private readonly string _audience;
+        _secretKey = configuration["Jwt:SecretKey"];
+        _issuer = configuration["Jwt:Issuer"];
+        _audience = configuration["Jwt:Audience"];
 
-        public JwtService(IConfiguration configuration)
+        if (string.IsNullOrEmpty(_secretKey) || _secretKey.Length < 32)
+            throw new InvalidOperationException("Secret key must be at least 256 bits long.");
+    }
+
+    public string GenerateJwtToken(User user)
+    {
+        var claims = new[]
         {
-            _secretKey = configuration["Jwt:SecretKey"];
-            _issuer = configuration["Jwt:Issuer"];
-            _audience = configuration["Jwt:Audience"];
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim("userId", user.Id.ToString())
+        };
 
-            if (string.IsNullOrEmpty(_secretKey) || _secretKey.Length < 32)
-                throw new InvalidOperationException("Secret key must be at least 256 bits long.");
 
-        }
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-        public string GenerateJwtToken(User user)
+        var token = new JwtSecurityToken(
+            issuer: _issuer,
+            audience: _audience,
+            claims: claims,
+            expires: DateTime.Now.AddHours(1),
+            signingCredentials: creds
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public ClaimsPrincipal ValidateJwtToken(string token)
+    {
+        try
         {
-            var claims = new[]
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(_secretKey);
+
+            var validationParameters = new TokenValidationParameters
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim("userId", user.Id.ToString()),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidIssuer = _issuer,
+                ValidAudience = _audience,
+                IssuerSigningKey = new SymmetricSecurityKey(key)
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            SecurityToken validatedToken;
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
 
-            var token = new JwtSecurityToken(
-                issuer: _issuer,
-                audience: _audience,
-                claims: claims,
-                expires: DateTime.Now.AddHours(1),
-                signingCredentials: creds
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return principal;
+        }
+        catch (SecurityTokenException)
+        {
+            return null;
         }
     }
 }
