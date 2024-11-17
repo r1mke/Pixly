@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { VerifyEmailGuard } from './features/auth/services/verify-email-quard';
 
 export const routes: Routes = [
   {
@@ -10,7 +11,8 @@ export const routes: Routes = [
       },
       {
         path: 'verify-email',
-        loadComponent: () => import('./features/auth/pages/verify-email-page/verify-email-page.component').then(m => m.VerifyEmailPageComponent)
+        loadComponent: () => import('./features/auth/pages/verify-email-page/verify-email-page.component').then(m => m.VerifyEmailPageComponent),
+        canActivate: [VerifyEmailGuard]
       },
       { path: '**', redirectTo: 'register', pathMatch: 'full' }
     ]

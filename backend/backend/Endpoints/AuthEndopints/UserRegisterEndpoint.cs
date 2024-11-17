@@ -8,13 +8,16 @@ using backend.Heleper.Api;
 using backend.Data.Models;
 using backend.Helper.Auth.PasswordHasher;
 using backend.Helper.Auth.EmailSender;
-using static backend.Endpoints.AuthEndopints.UserRegisterEndpoint;
+using backend.Services.JwtService;
 using System.ComponentModel.DataAnnotations;
+using static backend.Endpoints.AuthEndopints.UserRegisterEndpoint;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Endpoints.AuthEndopints
 {
+    [AllowAnonymous]
     [Route("auth")]
-    public class UserRegisterEndpoint(AppDbContext db, IEmailSender emailSender, IPasswordHasher passwordHasher) : MyEndpointBaseAsync
+    public class UserRegisterEndpoint(AppDbContext db, IEmailSender emailSender, IPasswordHasher passwordHasher, IJwtService jwtService) : MyEndpointBaseAsync
         .WithRequest<CreateUserRequest>
         .WithResult<UserRegistrationResponse>
     {
@@ -24,9 +27,7 @@ namespace backend.Endpoints.AuthEndopints
             if (!ModelState.IsValid)
                 throw new InvalidOperationException("Invalid request data");
 
-            var existingUser = await db.Users
-                .FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
-
+            var existingUser = await db.Users.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
             if (existingUser != null)
                 throw new InvalidOperationException("User with this email already exists");
 
@@ -58,7 +59,7 @@ namespace backend.Endpoints.AuthEndopints
                 UserId = user.Id,
                 ActivateCode = verificationCode,
                 SentAt = DateTime.UtcNow,
-                ExpiryDate = DateTime.UtcNow.AddMinutes(1),
+                ExpiryDate = DateTime.UtcNow.AddMinutes(15),
                 IsUsed = false
             };
 
@@ -68,9 +69,12 @@ namespace backend.Endpoints.AuthEndopints
             await emailSender.SendEmailAsync(user.Email, "Verify your email",
                 $"Code to verify your email: <strong>{verificationCode}</strong>");
 
+            var jwtToken = jwtService.GenerateJwtToken(user);
+
             return new UserRegistrationResponse
             {
                 User = user,
+                JwtToken = jwtToken,
                 Message = "Registration successful. A verification email has been sent, activation code will expire in 15 minutes."
             };
         }
@@ -99,6 +103,7 @@ namespace backend.Endpoints.AuthEndopints
         public class UserRegistrationResponse
         {
             public User User { get; set; }
+            public string JwtToken { get; set; }
             public string Message { get; set; }
         }
     }

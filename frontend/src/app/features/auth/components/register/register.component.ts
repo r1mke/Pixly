@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { CustomValidators } from './custom-validators'; 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Router, RouterLink } from '@angular/router';
+import { RegisterService } from '../../services/register.service';// Importuj RegisterService/ Opcionalno za prikazivanje poruka korisnicima
 
 @Component({
   selector: 'app-register',
@@ -16,10 +17,12 @@ export class RegisterComponent {
   public frmSignup: FormGroup;
   public showPassword: boolean = false;
   public showConfirmPassword: boolean = false;
+  
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
+  private registerService = inject(RegisterService);
 
-  constructor(private fb: FormBuilder, private router: Router) {
-    this.frmSignup = this.createSignupForm();
-  }
+  constructor() {this.frmSignup = this.createSignupForm();}
 
   createSignupForm(): FormGroup {
     return this.fb.group({
@@ -39,7 +42,6 @@ export class RegisterComponent {
       confirmPassword: [null, Validators.required],
     }, { validators: CustomValidators.passwordMatchValidator });
   }  
-  
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
@@ -51,11 +53,25 @@ export class RegisterComponent {
 
   submit() {
     if (this.frmSignup.valid) {
-      console.log(this.frmSignup.value);
-      //this.router.navigate(['/login']);
-    } 
-    else
-      console.log('Form is invalid');
-  }
+      const userData = this.frmSignup.value;
+      console.log(userData);
   
+      this.registerService.registerUser(userData).subscribe({
+        next: (response) => {
+          console.log('Registration successful', response);
+          const token = response?.jwtToken;
+          if (token) {
+            localStorage.setItem('jwtToken', token);
+            console.log('JWT token saved successfully');
+            this.router.navigate(['/auth/verify-email']);
+          }
+        },
+        error: (err) => {
+          console.error('Error occurred during registration', err);
+        }
+      });
+    } else {
+      console.log('Form is invalid');
+    }
+  }
 }
