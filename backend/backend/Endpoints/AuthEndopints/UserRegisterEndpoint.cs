@@ -79,6 +79,24 @@ namespace backend.Endpoints.AuthEndopints
             };
         }
 
+        [HttpGet("check-email")]
+        public async Task<IActionResult> CheckEmail(string email, CancellationToken cancellationToken = default)
+        {
+            var emailExists = await db.Users.AnyAsync(u => u.Email == email, cancellationToken);
+            var message = emailExists ? "Email is already taken!" : "Email is available";
+
+            return Ok(new { available = !emailExists, message });
+        }
+
+        [HttpGet("check-username")]
+        public async Task<IActionResult> CheckUsername(string username, CancellationToken cancellationToken = default)
+        {
+            var usernameExists = await db.Users.AnyAsync(u => u.Username == username, cancellationToken);
+            var message = usernameExists ? "Username is already taken" : "Username is available";
+
+            return Ok(new { available = !usernameExists, message });
+        }
+
         public class CreateUserRequest
         {
             [Required]

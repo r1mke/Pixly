@@ -55,7 +55,7 @@
                 formControlName="username"
                 type="text"
                 class="form-control"
-                [ngClass]="{'is-invalid': frmSignup.controls['username'].invalid && (frmSignup.controls['username'].touched || frmSignup.controls['username'].dirty)}"
+                [ngClass]="{'is-invalid': frmSignup.controls['username'].invalid && (frmSignup.controls['username'].touched || frmSignup.controls['username'].dirty) || usernameError}"
                 placeholder="Username"
                 required
               />
@@ -63,6 +63,7 @@
                 <span *ngIf="frmSignup.controls['username'].hasError('required')">Required!</span>
                 <span *ngIf="frmSignup.controls['username'].hasError('minlength')">Minimum 5 characters</span>
                 <span *ngIf="frmSignup.controls['username'].hasError('maxlength')">Limited to 20 characters</span>
+                <span *ngIf="usernameError">{{ usernameError }}</span>
               </div>
             </div>
 
@@ -73,15 +74,18 @@
                 formControlName="email"
                 type="email"
                 class="form-control"
-                [ngClass]="{'is-invalid': frmSignup.controls['email'].invalid && (frmSignup.controls['email'].touched || frmSignup.controls['email'].dirty)}"
+                [ngClass]="{
+                  'is-invalid': (frmSignup.controls['email'].invalid && (frmSignup.controls['email'].touched || frmSignup.controls['email'].dirty)) || emailError}"
                 placeholder="Email"
                 required
               />
               <div class="invalid-feedback">
                 <span *ngIf="frmSignup.controls['email'].hasError('required')">Required!</span>
                 <span *ngIf="frmSignup.controls['email'].hasError('email')">Enter a valid email address!</span>
+                <span *ngIf="emailError">{{emailError}}</span>
               </div>
             </div>
+            
 
             <!-- Password Field -->
             <div class="mb-3">
@@ -136,7 +140,7 @@
 
             <!-- Submit Button -->
             <div class="mb-3">
-              <button [disabled]="frmSignup.invalid" type="submit" class="w-100 fw-bold p-2">Sign Up</button>
+              <button [disabled]="frmSignup.invalid || emailError || usernameError" type="submit" class="w-100 fw-bold p-2">Sign Up</button>
             </div>
 
             <!-- Terms and Conditions -->

@@ -3,6 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MYCONFIG } from '../../../my-config';
 
+export interface AvailabilityResponse {
+  available: boolean;
+  message: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -26,4 +31,13 @@ export class RegisterService {
   removeToken(): void {
     localStorage.removeItem('jwtToken');
   }
+
+  checkEmail(email: string): Observable<AvailabilityResponse> {
+    return this.http.get<AvailabilityResponse>(`${MYCONFIG.apiUrl}/auth/check-email?email=${email}`);
+  }
+
+  checkUsername(username: string): Observable<AvailabilityResponse> {
+    return this.http.get<AvailabilityResponse>(`${MYCONFIG.apiUrl}/auth/check-username?username=${username}`);
+  }
+  
 }
