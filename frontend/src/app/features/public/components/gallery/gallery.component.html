@@ -1,8 +1,32 @@
 <div class="container">
-	<div class="box" *ngFor="let photo of photos">
+	<div class="box" *ngFor="let photo of photos; let i = index">
 		<img
-		loading="lazy"
+		[attr.loading]="i === 0 ? 'eager' : 'lazy'"
         src="{{ photo.url }}"
 		>
+		<div class="layout">
+			<div class="layout-content">
+				<div class="row-1">
+					<div class="like-button">
+						<img id="like" src="../../../../../assets/img/like-white.png"  width="20px" height="20px" width="20px" height="20px" alt="">
+					</div>
+					<div class="collect-button">
+						<img id="collect" src="../../../../../assets/img/bookmark.png"  width="20px" height="20px" alt="">
+					</div>
+				</div>
+				<div class="row-2">
+					<div class="user">
+						<img src="../../../../../assets/img/user.webp" width="40px" height="40px" alt="">
+						<div class="user-name">
+							<span>Kerim Begić</span>
+						</div>
+					</div>
+					<div class="download-button">
+						<img src="../../../../../assets/img/download.png"  width="20px" height="20px" alt="">
+						<span>Download</span>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>

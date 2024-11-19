@@ -10,20 +10,11 @@ export class GetAllPhotosService {
 
   private url = '/api/photos'
 
-  private photos: BehaviorSubject<any[]> = new BehaviorSubject<any[]>([]);
-
-  public data$ = this.photos.asObservable();
 
   constructor(private http: HttpClient) { }
 
- // getPhotosRandom(): Observable<any> {
-  //  return this.http.get<any>(this.url);
-  //}
-  //}
-  
-  getPhotosRandomAll(): void {
-    this.http.get<any>(this.url).subscribe((data) => {
-      this.photos.next(data);
-    })
+  getAllPhotos() {
+    return this.http.get<any[]>(this.url);
   }
+  
 }

@@ -9,11 +9,154 @@
 	width: 100%;
 	margin-bottom: 10px;
 	break-inside: avoid;
+	position: relative;
 }
 
 .container .box img{
 	max-width: 100%;
 	border-radius: 15px;
+}
+
+.container .box .layout{
+	display: block;
+	position: absolute;
+	top: 0;
+  	left: 0;
+  	right: 0;
+  	bottom: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.5);
+	opacity: 0;
+	transition: 0.8s ease;
+}
+
+.container .box:hover .layout{
+	z-index: 1;
+	opacity: 1;
+	display: block;
+}
+
+.layout-content{
+	display: flex;
+	flex-wrap: wrap;
+	align-content: space-between;
+	padding: 15px;
+	width: 100%;
+	height: 100%;
+}
+
+.row-1, .row-2{
+	width: 100%;
+	display: flex;
+}
+
+.row-1{
+	justify-content: flex-end;
+}
+
+.row-2{
+	justify-content: space-between;
+}
+
+.collect-button{
+	margin-left: 15px;
+}
+
+.collect-button, .like-button{
+	cursor: pointer;
+	padding: 10px;
+	border-radius: 10px;
+	background-color: #fff;
+}
+
+.user , .download-button{
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	color: #fff;
+}
+
+.layout-content .row-2 span{
+	margin-left: 10px;
+}
+
+.download-button{
+	background-color: var(--pixly-color);
+	border-radius: 10px;
+	padding: 15px;
+	display: flex;
+	align-items: center;
+}.container .box .layout{
+	display: block;
+	position: absolute;
+	top: 0;
+  	left: 0;
+  	right: 0;
+  	bottom: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,0,0,0.5);
+	opacity: 0;
+	transition: 0.8s ease;
+}
+
+.container .box:hover .layout{
+	z-index: 1;
+	opacity: 1;
+	display: block;
+}
+
+.layout-content{
+	display: flex;
+	flex-wrap: wrap;
+	align-content: space-between;
+	padding: 15px;
+	width: 100%;
+	height: 100%;
+}
+
+.row-1, .row-2{
+	width: 100%;
+	display: flex;
+}
+
+.row-1{
+	justify-content: flex-end;
+}
+
+.row-2{
+	justify-content: space-between;
+}
+
+.collect-button{
+	margin-left: 15px;
+}
+
+.collect-button, .like-button{
+	cursor: pointer;
+	padding: 10px;
+	border-radius: 10px;
+	background-color: #fff;
+}
+
+.user , .download-button{
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	color: #fff;
+}
+
+.layout-content .row-2 span{
+	margin-left: 10px;
+}
+
+.download-button{
+	background-color: var(--pixly-color);
+	border-radius: 10px;
+	padding: 15px;
+	display: flex;
+	align-items: center;
 }
 
 @media (max-width:900px){
