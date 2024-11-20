@@ -9,6 +9,7 @@ using System.Security.Claims;
 using static backend.Endpoints.AuthEndopints.UserVerifyEmailEndpoint;
 using Azure;
 using backend.Heleper.Api;
+using System.Text.Json.Serialization;
 
 namespace backend.Endpoints.AuthEndopints
 {
@@ -54,7 +55,9 @@ namespace backend.Endpoints.AuthEndopints
 
         public class VerifyEmailRequest
         {
+            [JsonPropertyName("verificationCode")]
             public string VerificationCode { get; set; }
+            [JsonPropertyName("email")]
             public string Email { get; set; }
         }
 

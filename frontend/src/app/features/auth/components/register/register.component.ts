@@ -19,6 +19,7 @@ export class RegisterComponent {
   public showConfirmPassword: boolean = false;
   public emailError: string = '';
   public usernameError: string = '';
+  public isLoading: boolean = false;
   
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -58,6 +59,7 @@ export class RegisterComponent {
 
   submit() {
     if (this.frmSignup.valid) {
+      this.isLoading = true;
       const userData = this.frmSignup.value;
       console.log(userData);
   
@@ -67,32 +69,32 @@ export class RegisterComponent {
           const token = response?.jwtToken;
           if (token) {
             localStorage.setItem('jwtToken', token);
-            console.log('JWT token saved successfully');
             this.router.navigate(['/auth/verify-email']);
           }
         },
         error: (err) => {
           console.error('Error occurred during registration', err);
-        }
+        },
+        complete: () => {
+          this.isLoading = false;
+        },
       });
     } else {
       console.log('Form is invalid');
     }
   }
+  
 
  // Provjera emaila
  checkEmail(email: string): void {
-  this.emailError = '';  // Resetiraj grešku svaki put kad se mijenja email
-
-  if (!email) {
-    return; // Ako je polje prazno, ne šaljemo zahtjev
-  }
+  this.emailError = '';
+  
+  if (!email) return;
 
   this.registerService.checkEmail(email).subscribe({
     next: (response) => {
-      if (!response.available) {
-        this.emailError = response.message; // Postavi poruku ako email nije dostupan
-      }
+      if (!response.available)
+        this.emailError = response.message;
     },
     error: (err) => {
       console.error('Greška prilikom provjere emaila', err);

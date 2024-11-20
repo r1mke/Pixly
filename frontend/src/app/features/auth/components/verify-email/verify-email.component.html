@@ -39,7 +39,12 @@
             
             <!-- Submit Button -->
             <div class="mb-3">
-              <button [disabled]="frmVerifyEmail.invalid" type="submit" class="w-100 fw-bold p-2">Verify</button>
+              <button [disabled]="frmVerifyEmail.invalid || isLoading" type="submit" class="w-100 fw-bold p-2">
+                <span *ngIf="!isLoading">Sign Up</span>
+                <div *ngIf="isLoading" class="spinner-border spinner-border-sm text-light" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+              </button>
             </div>
 
             <!-- Resend Code -->
@@ -48,6 +53,7 @@
                 Didn't receive the code? <a class="pixly" (click)="resendCode()">Resend Code</a>
               </p>
             </div>
+            
           </form>
         </div>
       </div>

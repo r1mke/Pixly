@@ -10,7 +10,7 @@ import { jwtDecode } from 'jwt-decode';
 @Component({
   selector: 'app-verify-email',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, NgbModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, NgbModule],
   templateUrl: './verify-email.component.html',
   styleUrls: ['./verify-email.component.css']
 })
@@ -22,6 +22,7 @@ export class VerifyEmailComponent implements OnInit {
   public successMessage: string = '';
   public resendErrorMessage: string = '';
   public resendSuccessMessage: string = '';
+  public isLoading: boolean = false;
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -56,12 +57,14 @@ export class VerifyEmailComponent implements OnInit {
   
   submitVerificationCode() {
     this.resetMessages();
-
+    this.isLoading = true;
+  
     if (!this.frmVerifyEmail.valid || !this.userEmail) {
       this.errorMessage = !this.frmVerifyEmail.valid ? 'Kod nije validan.' : 'Email nije pronađen.';
+      this.isLoading = false;
       return;
     }
-
+  
     const code = Object.values(this.frmVerifyEmail.value).join('');
     console.log('Uneseni kod:', code, 'Poslani email:', this.userEmail);
   
@@ -72,10 +75,12 @@ export class VerifyEmailComponent implements OnInit {
         this.router.navigate(['/login']);
       },
       error: (error) => {
+        this.isLoading = false;
         console.error('Greška pri verifikaciji:', error);
         this.errorMessage = error.message || 'Došlo je do greške pri verifikaciji.';
       },
       complete: () => {
+        this.isLoading = false; // Resetovanje loading stanja
         console.log('Verifikacija završena.');
       }
     });

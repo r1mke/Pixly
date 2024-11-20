@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using backend.Helper.String;
 
 public class Program
 {
@@ -42,6 +43,8 @@ public class Program
         builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
         builder.Services.AddScoped<PhotoService>();
         builder.Services.AddScoped<IJwtService, JwtService>();
+        builder.Services.AddScoped<IStringHelper, StringHelper>();
+
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
