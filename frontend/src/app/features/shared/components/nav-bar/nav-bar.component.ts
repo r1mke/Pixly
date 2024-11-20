@@ -18,7 +18,15 @@ export class NavBarComponent  implements OnInit, AfterViewInit{
   user: boolean = true;
   menuOpen: boolean = false;  
 
-  constructor(private windowSizeService: WindowSizeService,private router: Router, private renderer: Renderer2) {}
+  constructor(private windowSizeService: WindowSizeService,private router: Router, private renderer: Renderer2) {
+    this.windowSizeService.data$.subscribe((w)=> {
+      this.windowWidth = w;
+
+      this.menuOpen = this.windowWidth >= 900;
+      console.log(this.menuOpen, this.windowWidth);
+
+    })
+  }
 
   ngOnInit(): void {
     this.windowSizeService.data$.subscribe((w)=> {

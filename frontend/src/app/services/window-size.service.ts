@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, fromEvent, Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { debounceTime } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WindowSizeService {
-  private windowWidth: BehaviorSubject<number> | null = null;
-
-  // Observable za pristup podacima o širini prozora
-  data$: Observable<number>;
+  private windowWidth = new BehaviorSubject<number>(typeof window !== 'undefined' ? window.innerWidth : 0);
+  data$: Observable<number> = this.windowWidth.asObservable();
 
   constructor() {
     // Provjeravamo da li smo na klijentskoj strani
@@ -20,7 +19,8 @@ export class WindowSizeService {
       fromEvent(window, 'resize')
         .pipe(
           map(() => window.innerWidth),
-          startWith(window.innerWidth)
+          startWith(window.innerWidth),
+          debounceTime(200)
         )
         .subscribe((width) => this.windowWidth?.next(width));
     } else {
