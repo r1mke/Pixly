@@ -12,12 +12,14 @@ using backend.Services.JwtService;
 using System.ComponentModel.DataAnnotations;
 using static backend.Endpoints.AuthEndopints.UserRegisterEndpoint;
 using Microsoft.AspNetCore.Authorization;
+using backend.Helper.String;
+using System.Text.Json.Serialization;
 
 namespace backend.Endpoints.AuthEndopints
 {
     [AllowAnonymous]
     [Route("auth")]
-    public class UserRegisterEndpoint(AppDbContext db, IEmailSender emailSender, IPasswordHasher passwordHasher, IJwtService jwtService) : MyEndpointBaseAsync
+    public class UserRegisterEndpoint(AppDbContext db, IEmailSender emailSender, IPasswordHasher passwordHasher, IJwtService jwtService, IStringHelper stringHelper) : MyEndpointBaseAsync
         .WithRequest<CreateUserRequest>
         .WithResult<UserRegistrationResponse>
     {
@@ -40,10 +42,10 @@ namespace backend.Endpoints.AuthEndopints
 
             var user = new User
             {
-                FirstName = request.FirstName,
-                LastName = request.LastName,
+                FirstName = stringHelper.CapitalizeFirstLetter(request.FirstName),
+                LastName = stringHelper.CapitalizeFirstLetter(request.LastName),
                 Username = request.Username,
-                Email = request.Email,
+                Email = request.Email.ToLower(),
                 Password = hash,
                 CreatedAt = DateTime.UtcNow,
                 IsVerified = false,
@@ -100,28 +102,36 @@ namespace backend.Endpoints.AuthEndopints
         public class CreateUserRequest
         {
             [Required]
+            [JsonPropertyName("firstName")]
             public string FirstName { get; set; }
 
             [Required]
+            [JsonPropertyName("lastName")]
             public string LastName { get; set; }
 
             [Required]
             [MinLength(5), MaxLength(20)]
+            [JsonPropertyName("username")]
             public string Username { get; set; }
 
             [Required]
             [EmailAddress]
+            [JsonPropertyName("email")]
             public string Email { get; set; }
 
             [Required]
             [MinLength(8), MaxLength(64)]
+            [JsonPropertyName("password")]
             public string Password { get; set; }
         }
 
         public class UserRegistrationResponse
         {
             public User User { get; set; }
+
+            [JsonPropertyName("jwtToken")]
             public string JwtToken { get; set; }
+
             public string Message { get; set; }
         }
     }
