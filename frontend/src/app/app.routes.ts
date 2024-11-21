@@ -14,6 +14,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/auth/pages/verify-email-page/verify-email-page.component').then(m => m.VerifyEmailPageComponent),
         canActivate: [VerifyEmailGuard]
       },
+      {
+        path: 'login',
+        loadComponent: () => import('./features/auth/pages/login-page/login-page.component').then(m => m.LoginPageComponent),
+      },
       { path: '**', redirectTo: 'register', pathMatch: 'full' }
     ]
   },
