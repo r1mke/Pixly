@@ -1,4 +1,4 @@
-using backend.Data;
+﻿using backend.Data;
 using backend.Helper.Auth.EmailSender;
 using backend.Helper;
 using Microsoft.EntityFrameworkCore;
@@ -9,12 +9,29 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using backend.Helper.String;
 using backend.Helper.Services.JwtService;
+using DotNetEnv;
 
 public class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        Env.Load(); // Učitaj varijable iz .env fajla
+
+        builder.Configuration.AddJsonFile("appsettings.json");
+
+        // Preko environment varijabli zamijenite vrijednosti u konfiguraciji
+        builder.Configuration["Smtp:Username"] = Environment.GetEnvironmentVariable("SMTP_USERNAME");
+        builder.Configuration["Smtp:Password"] = Environment.GetEnvironmentVariable("SMTP_PASSWORD");
+        builder.Configuration["Smtp:FromEmail"] = Environment.GetEnvironmentVariable("SMTP_FROM_EMAIL");
+
+        builder.Configuration["CloudinarySettings:CloudName"] = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME");
+        builder.Configuration["CloudinarySettings:ApiKey"] = Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY");
+        builder.Configuration["CloudinarySettings:ApiSecret"] = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET");
+
+        builder.Configuration["Jwt:SecretKey"] = Environment.GetEnvironmentVariable("JWT_SECRET_KEY");
+
+        builder.Configuration["ConnectionStrings:DefaultConnection"] = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
         builder.Services.AddMemoryCache();
 
@@ -44,7 +61,6 @@ public class Program
         builder.Services.AddScoped<PhotoService>();
         builder.Services.AddScoped<IJwtService, JwtService>();
         builder.Services.AddScoped<IStringHelper, StringHelper>();
-
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
@@ -90,14 +106,13 @@ public class Program
 
         var app = builder.Build();
 
-        // CORS konfiguracija (prilagoditi za produkciju)
-        app.UseCors(
-            options => options
-             .SetIsOriginAllowed(x => _ = true)
+        // CORS konfiguracija
+        app.UseCors(options => options
+             .SetIsOriginAllowed(x => _ = true) // Ovo omogućava sve izvore
              .AllowAnyMethod()
              .AllowAnyHeader()
              .AllowCredentials()
-        ); //This needs to set everything allowed
+        );
 
         if (app.Environment.IsDevelopment())
         {
