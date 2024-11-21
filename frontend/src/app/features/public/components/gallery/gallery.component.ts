@@ -18,7 +18,7 @@ export class GalleryComponent implements OnInit {
   ngOnInit() {
     this.getAllPhotosService.getAllPhotos().subscribe((data) => {
       this.photos = [...data];
-      console.log(this.photos);
+      //console.log(this.photos);
     });
   }
 

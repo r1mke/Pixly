@@ -14,7 +14,7 @@ export class GetAllPhotosService {
   constructor(private http: HttpClient) { }
 
   getAllPhotos() {
-    return this.http.get<any[]>(this.url);
+    return this.http.get<any[]>('http://localhost:5264/api/photos');
   }
   
 }

@@ -6,7 +6,7 @@
         <div class="card-body">
           <h4 class="text-start fw-medium">Join</h4>
           <p class="text-start m-0 small mb-3">
-            Already a member? <a routerLink="/login">Sign in</a>
+            Already a member? <a routerLink="/auth/login">Sign in</a>
           </p>
 
           <form [formGroup]="frmSignup" (submit)="submit()">
@@ -129,14 +129,13 @@
                   required
                 />
                 <button type="button" class="p-2" (click)="toggleConfirmPasswordVisibility()">
-                  <i [class]="showConfirmPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+                  <i [class]="showConfirmPassword ? 'fas far fa-eye-slash' : 'fas fa-eye'"></i>
                 </button>
                 <div class="invalid-feedback">
                   <span *ngIf="frmSignup.errors?.['NoPasswordMatch']">Passwords do not match</span>
                 </div>
               </div>
             </div>
-            
 
             <!-- Submit Button -->
             <div class="mb-3">
@@ -152,7 +151,6 @@
               </button>
             </div>
             
-
             <!-- Terms and Conditions -->
             <div class="text-center small">
               <p>By joining Pixly, you accept our <a class="pixly">Privacy Policy</a> and <a class="pixly">Terms of Use</a>.</p>
