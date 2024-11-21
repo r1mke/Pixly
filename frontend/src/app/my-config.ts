@@ -1,3 +1,3 @@
 export const MYCONFIG = {
-  apiUrl: 'http://localhost:5264'
+  apiUrl: process.env['MYAPI']
 };
