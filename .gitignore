@@ -14,6 +14,7 @@ obj/
 .vscode/
 history/
 *.code-workspace
+*.my-config.ts
 
 # WebStorm
 .idea/
