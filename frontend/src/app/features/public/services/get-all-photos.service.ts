@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject } from 'rxjs';
 import { Observable } from 'rxjs';
 import { HttpHeaders, HttpParams } from '@angular/common/http';
+import { MYCONFIG } from '../../../my-config';
 @Injectable({
   providedIn: 'root'
 })
@@ -14,7 +15,7 @@ export class GetAllPhotosService {
   constructor(private http: HttpClient) { }
 
   getAllPhotos() {
-    return this.http.get<any[]>('http://localhost:5264/api/photos');
+    return this.http.get<any[]>(`${MYCONFIG.apiUrl}/api/photos`);
   }
   
 }
