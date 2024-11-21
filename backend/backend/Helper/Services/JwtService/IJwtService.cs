@@ -1,10 +1,11 @@
 ﻿using backend.Data.Models;
 
-namespace backend.Services.JwtService
+namespace backend.Helper.Services.JwtService
 {
     public interface IJwtService
     {
         string GenerateJwtToken(User user);
+        string GenerateRefreshToken();
     }
 }
 
