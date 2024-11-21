@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap'; 
 import { Router, RouterLink } from '@angular/router';
+import { LoginService } from '../../services/login.service';
+import { response } from 'express';
 
 @Component({
   selector: 'app-login',
@@ -14,8 +16,10 @@ import { Router, RouterLink } from '@angular/router';
 export class LoginComponent {
   public frmLogin: FormGroup;
   public showPassword: boolean = false;
+  public isLoading: boolean = false;
+  public loginError: string = '';
 
-  constructor(private fb: FormBuilder, private router: Router) {
+  constructor(private fb: FormBuilder, private router: Router, private loginService: LoginService) {
     this.frmLogin = this.createLoginForm();
   }
 
@@ -30,12 +34,26 @@ export class LoginComponent {
     this.showPassword = !this.showPassword;
   }
 
-  submit() {
-    if (this.frmLogin.valid) {
-      console.log(this.frmLogin.value);
-      this.router.navigate(['/home']);
-    } else {
-      console.log('Form is invalid');
-    }
+  submit(): void{
+    if(this.frmLogin.valid) {
+      this.isLoading = true;
+      const loginData = this.frmLogin.value;
+      this.loginService.loginUser(loginData).subscribe({
+        next:(response) =>{
+          this.loginService.saveToken(response.jwtToken);
+          console.log(response.message);
+          this.router.navigate(['/home']);
+          this.loginError = '';
+        },
+        error:(error) =>{
+          console.error('Login failed', error);
+          this.loginError = error.message;
+          this.isLoading = false;
+        },
+        complete:()=>{
+          this.isLoading = false;
+        }
+      });
+    } 
   }
 }
