@@ -1,8 +1,9 @@
 ﻿using backend.Data.Models;
-using backend.Services.JwtService;
+using backend.Helper.Services.JwtService;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 public class JwtService : IJwtService
@@ -44,6 +45,17 @@ public class JwtService : IJwtService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+    public string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[32];
+        using (var rng = RandomNumberGenerator.Create())
+        {
+            rng.GetBytes(randomNumber);
+            return Convert.ToBase64String(randomNumber);
+        }
+    }
+
 
     public ClaimsPrincipal ValidateJwtToken(string token)
     {

@@ -8,12 +8,12 @@ using backend.Heleper.Api;
 using backend.Data.Models;
 using backend.Helper.Auth.PasswordHasher;
 using backend.Helper.Auth.EmailSender;
-using backend.Services.JwtService;
 using System.ComponentModel.DataAnnotations;
 using static backend.Endpoints.AuthEndopints.UserRegisterEndpoint;
 using Microsoft.AspNetCore.Authorization;
 using backend.Helper.String;
 using System.Text.Json.Serialization;
+using backend.Helper.Services.JwtService;
 
 namespace backend.Endpoints.AuthEndopints
 {

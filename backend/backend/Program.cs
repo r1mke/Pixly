@@ -3,12 +3,12 @@ using backend.Helper.Auth.EmailSender;
 using backend.Helper;
 using Microsoft.EntityFrameworkCore;
 using backend.Helper.Auth.PasswordHasher;
-using backend.Services.JwtService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using backend.Helper.String;
+using backend.Helper.Services.JwtService;
 
 public class Program
 {
