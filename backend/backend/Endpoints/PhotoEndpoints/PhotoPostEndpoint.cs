@@ -14,7 +14,7 @@ namespace backend.Endpoints.PhotoEndpoints
             _photoService = photoService;
         }
 
-        // Implementacija za POST endpoint koji upload-uje sliku
+      
         [HttpPost]
         public override async Task<PostPhotoResult> HandleAsync(PostPhotoRequest request, CancellationToken cancellationToken = default)
         {
@@ -36,13 +36,14 @@ namespace backend.Endpoints.PhotoEndpoints
                     request.Description,
                     request.Location,
                     request.UserId,
-                    request.File
+                    request.File,
+                    request.Tags
                 );
 
                 return new PostPhotoResult
                 {
                     Message = "Uspjesno iz endpointa",
-                    PhotoId = photo.PhotoId
+                    PhotoId = photo.PhotoId,
                 };
             }
             catch (Exception ex)
@@ -57,14 +58,16 @@ namespace backend.Endpoints.PhotoEndpoints
         }
     }
 
-    // Klasa koja predstavlja podatke koje očekujemo u POST zahtjevu
+   
     public class PostPhotoRequest
     {
         public string Title { get; set; }
         public string Description { get; set; }
         public string Location { get; set; }
         public int UserId { get; set; }
-        public IFormFile File { get; set; } // Ovdje uzimamo sliku u formatu byte[]
+        public IFormFile File { get; set; } 
+
+        public List<string> Tags { get; set; } = new List<string>();
     }
 
 

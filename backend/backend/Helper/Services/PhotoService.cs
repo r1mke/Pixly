@@ -2,15 +2,11 @@
 using CloudinaryDotNet.Actions;
 using backend.Data;
 using Microsoft.Extensions.Options;
-using System.Drawing;  // Za određivanje orijentacije
-using System.Linq;
-using System.Threading.Tasks;
+using System.Drawing;
+
 using backend.Data.Models;
 using backend.Helper;
-using System.IO;  // Za MemoryStream
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Http; // Za IFormFile
-using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 
 public class PhotoService
 {
@@ -28,121 +24,156 @@ public class PhotoService
         _context = context;
     }
 
-    // Funkcija koja upload-uje sliku u Cloudinary koristeći IFormFile
-    public async Task<PostPhotoResult> UploadPhotoAsync(string title, string description, string location, int userId, IFormFile file)
+    public async Task<PostPhotoResult> UploadPhotoAsync(string title, string description, string location, int userId, IFormFile file, List<string> tags)
     {
+        
+        if (string.IsNullOrWhiteSpace(title)) throw new ArgumentException("Title is required.");
+        if (file == null || file.Length == 0) throw new ArgumentException("File is required.");
+        if (tags == null || tags.Count == 0) throw new ArgumentException("At least one tag is required.");
 
-        try
+        using var memoryStream = new MemoryStream();
+        await file.CopyToAsync(memoryStream);
+        var imageBytes = memoryStream.ToArray();
+
+        
+        var uploadParams = new ImageUploadParams
         {
+            File = new FileDescription(file.FileName, new MemoryStream(imageBytes)),
+            Folder = "photos/full",
+            Colors = true,
+            QualityAnalysis = true
+        };
 
-            if (file == null || file.Length == 0)
-            {
-                throw new ArgumentException("File is required");
-            }
-
-
-            using var memoryStream = new MemoryStream();
-            await file.CopyToAsync(memoryStream);
-
-            var imageBytes = memoryStream.ToArray();
-
-            var uploadParams = new ImageUploadParams()
-            {
-                File = new FileDescription(file.FileName, new MemoryStream(imageBytes)),
-                UploadPreset = "full",
-                Context = new StringDictionary() { { "image_analysis", "true" } }
-            };
-
-            var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-
-            if (uploadResult?.Error != null)
-            {
-                throw new Exception($"Upload failed: {uploadResult.Error.Message}");
-            }
-
-            var compressedParams = new ImageUploadParams()
-            {
-                File = new FileDescription(file.FileName, new MemoryStream(imageBytes)),
-                UploadPreset = "compressed",
-                Transformation = new Transformation()
-                .Quality(40)
-                .Overlay(new Layer().PublicId("photos/watermark/ms7qetvbuvxbmmdvstao"))
-                .Gravity("center")
-                .Opacity(50)
-                .Crop("scale")
-            };
-
-
-            var compressedUploadResult = await _cloudinary.UploadAsync(compressedParams);
-
-            if (compressedUploadResult?.Error != null)
-            {
-                throw new Exception($"Compressed upload failed: {compressedUploadResult.Error.Message}");
-            }
-
-            var imageOrientation = GetImageOrientation(uploadResult.Width, uploadResult.Height);
-
-
-            var color = await GetDominantColorsAsync(uploadResult.PublicId);
-
-            var photo = new Photo
-            {
-                Title = title,
-                Description = description,
-                Location = location,
-                UserId = userId,
-                Approved = false,
-                CreateAt = DateTime.UtcNow,
-                LikeCount = 0,
-                ViewCount = 0,
-                Price = 0,
-                PhotoTags = new List<PhotoTag>(),
-                Orientation = imageOrientation,
-                Colors = null
-            };
-
-            // Save photo in the database
-            _context.Photos.Add(photo);
-            await _context.SaveChangesAsync();
-
-            var item = new PhotoResolution
-            {
-                Resolution = "full_resolution",
-                Url = uploadResult.Url.ToString(),
-                Size = uploadResult.Bytes,
-                Date = DateTime.UtcNow,
-                Photo = photo
-
-            };
-            var item2 = new PhotoResolution
-            {
-                Resolution = "compressed",
-                Url = compressedUploadResult.Url.ToString(),
-                Size = compressedUploadResult.Bytes,
-                Date = DateTime.UtcNow,
-                Photo = photo
-            };
-            _context.PhotoResolutions.Add(item);
-            _context.PhotoResolutions.Add(item2);
-
-            await _context.SaveChangesAsync();
-
-
-
-            return new PostPhotoResult
-            {
-                Message = $"Uspjesno iz servisa + {photo.Id}",
-                PhotoId = photo.Id
-            };
-        }
-        catch(Exception ex)
+        var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+        if (uploadResult?.Error != null)
         {
-            return new PostPhotoResult
-            {
-                PhotoId = null,
-                Message = $"Error: {ex.Message}\nStack Trace: {ex.StackTrace}"
-            };
+            throw new InvalidOperationException($"Upload failed: {uploadResult.Error.Message}");
         }
+
+        var imageOrientation = GetImageOrientation(uploadResult.Width, uploadResult.Height);
+
+        
+        var transformation = imageOrientation switch
+        {
+            "landscape" => new Transformation().Named("landscape_transformation"),
+            "portrait" => new Transformation().Named("portrait_transformation"),
+            "square" => new Transformation().Named("square_transformation")
+        };
+
+        var compressedParams = new ImageUploadParams
+        {
+            File = new FileDescription(file.FileName, new MemoryStream(imageBytes)),
+            Folder = "photos/compressed",
+            Transformation = transformation,
+        };
+
+        var compressedUploadResult = await _cloudinary.UploadAsync(compressedParams);
+        if (compressedUploadResult?.Error != null)
+        {
+            throw new InvalidOperationException($"Compressed upload failed: {compressedUploadResult.Error.Message}");
+        }
+
+       
+        var photo = new Photo
+        {
+            Title = title,
+            Description = description,
+            Location = location,
+            UserId = userId,
+            Approved = false,
+            CreateAt = DateTime.UtcNow,
+            LikeCount = 0,
+            ViewCount = 0,
+            Price = 0,
+            PhotoTags = new List<PhotoTag>(),
+            Orientation = imageOrientation
+        };
+
+        _context.Photos.Add(photo);
+        await _context.SaveChangesAsync();
+
+       
+        var fullResolution = new PhotoResolution
+        {
+            Resolution = "full_resolution",
+            Url = uploadResult.Url.ToString(),
+            Size = uploadResult.Bytes,
+            Date = DateTime.UtcNow,
+            Photo = photo
+        };
+
+        var compressedResolution = new PhotoResolution
+        {
+            Resolution = "compressed",
+            Url = compressedUploadResult.Url.ToString(),
+            Size = compressedUploadResult.Bytes,
+            Date = DateTime.UtcNow,
+            Photo = photo
+        };
+
+        _context.PhotoResolutions.AddRange(fullResolution, compressedResolution);
+
+       
+        if (uploadResult.Colors != null)
+        {
+            var extractedColors = uploadResult.Colors
+                .Where(colorSet => float.TryParse(colorSet[1], out var percentage) && percentage > 15)
+                .Select(colorSet => colorSet[0])
+                .Distinct()
+                .ToList();
+
+            var existingColors = _context.Colors.ToDictionary(c => c.HexCode, c => c.Id);
+
+            foreach (var colorHex in extractedColors)
+            {
+                if (!existingColors.ContainsKey(colorHex))
+                {
+                    var newColor = new backend.Data.Models.Color { HexCode = colorHex };
+                    _context.Colors.Add(newColor);
+                    await _context.SaveChangesAsync();
+                    existingColors[colorHex] = newColor.Id;
+                }
+
+                var photoColor = new PhotoColor
+                {
+                    PhotoId = photo.Id,
+                    ColorId = existingColors[colorHex]
+                };
+
+                if (!_context.PhotoColors.Any(pc => pc.PhotoId == photo.Id && pc.ColorId == existingColors[colorHex]))
+                {
+                    _context.PhotoColors.Add(photoColor);
+                }
+            }
+        }
+
+        var existingTags = _context.Tags.ToDictionary(t => t.TagName, t => t.Id);
+        foreach (var tag in tags)
+        {
+            if (!existingTags.ContainsKey(tag))
+            {
+                var newTag = new Tag { TagName = tag };
+                _context.Tags.Add(newTag);
+                await _context.SaveChangesAsync();
+                existingTags[tag] = newTag.Id;
+            }
+
+            var photoTag = new PhotoTag
+            {
+                PhotoId = photo.Id,
+                TagId = existingTags[tag]
+            };
+
+            _context.PhotoTags.Add(photoTag);
+        }
+
+        await _context.SaveChangesAsync();
+
+        return new PostPhotoResult
+        {
+            Message = $"Successfully uploaded photo with ID {photo.Id}",
+            PhotoId = photo.Id
+        };
     }
 
     public class PostPhotoResult
@@ -151,42 +182,8 @@ public class PhotoService
         public int? PhotoId { get; set; }
     }
 
-
     private string GetImageOrientation(int width, int height)
     {
-        if (width > height)
-        {
-            return "landscape";
-        }
-        else if (width < height)
-        {
-            return "portrait";
-        }
-        else
-        {
-            return "square";
-        }
-    }
-    private async Task<string> GetDominantColorsAsync(string imagePublicId)
-    {
-        
-        var resourceParams = new GetResourceParams(imagePublicId)
-        {
-            Context = true
-        };
-
-      
-        var resource = await _cloudinary.GetResourceAsync(resourceParams);
-
-        var colors = resource?.Context?.SelectToken("colors")?.ToString();
-
-        if (!string.IsNullOrEmpty(colors))
-        {
-            var colorList = colors.Split(',').ToList();
-            var jsonColors = JsonConvert.SerializeObject(colorList);
-            return jsonColors;
-        }
-
-        return null; 
+        return width > height ? "landscape" : width < height ? "portrait" : "square";
     }
 }

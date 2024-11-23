@@ -14,9 +14,9 @@
         public bool Approved { get; set; }
         public DateTime CreateAt { get; set; }
         public string? Orientation { get; set; }
-
-        public string? Colors { get; set; }
         public ICollection<PhotoTag> PhotoTags { get; set; } = new List<PhotoTag>();
         public ICollection<PhotoResolution> Resolutions { get; set; } = new List<PhotoResolution>();
+
+        public ICollection<PhotoColor> PhotoColors { get; set; } = new List<PhotoColor>();
     }
 }

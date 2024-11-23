@@ -13,6 +13,10 @@ namespace backend.Data
         public DbSet <PhotoTag> PhotoTags { get; set; }
         public DbSet <PhotoResolution> PhotoResolutions { get; set; }
         public DbSet <EmailVerificationCode> EmailVerificationCodes { get; set; }
+        public DbSet <Color> Colors { get; set; }
+        public DbSet<PhotoColor> PhotoColors { get; set; }
+
+        public DbSet<Like> Likes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,6 +56,23 @@ namespace backend.Data
             modelBuilder.Entity<EmailVerificationCode>()
                 .HasIndex(evc => new { evc.UserId, evc.ActivateCode })
                 .IsUnique();
+
+            modelBuilder.Entity<Like>()
+                .HasIndex(l => new { l.UserId, l.PhotoId })
+                .IsUnique();
+
+            modelBuilder.Entity<PhotoColor>()
+                .HasKey(pc => new { pc.PhotoId, pc.ColorId });
+
+            modelBuilder.Entity<PhotoColor>()
+                .HasOne(pc => pc.Photo)
+                .WithMany(p => p.PhotoColors)
+                .HasForeignKey(pc => pc.PhotoId);
+
+            modelBuilder.Entity<PhotoColor>()
+                .HasOne(pc => pc.Color)
+                .WithMany(c => c.PhotoColors)
+                .HasForeignKey(pc => pc.ColorId);
         }
     }
 }
