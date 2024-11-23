@@ -12,8 +12,8 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241120221718_Inital1")]
-    partial class Inital1
+    [Migration("20241123233004_init1")]
+    partial class init1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,23 @@ namespace backend.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("backend.Data.Models.Color", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("HexCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Colors");
+                });
 
             modelBuilder.Entity("backend.Data.Models.EmailVerificationCode", b =>
                 {
@@ -57,6 +74,33 @@ namespace backend.Migrations
                     b.ToTable("EmailVerificationCodes");
                 });
 
+            modelBuilder.Entity("backend.Data.Models.Like", b =>
+                {
+                    b.Property<int>("LikeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LikeId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LikeId");
+
+                    b.HasIndex("PhotoId");
+
+                    b.HasIndex("UserId", "PhotoId")
+                        .IsUnique();
+
+                    b.ToTable("Likes");
+                });
+
             modelBuilder.Entity("backend.Data.Models.Photo", b =>
                 {
                     b.Property<int>("Id")
@@ -67,9 +111,6 @@ namespace backend.Migrations
 
                     b.Property<bool>("Approved")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Colors")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
@@ -106,6 +147,21 @@ namespace backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Photos");
+                });
+
+            modelBuilder.Entity("backend.Data.Models.PhotoColor", b =>
+                {
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ColorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PhotoId", "ColorId");
+
+                    b.HasIndex("ColorId");
+
+                    b.ToTable("PhotoColors");
                 });
 
             modelBuilder.Entity("backend.Data.Models.PhotoResolution", b =>
@@ -153,6 +209,37 @@ namespace backend.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("PhotoTags");
+                });
+
+            modelBuilder.Entity("backend.Data.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("backend.Data.Models.Tag", b =>
@@ -237,6 +324,25 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("backend.Data.Models.Like", b =>
+                {
+                    b.HasOne("backend.Data.Models.Photo", "Photo")
+                        .WithMany()
+                        .HasForeignKey("PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Photo");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("backend.Data.Models.Photo", b =>
                 {
                     b.HasOne("backend.Data.Models.User", "User")
@@ -245,6 +351,25 @@ namespace backend.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend.Data.Models.PhotoColor", b =>
+                {
+                    b.HasOne("backend.Data.Models.Color", "Color")
+                        .WithMany("PhotoColors")
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Data.Models.Photo", "Photo")
+                        .WithMany("PhotoColors")
+                        .HasForeignKey("PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Color");
+
+                    b.Navigation("Photo");
                 });
 
             modelBuilder.Entity("backend.Data.Models.PhotoResolution", b =>
@@ -277,8 +402,26 @@ namespace backend.Migrations
                     b.Navigation("Tag");
                 });
 
+            modelBuilder.Entity("backend.Data.Models.RefreshToken", b =>
+                {
+                    b.HasOne("backend.Data.Models.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend.Data.Models.Color", b =>
+                {
+                    b.Navigation("PhotoColors");
+                });
+
             modelBuilder.Entity("backend.Data.Models.Photo", b =>
                 {
+                    b.Navigation("PhotoColors");
+
                     b.Navigation("PhotoTags");
 
                     b.Navigation("Resolutions");
@@ -292,6 +435,8 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Data.Models.User", b =>
                 {
                     b.Navigation("Photos");
+
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }

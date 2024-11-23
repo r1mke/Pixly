@@ -1,22 +1,20 @@
 ﻿using backend.Data;
 using backend.Helper.Auth.EmailSender;
-using backend.Helper;
-using Microsoft.EntityFrameworkCore;
-using backend.Helper.Auth.PasswordHasher;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.OpenApi.Models;
-using backend.Helper.String;
 using backend.Helper.Services.JwtService;
+using backend.Helper.String;
+using backend.Helper;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using backend.Helper.Auth.PasswordHasher;
 
 public class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        Env.Load(); // Učitaj varijable iz .env fajla
+        Env.Load();
 
         builder.Configuration.AddJsonFile("appsettings.json");
 
@@ -35,22 +33,16 @@ public class Program
 
         builder.Services.AddMemoryCache();
 
-        // Autentifikaciju i JWT validacija
-        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+        // Autentifikacija putem cookies
+        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie(options =>
             {
-                options.RequireHttpsMetadata = false; // Postaviti na true u produkciji
-                options.SaveToken = true;
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                    ValidAudience = builder.Configuration["Jwt:Audience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]))
-                };
+                options.Cookie.Name = "YourAppName_AuthCookie";  // Ime kolačića
+                //options.LoginPath = "/login";  // Putanja na kojoj ćeš upravljati loginom
+                //options.LogoutPath = "/logout";  // Putanja za logout
+                options.AccessDeniedPath = "/access-denied";  // Putanja za pristup koji nije dozvoljen
+                options.SlidingExpiration = true;  // Automatsko obnavljanje isteka sesije
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);  // Vrijeme trajanja kolačića
             });
 
         builder.Services.AddAuthorization();
@@ -65,7 +57,8 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
 
-        // Swagger s Bearer authentication
+        // Swagger konfiguracija (ako koristiš za dokumentaciju)
+
         builder.Services.AddSwaggerGen(c =>
         {
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
@@ -109,6 +102,7 @@ public class Program
         // CORS konfiguracija
         app.UseCors(options => options
              .SetIsOriginAllowed(x => _ = true) // Ovo omogućava sve izvore
+             .AllowCredentials()
              .AllowAnyMethod()
              .AllowAnyHeader()
              .AllowCredentials()
@@ -120,7 +114,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
 
         // Middleware za autentifikaciju i autorizaciju
         app.UseAuthentication();

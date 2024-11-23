@@ -28,9 +28,11 @@ public class JwtService : IJwtService
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim("userId", user.Id.ToString())
+            new Claim("FirstName", user.FirstName),
+            new Claim("LastName", user.LastName),
+            new Claim("Username", user.Username),
+            new Claim("IsVerified", user.IsVerified.ToString())
         };
-
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -39,49 +41,86 @@ public class JwtService : IJwtService
             issuer: _issuer,
             audience: _audience,
             claims: claims,
-            expires: DateTime.Now.AddHours(1),
+            expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: creds
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public string GenerateRefreshToken()
+    public RefreshToken GenerateRefreshToken(int userId)
     {
         var randomNumber = new byte[32];
         using (var rng = RandomNumberGenerator.Create())
         {
             rng.GetBytes(randomNumber);
-            return Convert.ToBase64String(randomNumber);
         }
+
+        return new RefreshToken
+        {
+            Token = Convert.ToBase64String(randomNumber),
+            UserId = userId,
+            CreatedAt = DateTime.UtcNow,
+            ExpiresAt = DateTime.UtcNow.AddDays(7),
+        };
     }
 
+    public bool ValidateRefreshToken(RefreshToken refreshToken, string token)
+    {
+        if (refreshToken == null || !refreshToken.IsActive || refreshToken.Token != token)
+            return false;
+        
+        return true;
+    }
 
-    public ClaimsPrincipal ValidateJwtToken(string token)
+    public void RevokeRefreshToken(RefreshToken refreshToken)
+    {
+        if (refreshToken != null && refreshToken.IsActive)
+            refreshToken.RevokedAt = DateTime.UtcNow;
+        
+    }
+
+    public string? ExtractEmailFromJwt(string jwtToken)
+    {
+        var handler = new JwtSecurityTokenHandler();
+
+        if (!handler.CanReadToken(jwtToken)) return null;
+
+        var jwtTokenObj = handler.ReadJwtToken(jwtToken);
+
+        var emailClaim = jwtTokenObj.Claims.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Email);
+        return emailClaim?.Value;
+    }
+
+    public bool IsValidJwt(string token)
     {
         try
         {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_secretKey);
+            var handler = new JwtSecurityTokenHandler();
+            var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+
+            if (jsonToken == null)
+                return false;
+
+            var expiration = jsonToken.ValidTo; // UTC vrijeme isteka
+            if (DateTime.UtcNow > expiration)
+                return false;
 
             var validationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
+                ValidateIssuer = false,
+                ValidateAudience = false,
                 ValidateLifetime = true,
-                ValidIssuer = _issuer,
-                ValidAudience = _audience,
-                IssuerSigningKey = new SymmetricSecurityKey(key)
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey))
             };
 
-            SecurityToken validatedToken;
-            var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
-
-            return principal;
+            handler.ValidateToken(token, validationParameters, out _);
+            return true;
         }
-        catch (SecurityTokenException)
+        catch
         {
-            return null;
+            return false;
         }
     }
+
 }
