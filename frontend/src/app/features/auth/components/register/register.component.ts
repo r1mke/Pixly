@@ -66,11 +66,7 @@ export class RegisterComponent {
       this.registerService.registerUser(userData).subscribe({
         next: (response) => {
           console.log('Registration successful', response);
-          const token = response?.jwtToken;
-          if (token) {
-            localStorage.setItem('jwtToken', token);
-            this.router.navigate(['/auth/verify-email']);
-          }
+          this.router.navigate(['/auth/verify-email']);
         },
         error: (err) => {
           console.error('Error occurred during registration', err);
@@ -79,13 +75,11 @@ export class RegisterComponent {
           this.isLoading = false;
         },
       });
-    } else {
+    } 
+    else 
       console.log('Form is invalid');
-    }
   }
   
-
- // Provjera emaila
  checkEmail(email: string): void {
   this.emailError = '';
   
@@ -102,18 +96,12 @@ export class RegisterComponent {
   });
 }
 
-
-
-
-// Provjera korisničkog imena
 checkUsername(username: string): void {
-  this.usernameError = '';  // Resetiraj grešku svaki put kad se mijenja korisničko ime
+  this.usernameError = '';
   this.registerService.checkUsername(username).subscribe({
     next: (response) => {
-      // Ako korisničko ime nije dostupno, postavi grešku
-      if (!response.available) {
-        this.usernameError = response.message;  // Postavi poruku koju backend vraća
-      }
+      if (!response.available) 
+        this.usernameError = response.message;
     },
     error: (err) => {
       console.error('Greška prilikom provjere korisničkog imena', err);
@@ -121,18 +109,15 @@ checkUsername(username: string): void {
   });
 }
 
-  // Dodavanje listenera za promjenu emaila i korisničkog imena
   private setupListeners(): void {
     this.frmSignup.get('email')?.valueChanges.subscribe((email) => {
-      if (email) {
-        this.checkEmail(email); // Provjeri email na promjenu
-      }
+      if (email) 
+        this.checkEmail(email);
     });
 
     this.frmSignup.get('username')?.valueChanges.subscribe((username) => {
-      if (username) {
-        this.checkUsername(username); // Provjeri korisničko ime na promjenu
-      }
+      if (username) 
+        this.checkUsername(username);
     });
   }
 }

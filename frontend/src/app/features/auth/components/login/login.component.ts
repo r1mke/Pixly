@@ -40,7 +40,6 @@ export class LoginComponent {
       const loginData = this.frmLogin.value;
       this.loginService.loginUser(loginData).subscribe({
         next:(response) =>{
-          this.loginService.saveToken(response.jwtToken);
           console.log(response.message);
           this.router.navigate(['/home']);
           this.loginError = '';

@@ -1,25 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using backend.Data;
-using System.Threading;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using System;
-using backend.Heleper.Api;
 using backend.Data.Models;
 using backend.Helper.Auth.PasswordHasher;
 using backend.Helper.Auth.EmailSender;
 using System.ComponentModel.DataAnnotations;
-using static backend.Endpoints.AuthEndopints.UserRegisterEndpoint;
+using static backend.Endpoints.AuthEndopints.RegisterEndpoint;
 using Microsoft.AspNetCore.Authorization;
 using backend.Helper.String;
 using System.Text.Json.Serialization;
 using backend.Helper.Services.JwtService;
+using Azure;
+using backend.Heleper.Api;
+using System.Linq;
 
 namespace backend.Endpoints.AuthEndopints
 {
     [AllowAnonymous]
     [Route("auth")]
-    public class UserRegisterEndpoint(AppDbContext db, IEmailSender emailSender, IPasswordHasher passwordHasher, IJwtService jwtService, IStringHelper stringHelper) : MyEndpointBaseAsync
+    public class RegisterEndpoint(AppDbContext db, IEmailSender emailSender, IPasswordHasher passwordHasher, IJwtService jwtService, IStringHelper stringHelper) : MyEndpointBaseAsync
         .WithRequest<CreateUserRequest>
         .WithResult<UserRegistrationResponse>
     {
@@ -37,9 +36,7 @@ namespace backend.Endpoints.AuthEndopints
             if (usernameExists)
                 throw new InvalidOperationException("User with this username already exists");
 
-            var verificationCode = new Random().Next(100000, 1000000).ToString();
             var hash = await passwordHasher.Hash(request.Password);
-
             var user = new User
             {
                 FirstName = stringHelper.CapitalizeFirstLetter(request.FirstName),
@@ -52,10 +49,10 @@ namespace backend.Endpoints.AuthEndopints
                 IsCreator = false,
                 IsAdmin = false,
             };
-
             db.Users.Add(user);
             await db.SaveChangesAsync(cancellationToken);
 
+            var verificationCode = new Random().Next(100000, 1000000).ToString();
             var newVerificationCode = new EmailVerificationCode
             {
                 UserId = user.Id,
@@ -64,7 +61,6 @@ namespace backend.Endpoints.AuthEndopints
                 ExpiryDate = DateTime.UtcNow.AddMinutes(15),
                 IsUsed = false
             };
-
             db.EmailVerificationCodes.Add(newVerificationCode);
             await db.SaveChangesAsync(cancellationToken);
 
@@ -72,12 +68,40 @@ namespace backend.Endpoints.AuthEndopints
                 $"Code to verify your email: <strong>{verificationCode}</strong>");
 
             var jwtToken = jwtService.GenerateJwtToken(user);
+            var refreshToken = jwtService.GenerateRefreshToken(user.Id);
+            var refreshTokenRecord = new RefreshToken
+            {
+                UserId = user.Id,
+                Token = refreshToken.Token,
+                ExpiresAt = DateTime.UtcNow.AddDays(7),
+                RevokedAt = null,
+                CreatedAt = DateTime.UtcNow
+            };
+            db.RefreshTokens.Add(refreshTokenRecord);
+            await db.SaveChangesAsync(cancellationToken);
+
+
+            Response.Cookies.Append("jwt", jwtToken, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddHours(1),
+                Secure = true,
+            });
+
+            Response.Cookies.Append("refreshToken", refreshToken.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Expires = DateTime.UtcNow.AddDays(7),
+                Secure = true,
+            });
 
             return new UserRegistrationResponse
             {
                 User = user,
                 JwtToken = jwtToken,
-                Message = "Registration successful. A verification email has been sent, activation code will expire in 15 minutes."
+                Message = "Registration successful"
             };
         }
 
@@ -129,7 +153,7 @@ namespace backend.Endpoints.AuthEndopints
         {
             public User User { get; set; }
 
-            [JsonPropertyName("jwtToken")]
+            [JsonPropertyName("jwt")]
             public string JwtToken { get; set; }
 
             public string Message { get; set; }

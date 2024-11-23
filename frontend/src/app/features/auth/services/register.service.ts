@@ -17,21 +17,11 @@ export class RegisterService {
   constructor(private http: HttpClient) {}
 
   registerUser(userData: any): Observable<any> {
-    return this.http.post<any>(this.apiUrl, userData);
+    return this.http.post<any>(this.apiUrl, userData, {
+      withCredentials: true,
+    });
   }
-
-  saveToken(token: string): void {
-    localStorage.setItem('jwtToken', token);
-  }
-
-  getToken(): string | null {
-    return localStorage.getItem('jwtToken');
-  }
-
-  removeToken(): void {
-    localStorage.removeItem('jwtToken');
-  }
-
+  
   checkEmail(email: string): Observable<AvailabilityResponse> {
     return this.http.get<AvailabilityResponse>(`${MYCONFIG.apiUrl}/auth/check-email?email=${email}`);
   }
@@ -39,5 +29,4 @@ export class RegisterService {
   checkUsername(username: string): Observable<AvailabilityResponse> {
     return this.http.get<AvailabilityResponse>(`${MYCONFIG.apiUrl}/auth/check-username?username=${username}`);
   }
-  
 }

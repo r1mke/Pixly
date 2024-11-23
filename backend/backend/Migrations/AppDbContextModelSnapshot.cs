@@ -109,9 +109,6 @@ namespace backend.Migrations
                     b.Property<bool>("Approved")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Colors")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
@@ -209,6 +206,37 @@ namespace backend.Migrations
                     b.HasIndex("TagId");
 
                     b.ToTable("PhotoTags");
+                });
+
+            modelBuilder.Entity("backend.Data.Models.RefreshToken", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("RevokedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("backend.Data.Models.Tag", b =>
@@ -371,6 +399,17 @@ namespace backend.Migrations
                     b.Navigation("Tag");
                 });
 
+            modelBuilder.Entity("backend.Data.Models.RefreshToken", b =>
+                {
+                    b.HasOne("backend.Data.Models.User", "User")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("backend.Data.Models.Color", b =>
                 {
                     b.Navigation("PhotoColors");
@@ -393,6 +432,8 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Data.Models.User", b =>
                 {
                     b.Navigation("Photos");
+
+                    b.Navigation("RefreshTokens");
                 });
 #pragma warning restore 612, 618
         }
