@@ -15,6 +15,9 @@ namespace backend.Data
         public DbSet <EmailVerificationCode> EmailVerificationCodes { get; set; }
         public DbSet <Color> Colors { get; set; }
         public DbSet<PhotoColor> PhotoColors { get; set; }
+        public DbSet<Category> Categories { get; set; }
+        public DbSet<PhotoCategory> PhotoCategories { get; set; }
+
         public DbSet<Like> Likes { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
@@ -79,6 +82,19 @@ namespace backend.Data
                 .WithMany(u => u.RefreshTokens)
                 .HasForeignKey(rt => rt.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<PhotoCategory>()
+                .HasKey(pc => new { pc.PhotoId, pc.CategoryId }); // Kombinirani ključ
+
+            modelBuilder.Entity<PhotoCategory>()
+                .HasOne(pc => pc.Photo)
+                .WithMany(p => p.PhotoCategories)
+                .HasForeignKey(pc => pc.PhotoId);
+
+            modelBuilder.Entity<PhotoCategory>()
+                .HasOne(pc => pc.Category)
+                .WithMany(c => c.PhotoCategories)
+                .HasForeignKey(pc => pc.CategoryId);
         }
     }
 }

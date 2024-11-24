@@ -1,9 +1,11 @@
 ﻿using backend.Data.Models;
 using backend.Heleper.Api;
+using backend.Helper.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Endpoints.PhotoEndpoints
 {
+
     [Route("api/photos")]
     public class PhotoPostEndpoint : MyEndpointBaseAsync.WithRequest<PostPhotoRequest>.WithResult<PostPhotoResult>
     {
@@ -37,7 +39,8 @@ namespace backend.Endpoints.PhotoEndpoints
                     request.Location,
                     request.UserId,
                     request.File,
-                    request.Tags
+                    request.Tags,
+                    request.Categories
                 );
 
                 return new PostPhotoResult
@@ -68,6 +71,8 @@ namespace backend.Endpoints.PhotoEndpoints
         public IFormFile File { get; set; } 
 
         public List<string> Tags { get; set; } = new List<string>();
+
+        public List<CategoryEnum> Categories { get; set; } = new List<CategoryEnum>();
     }
 
 
