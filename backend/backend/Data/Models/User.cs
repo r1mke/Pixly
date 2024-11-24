@@ -21,5 +21,7 @@ namespace backend.Data.Models
         public bool IsAdmin { get; set; }
         public bool IsCreator { get; set; }
         public ICollection<Photo> Photos { get; set; }
+        [JsonIgnore]
+        public ICollection<RefreshToken> RefreshTokens { get; set; }
     }
 }

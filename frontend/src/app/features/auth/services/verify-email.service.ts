@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { MYCONFIG } from '../../../my-config';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,29 +11,13 @@ import { MYCONFIG } from '../../../my-config';
 export class VerifyEmailService {
   private apiUrl = `${MYCONFIG.apiUrl}/auth/verify-email`;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService:AuthService) {}
 
   verifyEmail(code: string, email: string): Observable<any> {
-    const token = localStorage.getItem('jwtToken');
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
     const body = { verificationCode: code, email: email };
 
-    return this.http.post(`${this.apiUrl}`, body, { headers })
-    .pipe(
-      catchError(this.handleError)
+    return this.http.post(`${this.apiUrl}`, body, { withCredentials: true }).pipe(
+      catchError(this.authService.handleError)
     );
-  }
-  
-  private handleError(error: HttpErrorResponse) {
-    let errorMessage = 'An unexpected error occurred.';
-
-    if (error.status === 400 || error.status === 422) {
-      const errorResponse = error.error;
-
-      if (errorResponse?.message) 
-        errorMessage = errorResponse.message;
-    }
-
-    return throwError(() => new Error(errorMessage));
   }
 }
