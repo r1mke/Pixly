@@ -20,8 +20,7 @@ export class LoginService {
 
   loginUser(loginData: any): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(this.apiUrl, loginData, {
-      withCredentials: true,
-    }).pipe(
+      withCredentials: true,}).pipe(
       catchError(this.authService.handleError)
     );
   }

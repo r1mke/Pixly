@@ -11,5 +11,6 @@ namespace backend.Helper.Services.JwtService
         void RevokeRefreshToken(RefreshToken refreshToken);
         string ExtractEmailFromJwt(string jwtToken);
         public bool IsValidJwt(string token);
+        void Logout(int userId);
     }
 }

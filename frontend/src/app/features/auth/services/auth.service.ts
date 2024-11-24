@@ -9,8 +9,9 @@ import { MYCONFIG } from '../../../my-config';
 export class AuthService {
 
   constructor(private http: HttpClient) {}
-  private apiUrl = `${MYCONFIG.apiUrl}/auth/verify-token`;
-  private apiUrl2 = `${MYCONFIG.apiUrl}/auth/current-user`;
+  private apiVerifyToken = `${MYCONFIG.apiUrl}/auth/verify-token`;
+  private apiCurrentUser = `${MYCONFIG.apiUrl}/auth/current-user`;
+  private apiLogout = `${MYCONFIG.apiUrl}/auth/logout`;
 
   /*
   verifyJwtToken(): Observable<any> {
@@ -26,13 +27,19 @@ export class AuthService {
   */
 
   verifyJwtToken(): Observable<any> {
-    return this.http.get(this.apiUrl, { withCredentials: true }).pipe(
+    return this.http.get(this.apiVerifyToken, { withCredentials: true }).pipe(
       catchError(this.handleError)
     );
   }
 
   getCurrentUser(): Observable<any> {
-    return this.http.get(this.apiUrl2, { withCredentials: true }).pipe(
+    return this.http.get(this.apiCurrentUser, { withCredentials: true }).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  logout(): Observable<any> {
+    return this.http.post(this.apiLogout, null, { withCredentials: true }).pipe(
       catchError(this.handleError)
     );
   }

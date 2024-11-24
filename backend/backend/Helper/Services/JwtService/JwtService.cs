@@ -1,4 +1,5 @@
-﻿using backend.Data.Models;
+﻿using backend.Data;
+using backend.Data.Models;
 using backend.Helper.Services.JwtService;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,12 +12,14 @@ public class JwtService : IJwtService
     private readonly string _secretKey;
     private readonly string _issuer;
     private readonly string _audience;
+    private readonly AppDbContext db;
 
-    public JwtService(IConfiguration configuration)
+    public JwtService(IConfiguration configuration, AppDbContext db)
     {
         _secretKey = configuration["Jwt:SecretKey"];
         _issuer = configuration["Jwt:Issuer"];
         _audience = configuration["Jwt:Audience"];
+        this.db = db;
 
         if (string.IsNullOrEmpty(_secretKey) || _secretKey.Length < 32)
             throw new InvalidOperationException("Secret key must be at least 256 bits long.");
@@ -120,6 +123,18 @@ public class JwtService : IJwtService
         catch
         {
             return false;
+        }
+    }
+
+    public void Logout(int userId)
+    {
+        // Nađi refresh token u bazi
+        var refreshToken = db.RefreshTokens.FirstOrDefault(r => r.UserId == userId && r.RevokedAt == null);
+        if (refreshToken != null)
+        {
+            // Poništi refresh token
+            refreshToken.RevokedAt = DateTime.UtcNow;
+            db.SaveChanges();
         }
     }
 

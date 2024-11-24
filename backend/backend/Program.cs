@@ -105,7 +105,6 @@ public class Program
              .AllowCredentials()
              .AllowAnyMethod()
              .AllowAnyHeader()
-             .AllowCredentials()
         );
 
         if (app.Environment.IsDevelopment())
