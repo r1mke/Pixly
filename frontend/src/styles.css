@@ -21,17 +21,13 @@ body{
 
 button
 {
-  background-color: var(--pixly-color);
-  color: white;
   border-radius: 5px;
   box-shadow: 0;
+  padding: 10px 20px 10px 20px;
+  font-weight: 500;
   border: 0;
 }
 
-button:hover{
-  background-color: var(--pixly-color-hover);
-  cursor: pointer;
-}
 
 a{
   color: var(--pixly-color);
