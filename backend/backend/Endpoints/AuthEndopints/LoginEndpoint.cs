@@ -56,11 +56,11 @@ public class LoginEndpoint(AppDbContext db, IPasswordHasher passwordHasher, IJwt
 
         var jwtToken = jwtService.GenerateJwtToken(user);
 
-        Response.Cookies.Append("jwtToken", jwtToken, new CookieOptions
+        Response.Cookies.Append("jwt", jwtToken, new CookieOptions
         {
             HttpOnly = true,
             Secure = true,
-            SameSite = SameSiteMode.Strict,
+            SameSite = SameSiteMode.None,
             Expires = DateTime.UtcNow.AddHours(1)
         });
 
@@ -68,7 +68,7 @@ public class LoginEndpoint(AppDbContext db, IPasswordHasher passwordHasher, IJwt
         {
             HttpOnly = true,
             Secure = true,
-            SameSite = SameSiteMode.Strict,
+            SameSite = SameSiteMode.None,
             Expires = newRefreshToken.ExpiresAt
         });
 
@@ -100,7 +100,7 @@ public class LoginEndpoint(AppDbContext db, IPasswordHasher passwordHasher, IJwt
 
     public class UserLoginResponse
     {
-        [JsonPropertyName("jwtToken")]
+        [JsonPropertyName("jwt")]
         public string JwtToken { get; set; }
 
         [JsonPropertyName("refreshToken")]
