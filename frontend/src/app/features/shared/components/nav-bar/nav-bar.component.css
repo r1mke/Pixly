@@ -114,17 +114,13 @@ nav{
     color: black;
 }
 
-.login{
-    border: none;
-    background-color: #01a081; 
-    border-radius: 5px;
-    color: #fff;
-    padding: 10px 20px 10px 20px;
-    font-weight: 500;
+button{
+    background-color: var(--pixly-color); 
+    color: white;
 }
 
 
-.login:hover{
+button:hover{
     background-color: #027d65;
     transition: 0.5s;   
 }

@@ -13,9 +13,5 @@ export class GetAllPhotosService {
   getAllPhotos() {
     return this.http.get<any[]>(`${MYCONFIG.apiUrl}/api/photos`);
   }
-
-  getRandomPhoto() {
-    return this.http.get<string>(`${MYCONFIG.apiUrl}/api/photo/random`, { responseType: 'text' as 'json' });
-  }
   
 }
