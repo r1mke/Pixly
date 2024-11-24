@@ -22,6 +22,23 @@ namespace backend.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("backend.Data.Models.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
             modelBuilder.Entity("backend.Data.Models.Color", b =>
                 {
                     b.Property<int>("Id")
@@ -109,9 +126,6 @@ namespace backend.Migrations
                     b.Property<bool>("Approved")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Colors")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
@@ -147,6 +161,21 @@ namespace backend.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Photos");
+                });
+
+            modelBuilder.Entity("backend.Data.Models.PhotoCategory", b =>
+                {
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PhotoId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("PhotoCategories");
                 });
 
             modelBuilder.Entity("backend.Data.Models.PhotoColor", b =>
@@ -322,6 +351,25 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("backend.Data.Models.PhotoCategory", b =>
+                {
+                    b.HasOne("backend.Data.Models.Category", "Category")
+                        .WithMany("PhotoCategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Data.Models.Photo", "Photo")
+                        .WithMany("PhotoCategories")
+                        .HasForeignKey("PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Photo");
+                });
+
             modelBuilder.Entity("backend.Data.Models.PhotoColor", b =>
                 {
                     b.HasOne("backend.Data.Models.Color", "Color")
@@ -371,6 +419,11 @@ namespace backend.Migrations
                     b.Navigation("Tag");
                 });
 
+            modelBuilder.Entity("backend.Data.Models.Category", b =>
+                {
+                    b.Navigation("PhotoCategories");
+                });
+
             modelBuilder.Entity("backend.Data.Models.Color", b =>
                 {
                     b.Navigation("PhotoColors");
@@ -378,6 +431,8 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Data.Models.Photo", b =>
                 {
+                    b.Navigation("PhotoCategories");
+
                     b.Navigation("PhotoColors");
 
                     b.Navigation("PhotoTags");

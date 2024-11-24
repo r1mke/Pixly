@@ -7,6 +7,7 @@ using System.Drawing;
 using backend.Data.Models;
 using backend.Helper;
 using Microsoft.EntityFrameworkCore;
+using backend.Helper.Services;
 
 public class PhotoService
 {
@@ -24,12 +25,14 @@ public class PhotoService
         _context = context;
     }
 
-    public async Task<PostPhotoResult> UploadPhotoAsync(string title, string description, string location, int userId, IFormFile file, List<string> tags)
+    public async Task<PostPhotoResult> UploadPhotoAsync(string title, string description, string location, int userId, IFormFile file, List<string> tags, List<Category> categories)
     {
         
         if (string.IsNullOrWhiteSpace(title)) throw new ArgumentException("Title is required.");
         if (file == null || file.Length == 0) throw new ArgumentException("File is required.");
         if (tags == null || tags.Count == 0) throw new ArgumentException("At least one tag is required.");
+        if (categories == null || categories.Count == 0) throw new ArgumentException("At least one category is required.");
+
 
         using var memoryStream = new MemoryStream();
         await file.CopyToAsync(memoryStream);
@@ -88,6 +91,14 @@ public class PhotoService
             PhotoTags = new List<PhotoTag>(),
             Orientation = imageOrientation
         };
+
+        var photoCategories = categories.Select(c => new PhotoCategory
+        {
+            Photo = photo,
+            Category = c
+        }).ToList();
+
+        photo.PhotoCategories = photoCategories;
 
         _context.Photos.Add(photo);
         await _context.SaveChangesAsync();
@@ -166,6 +177,7 @@ public class PhotoService
 
             _context.PhotoTags.Add(photoTag);
         }
+
 
         await _context.SaveChangesAsync();
 
