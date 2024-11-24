@@ -19,6 +19,7 @@ namespace backend.Data
         public DbSet<PhotoCategory> PhotoCategories { get; set; }
 
         public DbSet<Like> Likes { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -75,6 +76,12 @@ namespace backend.Data
                 .HasOne(pc => pc.Color)
                 .WithMany(c => c.PhotoColors)
                 .HasForeignKey(pc => pc.ColorId);
+
+            modelBuilder.Entity<RefreshToken>()
+                .HasOne(rt => rt.User)
+                .WithMany(u => u.RefreshTokens)
+                .HasForeignKey(rt => rt.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<PhotoCategory>()
                 .HasKey(pc => new { pc.PhotoId, pc.CategoryId }); // Kombinirani ključ

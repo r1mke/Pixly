@@ -1,28 +1,33 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { Observable, of } from 'rxjs';
+import { map, Observable, of, switchMap } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class VerifyEmailGuard implements CanActivate {
-  constructor(private router: Router) { }
+  constructor(private router: Router, private authService: AuthService) {}
 
   canActivate(): Observable<boolean> {
-    // Check if running in browser
-    if (typeof window !== 'undefined' && window.localStorage) {
-      const token = localStorage.getItem('jwtToken');
-      
-      if (token) {
-        return of(true);  // Token exists, allow access
-      } else {
-        this.router.navigate(['/login']);
-        return of(false);  // No token, deny access
-      }
-    } else {
-      // Fallback for SSR or environments where localStorage is not available
-      this.router.navigate(['/login']);
-      return of(false);
-    }
+    return this.authService.verifyJwtToken().pipe(
+      switchMap((response: any) => {
+        if (response.isValid) {
+          return this.authService.getCurrentUser().pipe(
+            map((user: any) => {
+              if (user?.isVerified) {
+                this.router.navigate(['/public/home']);
+                return false;
+              } else {
+                return true;
+              }
+            })
+          );
+        } else {
+          this.router.navigate(['/public/home']);
+          return of(false);
+        }
+      })
+    );
   }
 }

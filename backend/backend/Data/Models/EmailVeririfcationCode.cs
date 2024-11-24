@@ -13,8 +13,6 @@ namespace backend.Data.Models
         public DateTime SentAt { get; set; } 
         public DateTime ExpiryDate { get; set; } 
         public bool IsUsed { get; set; }
-
-
         public User User { get; set; }
     }
 }

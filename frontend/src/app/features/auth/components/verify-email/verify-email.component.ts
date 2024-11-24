@@ -5,7 +5,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { Router, RouterLink } from '@angular/router';
 import { VerifyEmailService } from '../../services/verify-email.service';
 import { ResendVerificationCodeService } from '../../services/resend-verififcation-code.service';
-import { jwtDecode } from 'jwt-decode';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-verify-email',
@@ -23,6 +23,7 @@ export class VerifyEmailComponent implements OnInit {
   public resendErrorMessage: string = '';
   public resendSuccessMessage: string = '';
   public isLoading: boolean = false;
+  public user: any = {};
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
@@ -31,7 +32,7 @@ export class VerifyEmailComponent implements OnInit {
 
   @ViewChildren('inputField') inputFields!: QueryList<ElementRef>;
   
-  constructor() {
+  constructor(private authService: AuthService) {
     this.verificationCodeControls = Array(6).fill(null).map(() => new FormControl('', [
       Validators.required,
       Validators.pattern(/^\d$/)
@@ -46,13 +47,22 @@ export class VerifyEmailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const token = localStorage.getItem('jwtToken');
-    console.log('JWT Token:', token);
-    if (token) {
-      const decodedToken: any = jwtDecode(token);
-      this.userEmail = decodedToken.email;
-      console.log('Decoded email:', this.userEmail);
-    }
+    this.authService.getCurrentUser().subscribe({
+      next: (response) => {
+        if (response) {
+          this.user = response;
+          this.userEmail = response.email;
+        } else {
+          this.errorMessage = 'Greška prilikom dohvaćanja podataka korisnika';
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Greška:', err);
+        this.errorMessage = 'Greška prilikom dohvaćanja podataka korisnika';
+        this.isLoading = false;
+      }
+    });
   }
   
   submitVerificationCode() {
@@ -64,14 +74,9 @@ export class VerifyEmailComponent implements OnInit {
       this.isLoading = false;
       return;
     }
-  
     const code = Object.values(this.frmVerifyEmail.value).join('');
-    console.log('Uneseni kod:', code, 'Poslani email:', this.userEmail);
-  
     this.verifyEmailService.verifyEmail(code, this.userEmail).subscribe({
       next: (response) => {
-        console.log('Verifikacija uspješna:', response);
-        localStorage.removeItem('jwtToken');
         this.router.navigate(['/login']);
       },
       error: (error) => {
@@ -80,8 +85,7 @@ export class VerifyEmailComponent implements OnInit {
         this.errorMessage = error.message || 'Došlo je do greške pri verifikaciji.';
       },
       complete: () => {
-        this.isLoading = false; // Resetovanje loading stanja
-        console.log('Verifikacija završena.');
+        this.isLoading = false;
       }
     });
   }
@@ -97,10 +101,10 @@ export class VerifyEmailComponent implements OnInit {
     this.resetMessages();
     
     if (this.userEmail) {
-      this.resendVerificationCodeService.resendVerificationCode(this.userEmail).subscribe({
+      this.resendVerificationCodeService.resendVerificationCode().subscribe({
         next: (response) => {
           console.log('Ponovno slanje koda uspješno:', response);
-          this.resendSuccessMessage = 'New code has beent sent.';
+          this.resendSuccessMessage = 'New code has been sent.';
           this.resendErrorMessage = '';
           this.errorMessage = '';
         },
