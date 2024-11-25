@@ -3,6 +3,7 @@
 	margin:20px auto;
 	columns: 3;
 	column-gap: 20px;
+	margin: 4% auto 4% auto;
 }
 
 .container .box{
@@ -29,6 +30,7 @@
 	background: rgba(0,0,0,0.5);
 	opacity: 0;
 	transition: 0.8s ease;
+	border-radius: 15px;
 }
 
 .container .box:hover .layout{
