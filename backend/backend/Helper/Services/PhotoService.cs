@@ -25,7 +25,7 @@ public class PhotoService
         _context = context;
     }
 
-    public async Task<PostPhotoResult> UploadPhotoAsync(string title, string description, string location, int userId, IFormFile file, List<string> tags, List<Category> categories)
+    public async Task<PostPhotoResult> UploadPhotoAsync(string title, string description, string location, int userId, IFormFile file, List<string> tags, List<Category> categories, CancellationToken cancellationToken)
     {
         
         if (string.IsNullOrWhiteSpace(title)) throw new ArgumentException("Title is required.");
@@ -92,16 +92,18 @@ public class PhotoService
             Orientation = imageOrientation
         };
 
+        
+
         var photoCategories = categories.Select(c => new PhotoCategory
         {
             Photo = photo,
             Category = c
         }).ToList();
-
+        
         photo.PhotoCategories = photoCategories;
-
+        
         _context.Photos.Add(photo);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
 
        
         var fullResolution = new PhotoResolution
@@ -141,7 +143,7 @@ public class PhotoService
                 {
                     var newColor = new backend.Data.Models.Color { HexCode = colorHex };
                     _context.Colors.Add(newColor);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(cancellationToken);
                     existingColors[colorHex] = newColor.Id;
                 }
 
@@ -165,7 +167,7 @@ public class PhotoService
             {
                 var newTag = new Tag { TagName = tag };
                 _context.Tags.Add(newTag);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellationToken);
                 existingTags[tag] = newTag.Id;
             }
 
@@ -179,7 +181,7 @@ public class PhotoService
         }
 
 
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(cancellationToken);
 
         return new PostPhotoResult
         {
