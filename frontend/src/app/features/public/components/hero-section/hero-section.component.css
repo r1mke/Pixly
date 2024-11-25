@@ -25,6 +25,10 @@ button:hover{
     transition: 1s;
 }
 
+span{
+    text-align: center;
+}
+
 .ai{
     text-align: center;
     background-color: black;
@@ -40,14 +44,13 @@ h3{
 }
 
 
-/* @media (max-width: 900px){
+ @media (max-width: 900px){
 
-    .hero-section{
-        height: 70vh;
+    .ai{
+        display: none;
     }
 
-
-    h1{
-        font-size: 20px;
+    .overlay{
+        padding: 5%;
     }
-} */
+}
