@@ -1,40 +1,46 @@
 ﻿using backend.Data;
+using backend.Helper.Services.JwtService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.IdentityModel.Tokens.Jwt;
 
-namespace backend.Endpoints.UserEndpoints
+namespace backend.Endpoints.AuthEndpoints
 {
     [Route("auth")]
-    public class CurrentUserEndpoint(AppDbContext dbContext) : ControllerBase
+    [ApiController]
+    public class CurrentUserEndpoint(AppDbContext dbContext, IJwtService jwtService) : ControllerBase
     {
         [HttpGet("current-user")]
-        public async Task<IActionResult> GetCurrentUser()
+        public async Task<IActionResult> GetCurrentUserAsync()
         {
             var jwtToken = Request.Cookies["jwt"];
-
             if (string.IsNullOrEmpty(jwtToken))
-                return Unauthorized(new { Message = "JWT token not found in cookies." });
+                return Unauthorized(new { IsValid = false, Message = "Token is missing in cookies." });
 
-            var handler = new JwtSecurityTokenHandler();
-            var token = handler.ReadJwtToken(jwtToken);
+            if (!jwtService.IsValidJwt(jwtToken))
+                return Unauthorized(new { IsValid = false, Message = "Invalid or expired token." });
 
-            var userId = token.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub)?.Value;
-            if (userId == null)
-                return Unauthorized(new { Message = "User is not authenticated." });
+            var email = jwtService.ExtractEmailFromJwt(jwtToken);
+            if (string.IsNullOrEmpty(email))
+                return Unauthorized(new { IsValid = false, Message = "Invalid token structure." });
 
-            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Id.ToString() == userId);
+            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
-                return Unauthorized(new { Message = "User not found." });
+                return Unauthorized(new { IsValid = false, Message = "User not found." });
 
             return Ok(new
             {
-                UserId = user.Id,
-                Email = user.Email,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Username = user.Username,
-                IsVerified = user.IsVerified
+                IsValid = true,
+                Message = "Token is valid.",
+                User = new
+                {
+                    UserId = user.Id,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Username = user.Username,
+                    IsVerified = user.IsVerified,
+                    IsAdmin = user.IsAdmin,
+                }
             });
         }
     }

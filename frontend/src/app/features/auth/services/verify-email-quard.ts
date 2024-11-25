@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { map, Observable, of, switchMap } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { AuthService } from './auth.service';
+import { map, catchError, switchMap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root',
@@ -10,23 +11,22 @@ export class VerifyEmailGuard implements CanActivate {
   constructor(private router: Router, private authService: AuthService) {}
 
   canActivate(): Observable<boolean> {
-    return this.authService.verifyJwtToken().pipe(
-      switchMap((response: any) => {
-        if (response.isValid) {
-          return this.authService.getCurrentUser().pipe(
-            map((user: any) => {
-              if (user?.isVerified) {
-                this.router.navigate(['/public/home']);
-                return false;
-              } else {
-                return true;
-              }
-            })
-          );
-        } else {
-          this.router.navigate(['/public/home']);
-          return of(false);
+    return this.authService.getCurrentUser().pipe(
+      map((response: any) => {
+        if (!response?.isValid) {
+          this.router.navigate(['/auth/login']);
+          return false;
         }
+        if (response.user?.isVerified) {
+          this.router.navigate(['/public/home']);
+          return false; 
+        }
+        return true;
+      }),
+      catchError((error) => {
+        console.error('Error in VerifyEmailGuard:', error);
+        this.router.navigate(['/auth/login']);
+        return of(false);
       })
     );
   }

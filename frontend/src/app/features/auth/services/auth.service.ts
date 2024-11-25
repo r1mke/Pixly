@@ -26,12 +26,6 @@ export class AuthService {
   }
   */
 
-  verifyJwtToken(): Observable<any> {
-    return this.http.get(this.apiVerifyToken, { withCredentials: true }).pipe(
-      catchError(this.handleError)
-    );
-  }
-
   getCurrentUser(): Observable<any> {
     return this.http.get(this.apiCurrentUser, { withCredentials: true }).pipe(
       catchError(this.handleError)

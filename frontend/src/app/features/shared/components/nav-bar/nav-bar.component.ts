@@ -30,7 +30,6 @@ export class NavBarComponent implements OnInit, AfterViewInit {
     this.windowSizeService.data$.subscribe((w) => {
       this.windowWidth = w;
       this.menuOpen = this.windowWidth >= 900;
-      console.log(this.menuOpen, this.windowWidth);
     });
   }
 
@@ -38,20 +37,9 @@ export class NavBarComponent implements OnInit, AfterViewInit {
     this.windowSizeService.data$.subscribe((w) => {
       this.windowWidth = w;
       this.menuOpen = this.windowWidth >= 900;
-      console.log(this.menuOpen, this.windowWidth);
     });
 
-    this.authService.verifyJwtToken().subscribe({
-      next: (response) => {
-        if (response.isValid)
-          this.fetchCurrentUser();
-        else 
-          this.user = null;
-      },
-      error: () => {
-        this.user = null;
-      }
-    });
+    this.fetchCurrentUser(); // Direktan poziv na dohvaćanje korisnika
   }
 
   ngAfterViewInit() {}
@@ -86,5 +74,4 @@ export class NavBarComponent implements OnInit, AfterViewInit {
       }
     });
   }
-  
 }
