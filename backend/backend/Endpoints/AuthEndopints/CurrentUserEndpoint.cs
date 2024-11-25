@@ -1,4 +1,5 @@
 ﻿using backend.Data;
+using backend.Data.Models;
 using backend.Helper.Services.JwtService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,19 +14,12 @@ namespace backend.Endpoints.AuthEndpoints
         public async Task<IActionResult> GetCurrentUserAsync()
         {
             var jwtToken = Request.Cookies["jwt"];
-            if (string.IsNullOrEmpty(jwtToken))
-                return Unauthorized(new { IsValid = false, Message = "Token is missing in cookies." });
 
-            if (!jwtService.IsValidJwt(jwtToken))
-                return Unauthorized(new { IsValid = false, Message = "Invalid or expired token." });
+            var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, dbContext);
+            if (validationResult is UnauthorizedObjectResult unauthorizedResult)
+                return unauthorizedResult;
 
-            var email = jwtService.ExtractEmailFromJwt(jwtToken);
-            if (string.IsNullOrEmpty(email))
-                return Unauthorized(new { IsValid = false, Message = "Invalid token structure." });
-
-            var user = await dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
-            if (user == null)
-                return Unauthorized(new { IsValid = false, Message = "User not found." });
+            var user = (User)((OkObjectResult)validationResult).Value;
 
             return Ok(new
             {

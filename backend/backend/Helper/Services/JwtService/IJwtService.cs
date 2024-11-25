@@ -1,4 +1,6 @@
-﻿using backend.Data.Models;
+﻿using backend.Data;
+using backend.Data.Models;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace backend.Helper.Services.JwtService
@@ -12,5 +14,6 @@ namespace backend.Helper.Services.JwtService
         string ExtractEmailFromJwt(string jwtToken);
         public bool IsValidJwt(string token);
         void Logout(int userId);
+        Task<IActionResult> ValidateJwtAndUserAsync(string jwtToken, AppDbContext db);
     }
 }

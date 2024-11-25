@@ -18,15 +18,13 @@ public class LogoutEndpoint(AppDbContext db, IPasswordHasher passwordHasher, IJw
     [HttpPost("logout")]
     public async Task<IActionResult> Logout(CancellationToken cancellationToken = default)
     {
-        var token = Request.Cookies["jwt"];
-        if (string.IsNullOrEmpty(token) || !jwtService.IsValidJwt(token))
-            return Unauthorized("Invalid or expired token");
+        var jwtToken = Request.Cookies["jwt"];
 
-        var email = jwtService.ExtractEmailFromJwt(token);
-        var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email, cancellationToken);
+        var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, db);
+        if (validationResult is UnauthorizedObjectResult unauthorizedResult)
+            return unauthorizedResult;
 
-        if (user == null)
-            return Unauthorized("User not found");
+        var user = (User)((OkObjectResult)validationResult).Value;
 
         jwtService.Logout(user.Id);
 
