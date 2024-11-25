@@ -1,0 +1,13 @@
+button
+{
+  background-color: var(--pixly-color);
+}
+
+button:hover
+{
+  background-color: var(--pixly-color-hover);
+}
+
+i{
+  color: white;
+}
