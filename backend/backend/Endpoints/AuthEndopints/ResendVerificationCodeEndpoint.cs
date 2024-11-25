@@ -22,15 +22,15 @@ public class ResendVerificationCodeEndpoint(AppDbContext db, IEmailSender emailS
     [HttpPost("resend-verification-code")]
     public async Task<ActionResult> HandleAsync(CancellationToken cancellationToken = default)
     {
-        var jwt = Request.Cookies["jwt"];
+        var jwtToken = Request.Cookies["jwt"];
 
-        if (string.IsNullOrEmpty(jwt))
-            return await HandleError("JWT token not found in the cookies.", 400);
+        var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, db);
+        if (validationResult is UnauthorizedObjectResult unauthorizedResult)
+            return unauthorizedResult;
 
-        if (!jwtService.IsValidJwt(jwt))
-            return await HandleError("Invalid or expired token.", 401);
+        var user = (User)((OkObjectResult)validationResult).Value;
 
-        var emailFromToken = jwtService.ExtractEmailFromJwt(jwt);
+        var emailFromToken = user.Email;
 
         if (string.IsNullOrEmpty(emailFromToken))
             return await HandleError("Email not found in the token.", 400);
@@ -46,10 +46,6 @@ public class ResendVerificationCodeEndpoint(AppDbContext db, IEmailSender emailS
         }
         else
             memoryCache.Set(cacheKey, 1, TimeSpan.FromSeconds(TimeWindowInSeconds));
-
-        var user = await db.Users.FirstOrDefaultAsync(u => u.Email == emailFromToken, cancellationToken);
-        if (user == null)
-            return await HandleError("User not found.", 400);
 
         if (user.IsVerified)
             return await HandleError("User is already verified.", 400);

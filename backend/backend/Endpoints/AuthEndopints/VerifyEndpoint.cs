@@ -9,6 +9,7 @@ using System.IdentityModel.Tokens.Jwt;
 using backend.Helper.Services.JwtService;
 using Azure;
 using backend.Heleper.Api;
+using backend.Data.Models;
 
 namespace backend.Endpoints.AuthEndopints
 {
@@ -24,18 +25,16 @@ namespace backend.Endpoints.AuthEndopints
                 return await HandleError("Invalid verification request.", 400);
 
             var jwtToken = Request.Cookies["jwt"];
-            if (string.IsNullOrEmpty(jwtToken))
-                return await HandleError("Authorization token missing in cookies.", 401);
 
-            if (!jwtService.IsValidJwt(jwtToken))
-                return await HandleError("Invalid or expired token.", 401);
+            var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, db);
+            if (validationResult is UnauthorizedObjectResult)
+            {
+                var unauthorizedMessage = ((UnauthorizedObjectResult)validationResult).Value?.ToString() ?? "Unauthorized";
+                return await HandleError(unauthorizedMessage, 401);
+            }
 
-            var emailFromToken = jwtService.ExtractEmailFromJwt(jwtToken);
-            if (string.IsNullOrEmpty(emailFromToken))
-                return await HandleError("Invalid token or missing email in token.", 401);
+            var user = (User)((OkObjectResult)validationResult).Value;
 
-            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == emailFromToken, cancellationToken);
-            if (user == null) return await HandleError("User not found or mismatched token.", 400);
             if (user.IsVerified) return await HandleError("User has already been verified.", 400);
 
             var verificationCode = await db.EmailVerificationCodes

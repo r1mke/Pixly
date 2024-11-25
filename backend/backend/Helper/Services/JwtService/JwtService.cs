@@ -1,6 +1,8 @@
 ﻿using backend.Data;
 using backend.Data.Models;
 using backend.Helper.Services.JwtService;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -31,10 +33,10 @@ public class JwtService : IJwtService
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
-            new Claim("FirstName", user.FirstName),
-            new Claim("LastName", user.LastName),
-            new Claim("Username", user.Username),
-            new Claim("IsVerified", user.IsVerified.ToString())
+            //new Claim("FirstName", user.FirstName),
+            //new Claim("LastName", user.LastName),
+            //new Claim("Username", user.Username),
+            //new Claim("IsVerified", user.IsVerified.ToString())
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
@@ -136,6 +138,23 @@ public class JwtService : IJwtService
             refreshToken.RevokedAt = DateTime.UtcNow;
             db.SaveChanges();
         }
+    }
+
+    public async Task<IActionResult> ValidateJwtAndUserAsync(string jwtToken, AppDbContext db)
+    {
+        if (string.IsNullOrEmpty(jwtToken) || !IsValidJwt(jwtToken))
+            return new UnauthorizedObjectResult(new { IsValid = false, Message = "Invalid or missing JWT token." });
+
+        var email = ExtractEmailFromJwt(jwtToken);
+
+        if (string.IsNullOrEmpty(email))
+            return new UnauthorizedObjectResult(new { IsValid = false, Message = "Invalid JWT token structure." });
+
+        var user = await db.Users.FirstOrDefaultAsync(u => u.Email == email);
+        if (user == null)
+            return new UnauthorizedObjectResult(new { IsValid = false, Message = "User not found." });
+
+        return new OkObjectResult(user);
     }
 
 }
