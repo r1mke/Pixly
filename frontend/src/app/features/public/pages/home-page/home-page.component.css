@@ -2,8 +2,14 @@ h4,h6{
     text-align: center;
     color: black;
     font-weight: 400;
-    margin: 2% 0 2% 0;
+    
 }
+
+h4{
+    margin-bottom: 20px;
+}
+
+
 
 @media (max-width: 900px) {
     h4,h6{

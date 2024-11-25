@@ -40,7 +40,7 @@ namespace backend.Endpoints.PhotoEndpoints
                     request.UserId,
                     request.File,
                     request.Tags,
-                    request.categories,
+                   
                     cancellationToken
                 );
 
@@ -73,7 +73,6 @@ namespace backend.Endpoints.PhotoEndpoints
 
         public List<string> Tags { get; set; } = new List<string>();
 
-        public List<Category> categories { get; set; } = new List<Category> { };
     }
 
 

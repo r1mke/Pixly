@@ -25,13 +25,13 @@ public class PhotoService
         _context = context;
     }
 
-    public async Task<PostPhotoResult> UploadPhotoAsync(string title, string description, string location, int userId, IFormFile file, List<string> tags, List<Category> categories, CancellationToken cancellationToken)
+    public async Task<PostPhotoResult> UploadPhotoAsync(string title, string description, string location, int userId, IFormFile file, List<string> tags,  CancellationToken cancellationToken)
     {
         
         if (string.IsNullOrWhiteSpace(title)) throw new ArgumentException("Title is required.");
         if (file == null || file.Length == 0) throw new ArgumentException("File is required.");
         if (tags == null || tags.Count == 0) throw new ArgumentException("At least one tag is required.");
-        if (categories == null || categories.Count == 0) throw new ArgumentException("At least one category is required.");
+       // if (categories == null || categories.Count == 0) throw new ArgumentException("At least one category is required.");
 
 
         using var memoryStream = new MemoryStream();
@@ -94,13 +94,13 @@ public class PhotoService
 
         
 
-        var photoCategories = categories.Select(c => new PhotoCategory
-        {
-            Photo = photo,
-            Category = c
-        }).ToList();
-        
-        photo.PhotoCategories = photoCategories;
+        //var photoCategories = categories.Select(c => new PhotoCategory
+        //{
+        //    Photo = photo,
+        //    Category = c
+        //}).ToList();
+        //
+        //photo.PhotoCategories = photoCategories;
         
         _context.Photos.Add(photo);
         await _context.SaveChangesAsync(cancellationToken);
