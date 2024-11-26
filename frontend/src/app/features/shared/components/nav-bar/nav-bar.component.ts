@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -18,6 +18,9 @@ export class NavBarComponent implements OnInit, AfterViewInit {
   isScrolled: boolean = false;
   windowWidth: number = 0;
   menuOpen: boolean = false;
+  exploreHovered = false;
+  profileHovered = false;
+  dotsHovered = false;
 
   user: any = null; // Čuva podatke o korisniku
 
@@ -73,5 +76,20 @@ export class NavBarComponent implements OnInit, AfterViewInit {
         console.error('Logout error:', err);
       }
     });
+  }
+
+  @Output() hoverStateChange = new EventEmitter<{ key: string, state: boolean }>();
+
+  emitHoverStateChange(key: string, state: boolean) {
+    this.hoverStateChange.emit({ key, state });
+
+    // Update local states based on the key
+    if (key === 'explore') {
+      this.exploreHovered = state;
+    } else if (key === 'profile') {
+      this.profileHovered = state;
+    }
+    else if(key === 'dots')
+      this.dotsHovered = state;
   }
 }

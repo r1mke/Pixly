@@ -11,36 +11,71 @@
         </div>
 
         <div class="menu" >
-            <div class="resources">
-                <button>Explore</button>
-                <div class="dropdown-content">
-                    <a href="#">Home</a>
-                    <a href="#">Leaderboard</a>
-                    <a href="#">Popular Searches</a>
-                    <a href="#">Pricing</a>
-                </div>
+            <div 
+                class="resources text-center" 
+                (mouseenter)="emitHoverStateChange('explore', true)" 
+                (mouseleave)="emitHoverStateChange('explore', false)">
+                    <button class="p-0 m-0 border-0">Explore</button>
+                    <i class="fa-solid ms-2" [ngClass]="exploreHovered ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                    <div class="dropdown-content">
+                        <div class="popular-searches">
+                            <a href="">Popular Searches</a>
+                        </div>
+                        <a href="#">Home</a>
+                        <a href="#">Leaderboard</a>
+                        <a href="#">Pricing</a>
+                    </div>
+                    
+             </div>
+
+             <div *ngIf="!user">
+                <p class="text-center mb-0">Upload</p>
             </div>
-            <div class="resources" *ngIf="user">
-                <button>Profile</button>
-                <div class="dropdown-content">
-                    <a href="#">Your Profile</a>
-                    <a href="#">Your Collection</a>
-                    <a href="#">Downolad History</a>
-                    <a href="#">Change Language</a>
-                    <a href="#">Settings</a>
-                    <a href="#" (click)="logout()">Log out</a>
-                </div>
+            
+
+            <div class=" text-center" *ngIf="user">
+                <i class="fa-regular fa-bell fs-6"></i>
             </div>
 
+            <div 
+                class="resources text-center" 
+                (mouseenter)="emitHoverStateChange('profile', true)" 
+                (mouseleave)="emitHoverStateChange('profile', false)" *ngIf="user">
+                    <button class="p-0 m-0 border-0"><img src="assets/img/user_dflt.png" height="30px" width="30px" alt="Profile"></button>
+                    <i class="fa-solid ms-2" [ngClass]="profileHovered ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                    <div class="dropdown-content">
+                        <div class="popular-searches">
+                            <a href="#">Your Profile</a>
+                        </div>
+                        <div class="popular-searches">
+                            <a href="#">Your Collection</a>
+                        </div>
+                        <div class="popular-searches">
+                            <a href="#">Settings</a>
+                        </div>
+                        <a href="#" (click)="logout()">Log out</a>
+                    </div>
+            </div>
+
+            
+
             <div class="resources" *ngIf="!user">
-                <button>...</button>
+                <i class="fa-solid fas fa-ellipsis-h"></i>
                 <div class="dropdown-content">
-                    <a href="#">Change Language</a>
-                    <a href="#">Join</a>
+                    <div class="popular-searches">
+                        <a href="#">Log in</a>
+                    </div>
+                    <div class="popular-searches">
+                        <a href="#">Join</a>
+                    </div>
+                    <div class="popular-searches">
+                        <a href="#">Images & Video API</a>
+                    </div>
                 </div>
             </div>
     
-            <button class="login" routerLink="/auth/login">Log in</button>
+            <button *ngIf="user" class="upload" routerLink="/upload">Upload</button>
+            <button *ngIf="!user" class="login" routerLink="/auth/login">Log in</button>
         </div>
    
         <div class="menu-icon" *ngIf="windowWidth<=900" (click)="toggleMenu()">
@@ -56,7 +91,6 @@
             </div>
             <div class="line"></div>
             <div class="profile-user menu" *ngIf="user">
-                    <a href="#">Your Profile</a>
                     <a href="#">Your Collection</a>
                     <a href="#">Downolad History</a>
                     <a href="#">Change Language</a>
