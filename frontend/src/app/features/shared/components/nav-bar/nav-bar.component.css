@@ -1,20 +1,21 @@
+
 nav{
-    padding: 20px 0 20px 0;
+    padding: 15px 0 15px 0;
     background-color: #fff;
     position: fixed;
     top: 0;
     left: 0;
     right: 0; 
     z-index: 1000;
+    height: auto;
 }
 
 .container{
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     flex-wrap: wrap;
     align-items: center;
 }
-
 
 
 .logo {
@@ -33,7 +34,6 @@ nav{
     padding: 10px 0 10px 0;
     background-color: #fff;
 }
-
 
 
 .search input{
@@ -73,7 +73,7 @@ nav{
 .resources{
     position: relative;
     display: inline-block;
-    width: 30%;
+    
 }
 
 .resources button{
@@ -85,24 +85,44 @@ nav{
     color:black;
 }
 
+
 .dropdown-content{
     display: none;
     position: absolute;
     background-color: #ffffff;
-    min-width: 40%;
+    min-width: 100px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
 }
 
  .dropdown-content a {
-    font-size: 14px;
+    font-size: 13px;
     color: #000000;
     padding: 15px;
     text-decoration: none;
     display: block;
+    color: #4a4a4a;
+    padding: 12px 15px;
+    text-align: left;
+}
+
+.popular-searches {
+    color: #4a4a4a;
+    text-align: left; 
+    font-weight: bold; 
+    white-space: nowrap; 
+}
+
+i
+{
+    font-size: 13px;
 }
 
  .resources:hover .dropdown-content{
+    display: block;
+}
+
+.resources:hover .dropdown-content a{
     display: block;
 }
 
@@ -134,9 +154,6 @@ button:hover{
 .hamburger-menu{
     display: none;
 }
-
-
-
 
 
 @media (max-width:899px){
