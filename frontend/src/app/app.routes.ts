@@ -18,6 +18,10 @@ export const routes: Routes = [
         path: 'login',
         loadComponent: () => import('./features/auth/pages/login-page/login-page.component').then(m => m.LoginPageComponent),
       },
+      {
+        path: 'edit-profile',
+        loadComponent: () => import('./features/auth/pages/edit-profile-page/edit-profile-page.component').then(m => m.EditProfilePageComponent),
+      },
       { path: '**', redirectTo: 'register', pathMatch: 'full' }
     ]
   },
@@ -27,6 +31,10 @@ export const routes: Routes = [
       {
         path: 'home',
         loadComponent: () => import('./features/public/pages/home-page/home-page.component').then(m => m.HomePageComponent)
+      },
+      {
+        path: 'user',
+        loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent)
       },
       { path: '**', redirectTo: 'home', pathMatch: 'full' }
     ] 
