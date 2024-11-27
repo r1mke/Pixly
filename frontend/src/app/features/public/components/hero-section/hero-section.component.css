@@ -1,5 +1,5 @@
 .hero-section {
-    position: relative; /* Dodano da overlay bude vezan za ovu sekciju */
+    position: relative;
     width: 100%;
     height: 500px; 
     margin-bottom: 4% ;
@@ -8,7 +8,7 @@
 .hero-section img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Osigurava da slika pokriva celu sekciju */
+    object-fit: cover;
 }
 
 .overlay {
@@ -17,18 +17,18 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* Poluprozirna pozadina */
-    z-index: 1; /* Obezbeđuje da overlay bude iznad slike */
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
 }
 
 .container {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%); /* Centriranje sadržaja unutar container-a */
+    transform: translate(-50%, -50%);
     text-align: center;
-    z-index: 2; /* Postavljanje sadržaja iznad overlay-a */
-    color: white; /* Boja teksta */
+    z-index: 2;
+    color: white;
     width: 100%;
     padding: 20px;
 }

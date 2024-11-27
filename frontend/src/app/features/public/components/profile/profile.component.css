@@ -1,0 +1,76 @@
+.container
+{
+  margin-top: 100px;
+}
+
+.profile-avatar {
+  position: relative;
+}
+
+.profile-name {
+  font-weight: bold;
+}
+
+.nav-tabs .nav-link.active {
+  font-weight: bold;
+  color: #000;
+}
+
+button
+{
+  background-color: var(--pixly-color);
+}
+
+button:hover
+{
+  background-color: var(--pixly-color-hover);
+}
+
+/* Stil za aktivnu stavku */
+.nav-item.active {
+  background-color: black;
+  color: white !important;
+  border-radius: 50px;
+  padding: 8px 16px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Stil za sve stavke */
+.nav-item {
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.nav-item:hover {
+  color: black;
+  text-decoration: none;
+}
+
+/* Dodaj padding i izbegni gužvanje */
+.d-flex > .nav-item {
+  padding: 5px 10px;
+}
+
+
+@media (max-width: 768px) {
+  .nav-item {
+    display: block; /* Prikazuje svaki nav-item kao blok */
+    text-align: center; /* Poravnanje teksta u centar */
+  }
+  .nav-container {
+    flex-direction: column; /* Elementi idu jedan ispod drugog */
+    gap: 1rem; /* Razmak između elemenata */
+  }
+}
+
+/* Broj postaje beo kada je nav-item aktivan ili fokusiran */
+.nav-item.active span.text-muted,
+.nav-item:focus span.text-muted {
+  color: white; /* Samo broj pored postaje beo */
+}
+
+/* Uklanjanje crnog okvira na fokusu (opciono) */
+.nav-item:focus {
+  outline: none; /* Uklanja crni okvir na klik */
+  color: white;
+}
