@@ -4,7 +4,6 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { WindowSizeService } from '../../../../services/window-size.service';
-import { Renderer2 } from '@angular/core';
 import { AuthService } from '../../../auth/services/auth.service';
 
 @Component({
@@ -14,6 +13,7 @@ import { AuthService } from '../../../auth/services/auth.service';
   templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css']
 })
+
 export class NavBarComponent implements OnInit, AfterViewInit {
   isScrolled: boolean = false;
   windowWidth: number = 0;
@@ -21,15 +21,11 @@ export class NavBarComponent implements OnInit, AfterViewInit {
   exploreHovered = false;
   profileHovered = false;
   dotsHovered = false;
+  user: any = null;
+  username! : string;
+  @Output() hoverStateChange = new EventEmitter<{ key: string, state: boolean }>();
 
-  user: any = null; // Čuva podatke o korisniku
-
-  constructor(
-    private windowSizeService: WindowSizeService,
-    private router: Router,
-    private renderer: Renderer2,
-    private authService: AuthService
-  ) {
+  constructor(private windowSizeService: WindowSizeService, private router: Router, private authService: AuthService) {
     this.windowSizeService.data$.subscribe((w) => {
       this.windowWidth = w;
       this.menuOpen = this.windowWidth >= 900;
@@ -57,10 +53,17 @@ export class NavBarComponent implements OnInit, AfterViewInit {
 
   private fetchCurrentUser() {
     this.authService.getCurrentUser().subscribe({
-      next: (user) => {
-        this.user = user;
+      next: (res) => {
+        if (res) {
+          this.user = res.user;
+          //console.log('User after fetch:', this.user);
+        } else {
+          //console.error('No user found');
+          this.user = null;
+        }
       },
       error: () => {
+        //console.error('Error fetching user');
         this.user = null;
       }
     });
@@ -69,7 +72,7 @@ export class NavBarComponent implements OnInit, AfterViewInit {
   public logout() {
     this.authService.logout().subscribe({
       next: () => {
-        this.router.navigate(['/login']);
+        this.router.navigate(['/auth/login']);
         this.user = null;
       },
       error: (err) => {
@@ -78,12 +81,18 @@ export class NavBarComponent implements OnInit, AfterViewInit {
     });
   }
 
-  @Output() hoverStateChange = new EventEmitter<{ key: string, state: boolean }>();
+  public goToProfile(): void {
+    if (this.user && this.user.username) {
+      this.router.navigate([`/public/${this.user.username}`]);
+    } else {
+      console.error('User or username is not available');
+    }
+  }
+
 
   emitHoverStateChange(key: string, state: boolean) {
     this.hoverStateChange.emit({ key, state });
 
-    // Update local states based on the key
     if (key === 'explore') {
       this.exploreHovered = state;
     } else if (key === 'profile') {

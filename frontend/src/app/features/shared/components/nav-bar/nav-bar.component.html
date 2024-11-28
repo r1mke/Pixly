@@ -44,7 +44,7 @@
                     <i class="fa-solid ms-2" [ngClass]="profileHovered ? 'fa-angle-up' : 'fa-angle-down'"></i>
                     <div class="dropdown-content">
                         <div class="popular-searches">
-                            <a href="#">Your Profile</a>
+                            <a (click)="goToProfile()">Your Profile</a>
                         </div>
                         <div class="popular-searches">
                             <a href="#">Your Collection</a>

@@ -118,6 +118,10 @@ i
     font-size: 13px;
 }
 
+a{
+    cursor: pointer;
+}
+
  .resources:hover .dropdown-content{
     display: block;
 }
