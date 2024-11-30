@@ -36,6 +36,10 @@ export const routes: Routes = [
         path: ':username',
         loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent)
       },
+      {
+        path: 'upload',
+        loadComponent: () => import('./features/public/pages/upload-page/upload-page.component').then(m => m.UploadPageComponent)
+      },
       { path: '**', redirectTo: 'home', pathMatch: 'full' }
     ] 
   },
