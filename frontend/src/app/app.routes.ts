@@ -33,12 +33,17 @@ export const routes: Routes = [
         loadComponent: () => import('./features/public/pages/home-page/home-page.component').then(m => m.HomePageComponent)
       },
       {
-        path: ':username',
-        loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent)
-      },
-      {
-        path: 'upload',
-        loadComponent: () => import('./features/public/pages/upload-page/upload-page.component').then(m => m.UploadPageComponent)
+        path: 'profile',
+        children: [
+          {
+            path: 'user/:username',
+            loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent)
+          },
+          {
+            path: 'upload',
+            loadComponent: () => import('./features/public/pages/upload-page/upload-page.component').then(m => m.UploadPageComponent)
+          }
+        ]
       },
       { path: '**', redirectTo: 'home', pathMatch: 'full' }
     ] 
