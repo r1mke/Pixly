@@ -1,7 +1,9 @@
 ﻿using backend.Data.Models;
 using backend.Heleper.Api;
+using backend.Helper.DTO_s;
 using backend.Helper.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace backend.Endpoints.PhotoEndpoints
 {
@@ -18,7 +20,7 @@ namespace backend.Endpoints.PhotoEndpoints
 
       
         [HttpPost]
-        public override async Task<PostPhotoResult> HandleAsync(PostPhotoRequest request, CancellationToken cancellationToken = default)
+        public override async Task<PostPhotoResult> HandleAsync( [FromForm] PostPhotoRequest request, CancellationToken cancellationToken = default)
         {
             
             if (request.File == null || request.File.Length == 0)
@@ -30,6 +32,10 @@ namespace backend.Endpoints.PhotoEndpoints
                 };
             }
 
+            var categories = request.Categories
+                .Select(categoryJson => JsonConvert.DeserializeObject<CategoryDTO>(categoryJson))
+                .ToList();
+
             try
             {
                
@@ -40,7 +46,7 @@ namespace backend.Endpoints.PhotoEndpoints
                     request.UserId,
                     request.File,
                     request.Tags,
-                   
+                    categories,
                     cancellationToken
                 );
 
@@ -73,6 +79,8 @@ namespace backend.Endpoints.PhotoEndpoints
 
         public List<string> Tags { get; set; } = new List<string>();
 
+        public List<string> Categories { get; set; } = new List<string>();
+ 
     }
 
 
@@ -81,4 +89,7 @@ namespace backend.Endpoints.PhotoEndpoints
         public string? Message { get; set; }
         public int? PhotoId { get; set; }
     }
+
+
+   
 }
