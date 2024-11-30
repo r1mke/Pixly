@@ -12,15 +12,26 @@
     </div>
   </div>
 
-  <form>
+  <form [formGroup]="editProfileForm" (ngSubmit)="saveProfile()">
     <div class="row g-4">
       <div class="col-md-6">
         <label for="firstName" class="form-label">First name <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" id="firstName" placeholder="Enter your first name">
+        <input 
+          type="text" 
+          class="form-control text-dark-emphasis"
+          [ngClass]="{'is-invalid': editProfileForm.controls['firstName'].invalid && (editProfileForm.controls['firstName'].touched || editProfileForm.controls['firstName'].dirty)} "  
+          formControlName="firstName"
+        />
+        <div class="invalid-feedback">
+          <span *ngIf="editProfileForm.controls['firstName'].hasError('required')">Required!</span>
+          <span *ngIf="editProfileForm.controls['firstName'].hasError('minlength')">Minimum 2 characters</span>
+          <span *ngIf="editProfileForm.controls['firstName'].hasError('maxlength')">Limited to 20 characters</span>
+        </div>
       </div>
+
       <div class="col-md-6">
         <label for="lastName" class="form-label">Last name <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" id="lastName" placeholder="Enter your last name">
+        <input type="text" class="form-control text-dark-emphasis" id="lastName" formControlName="lastName" />
       </div>
     </div>
     <p class="form-text mt-1 mb-3 text-body-tertiary">We’d like people to use real names in a community, so people would know who’s who.</p>
@@ -28,23 +39,23 @@
     <div class="row g-4">
       <div class="col-md-6">
         <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
-        <input type="email" class="form-control" id="email" placeholder="Enter your email">
+        <input type="email" class="form-control text-dark-emphasis" id="email" formControlName="email" placeholder="Enter your email" [disabled]="isEmailDisabled">
       </div>
       <div class="col-md-6">
         <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
-        <input type="text" class="form-control" id="username" placeholder="Enter your username">
+        <input type="text" class="form-control text-dark-emphasis" id="username" formControlName="username" placeholder="Enter your username">
+        <p class="form-text mt-1 mb-4 text-body-tertiary">Note that this username will be public.</p>
       </div>
     </div>
-    <p class="form-text mt-1 mb-4 text-body-tertiary">Note that this email will be public.</p>
 
     <div class="col-md-12 text-center mt-3 mb-5">
-      <button class="text-white w-50 mb-3">Save Profile</button>
+      <button class="text-white w-50 mb-3" type="submit" [disabled]="editProfileForm.invalid || editProfileForm.pristine">Save Profile</button>
     </div>
 
     <div class="container my-5">
       <h2 class="mb-3">Additional settings</h2>
-        <div class="mb-2"><a href="#" class="text-danger text-decoration-none fw-bold">Change password</a></div>
-        <div><a href="#" class="text-danger text-decoration-none fw-bold">Remove account</a></div>
+      <div class="mb-2"><a href="#" class="text-danger text-decoration-none fw-bold">Change password</a></div>
+      <div><a href="#" class="text-danger text-decoration-none fw-bold">Remove account</a></div>
     </div>
   </form>
 </div>

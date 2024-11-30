@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { VerifyEmailGuard } from './features/auth/services/verify-email-quard';
+import { AuthGuard } from './features/auth/services/auth-guard';
 
 export const routes: Routes = [
   {
@@ -21,6 +22,7 @@ export const routes: Routes = [
       {
         path: 'edit-profile',
         loadComponent: () => import('./features/auth/pages/edit-profile-page/edit-profile-page.component').then(m => m.EditProfilePageComponent),
+        canActivate: [AuthGuard]
       },
       { path: '**', redirectTo: 'register', pathMatch: 'full' }
     ]
