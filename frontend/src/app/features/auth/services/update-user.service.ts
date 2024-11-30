@@ -13,7 +13,7 @@ export class UpdateUserService {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
-  updateUser(data: { firstName: string; lastName: string }): Observable<any> {
+  updateUser(data: { firstName: string; lastName: string, username: string }): Observable<any> {
     return this.http.put(this.apiUpdateUser, data, { withCredentials: true }).pipe(
       catchError(this.authService.handleError)
     );

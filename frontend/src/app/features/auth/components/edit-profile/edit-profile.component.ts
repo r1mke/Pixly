@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../../services/auth.service';
 import { UpdateUserService } from '../../services/update-user.service';
 import { CommonModule } from '@angular/common';
+import { RegisterService } from '../../services/register.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -12,22 +13,23 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./edit-profile.component.css'],
 })
 export class EditProfileComponent implements OnInit {
-  editProfileForm!: FormGroup; // Koristimo "!" jer ćemo ga inicijalizirati kasnije.
+  editProfileForm!: FormGroup;
   isEmailDisabled: boolean = true;
   isUsernameDisabled: boolean = true;
+  public usernameError: string = '';
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private updateUserService: UpdateUserService
+    private updateUserService: UpdateUserService,
+    private registerService: RegisterService,
   ) {}
 
   ngOnInit(): void {
     this.authService.getCurrentUser().subscribe({
       next: (response: any) => {
-        if (response?.user) {
-          this.initForm(response.user); // Inicijalizacija forme s podacima korisnika
-        }
+        if (response?.user) 
+          this.initForm(response.user);
       },
       error: (err) => {
         console.error('Error fetching user:', err);
@@ -35,7 +37,6 @@ export class EditProfileComponent implements OnInit {
     });
   }
 
-  // Funkcija za inicijalizaciju forme
   private initForm(user: any): void {
     this.editProfileForm = this.fb.group({
       firstName: [
@@ -56,18 +57,18 @@ export class EditProfileComponent implements OnInit {
       ],
     });
 
-    // Onemogućavanje polja email i username
     this.editProfileForm.get('email')?.disable();
-    this.editProfileForm.get('username')?.disable();
+    //this.editProfileForm.get('username')?.disable();
   }
 
   saveProfile(): void {
     if (this.editProfileForm && this.editProfileForm.valid) {
-      const { firstName, lastName } = this.editProfileForm.getRawValue();
+      const { firstName, lastName, username } = this.editProfileForm.getRawValue();
 
-      this.updateUserService.updateUser({ firstName, lastName }).subscribe({
+      this.updateUserService.updateUser({ firstName, lastName, username }).subscribe({
         next: (response) => {
           console.log('Profile updated successfully:', response);
+          this.checkUsername(response.username);
           alert(response.message);
         },
         error: (err) => {
@@ -79,4 +80,19 @@ export class EditProfileComponent implements OnInit {
       console.log('Form is invalid');
     }
   }
+
+
+  checkUsername(username: string): void {
+    this.usernameError = '';
+    this.registerService.checkUsername(username).subscribe({
+      next: (response) => {
+        if (!response.available) 
+          this.usernameError = response.message;
+      },
+      error: (err) => {
+        console.error('Greška prilikom provjere korisničkog imena', err);
+      }
+    });
+  }
+
 }

@@ -83,7 +83,7 @@ export class NavBarComponent implements OnInit, AfterViewInit {
 
   public goToProfile(): void {
     if (this.user && this.user.username) {
-      this.router.navigate([`/public/${this.user.username}`]);
+      this.router.navigate([`/public/profile/user/${this.user.username}`]);
     } else {
       console.error('User or username is not available');
     }

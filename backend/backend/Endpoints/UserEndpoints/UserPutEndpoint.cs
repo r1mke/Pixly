@@ -30,15 +30,15 @@ namespace backend.Endpoints.UserEndpoints
 
             // Retrieve the user from the database
             var existingUser = await db.Users
-                .FirstOrDefaultAsync(u => u.Email == user.Email, cancellationToken);
+                .FirstOrDefaultAsync(u => u.Id == user.Id, cancellationToken);
 
             if (existingUser == null)
-                return NotFound(new UpdateUserResponse { Message = $"User with ID {user.Id} not found" });
+                return NotFound(new UpdateUserResponse { Message = $"User with not found" });
 
             // Update user fields with the request values
             existingUser.FirstName = request.FirstName;
             existingUser.LastName = request.LastName;
-            //existingUser.Username = request.Username;
+            existingUser.Username = request.Username;
 
             db.Users.Update(existingUser);
             await db.SaveChangesAsync(cancellationToken);
@@ -57,6 +57,11 @@ namespace backend.Endpoints.UserEndpoints
             [MinLength(2), MaxLength(20)]
             [JsonPropertyName("lastName")]
             public string LastName { get; set; }
+
+            [Required]
+            [MinLength(5), MaxLength(20)]
+            [JsonPropertyName("username")]
+            public string Username { get; set; }
         }
 
         public class UpdateUserResponse

@@ -28,7 +28,7 @@
              </div>
 
              <div *ngIf="!user">
-                <p class="text-center mb-0">Upload</p>
+                <p  routerLink="/public/upload" style="cursor: pointer;" class="text-center mb-0">Upload</p>
             </div>
             
 
@@ -71,7 +71,7 @@
                 </div>
             </div>
     
-            <button *ngIf="user" class="upload" routerLink="/upload">Upload</button>
+            <button *ngIf="user" class="upload" routerLink="/public/profile/upload">Upload</button>
             <button *ngIf="!user" class="login" routerLink="/auth/login">Log in</button>
         </div>
    

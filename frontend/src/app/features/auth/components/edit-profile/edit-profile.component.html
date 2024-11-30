@@ -31,7 +31,17 @@
 
       <div class="col-md-6">
         <label for="lastName" class="form-label">Last name <span class="text-danger">*</span></label>
-        <input type="text" class="form-control text-dark-emphasis" id="lastName" formControlName="lastName" />
+        <input 
+          type="text" 
+          class="form-control text-dark-emphasis" 
+          [ngClass]="{'is-invalid': editProfileForm.controls['lastName'].invalid && (editProfileForm.controls['lastName'].touched || editProfileForm.controls['lastName'].dirty)} "
+          formControlName="lastName" 
+          />
+          <div class="invalid-feedback">
+            <span *ngIf="editProfileForm.controls['lastName'].hasError('required')">Required!</span>
+            <span *ngIf="editProfileForm.controls['lastName'].hasError('minlength')">Minimum 2 characters</span>
+            <span *ngIf="editProfileForm.controls['lastName'].hasError('maxlength')">Limited to 20 characters</span>
+          </div>
       </div>
     </div>
     <p class="form-text mt-1 mb-3 text-body-tertiary">We’d like people to use real names in a community, so people would know who’s who.</p>
@@ -41,9 +51,22 @@
         <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
         <input type="email" class="form-control text-dark-emphasis" id="email" formControlName="email" placeholder="Enter your email" [disabled]="isEmailDisabled">
       </div>
+
       <div class="col-md-6">
         <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
-        <input type="text" class="form-control text-dark-emphasis" id="username" formControlName="username" placeholder="Enter your username">
+        <input 
+          type="text" 
+          class="form-control text-dark-emphasis"  
+          formControlName="username"
+          [ngClass]="{'is-invalid': editProfileForm.controls['username'].invalid && (editProfileForm.controls['username'].touched || editProfileForm.controls['username'].dirty) || usernameError}" 
+          placeholder="Enter your username" 
+          />
+          <div class="invalid-feedback">
+            <span *ngIf="editProfileForm.controls['username'].hasError('required')">Required!</span>
+            <span *ngIf="editProfileForm.controls['username'].hasError('minlength')">Minimum 5 characters</span>
+            <span *ngIf="editProfileForm.controls['username'].hasError('maxlength')">Limited to 20 characters</span>
+            <span *ngIf="usernameError">{{ usernameError }}</span>
+          </div>
         <p class="form-text mt-1 mb-4 text-body-tertiary">Note that this username will be public.</p>
       </div>
     </div>
