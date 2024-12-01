@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, Observable, of, throwError } from 'rxjs';
+import { BehaviorSubject, catchError, Observable, of, throwError } from 'rxjs';
 import { MYCONFIG } from '../../../my-config';
 
 @Injectable({
@@ -12,6 +12,9 @@ export class AuthService {
   private apiVerifyToken = `${MYCONFIG.apiUrl}/auth/verify-token`;
   private apiCurrentUser = `${MYCONFIG.apiUrl}/auth/current-user`;
   private apiLogout = `${MYCONFIG.apiUrl}/auth/logout`;
+
+  private currentUserSubject = new BehaviorSubject<any | null>(null);
+  currentUser$ = this.currentUserSubject.asObservable();
 
   /*
   verifyJwtToken(): Observable<any> {

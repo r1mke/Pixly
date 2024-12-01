@@ -40,7 +40,8 @@ export class UploadPageComponent implements OnInit {
   selectArray: Category[] = [];
   tagInput: string = ''; 
   //-----------------------//
-
+  isLoading: boolean = false;
+  
   uploadForm: FormGroup;
 
   constructor(private getAllCategoriesService: GetAllCategoriesService,
@@ -155,6 +156,7 @@ export class UploadPageComponent implements OnInit {
     }
 
     onSubmit():void {
+      this.isLoading = true;
       console.log("cliiick");
       console.log(this.uploadForm.value);
       console.log(this.user);
@@ -182,10 +184,12 @@ export class UploadPageComponent implements OnInit {
     this.photoPostService.postPhoto(formData).subscribe({
       next: (response) => {
         alert("Uspjesno: ");
+        this.isLoading = false;
         this.removeImage();
       },
       error: (err) => {
         alert("Uspjesno al u k: ");
+        this.isLoading = false;
       }
     }); 
     }

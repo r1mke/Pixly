@@ -10,8 +10,8 @@
 
     <!-- Edit Profile Button -->
     <div *ngIf="isOwnProfile; else otherProfile">
-      <button class="mt-3 mb-3 text-white py-3">
-        <span><i class="fa-solid fa-pen text-center me-2"></i>Edit Profile</span>
+      <button class="mt-3 mb-3 text-white py-3" routerLink="/auth/edit-profile">
+        <a class="text-white"><i class="fa-solid fa-pen text-center me-2"></i>Edit Profile</a>
       </button>
     </div>
 
