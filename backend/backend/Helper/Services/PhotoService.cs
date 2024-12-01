@@ -29,7 +29,7 @@ public class PhotoService
         _context = context;
     }
 
-    public async Task<string> UploadPhotoAsync(IFormFile file, CancellationToken cancellationToken)
+    public async Task<string> UploadProfilePhotoAsync(IFormFile file, CancellationToken cancellationToken)
     {
          
         int width = 0;
@@ -58,9 +58,9 @@ public class PhotoService
 
         var transformation = imageOrientation switch
         {
-            "landscape" => new Transformation().Named("landscape_transformation"),
-            "portrait" => new Transformation().Named("portrait_transformation"),
-            "square" => new Transformation().Named("square_transformation"),
+            "landscape" => new Transformation().Named("landscapeProfile_transformation"),
+            "portrait" => new Transformation().Named("portraitProfile_transformation"),
+            "square" => new Transformation().Named("squareProfile_transformation"),
             _ => null
         };
 

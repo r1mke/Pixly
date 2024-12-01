@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+﻿ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -23,6 +23,6 @@ namespace backend.Data.Models
         public ICollection<Photo> Photos { get; set; }
         [JsonIgnore]
         public ICollection<RefreshToken> RefreshTokens { get; set; }
-        public string Url { get; set; }
+        
     }
 }
