@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using backend.Helper.Services;
 
 
+
 public class PhotoService
 {
     private readonly Cloudinary _cloudinary;
@@ -28,9 +29,9 @@ public class PhotoService
         _context = context;
     }
 
-
-    public async Task<string> UploadProfilePhoto(IFormFile file, CancellationToken cancellationToken)
+    public async Task<string> UploadPhotoAsync(IFormFile file, CancellationToken cancellationToken)
     {
+         
         int width = 0;
         int height = 0;
 
@@ -51,7 +52,6 @@ public class PhotoService
         using var memoryStream = new MemoryStream();
         await file.CopyToAsync(memoryStream, cancellationToken);
         var imageBytes = memoryStream.ToArray();
-
 
 
         var imageOrientation = GetImageOrientation(width, height);
