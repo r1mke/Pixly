@@ -1,0 +1,234 @@
+<app-nav-bar></app-nav-bar>
+
+<div class="container">
+    <h3 *ngIf="!image">Share your photos and let the world love them.</h3>
+    <h3 *ngIf="image">Make your photos easy to discover and stand out.</h3>
+    <p *ngIf="image">Just like hashtags make content searchable on social media,
+         tags and categories on Pixly help users quickly find what they're looking for. <br>
+         <b> Add relevant keywords and select categories that describe your photo or video
+           to increase its visibility and reach. </b> </p>
+  <div
+    class="upload-container"
+    corpImgUpload
+    (dropFiles)="onDropFiles($event)"
+    *ngIf="!image"
+  >
+    <i class="icon fa-image fa-regular fa-6x"  style="color: #02a388"></i>
+    <h3>
+      Drag and drop <br />
+      to upload, or
+    </h3>
+    <button (click)="fileInput.click()">Browse</button>
+    <input
+      #fileInput
+      type="file"
+      (change)="onFileSelected($event)"
+      style="display: none"
+    />
+
+    <div class="tips">
+        <div class="tip">
+            <i class="fa-solid fa-circle-check" style="color: #02a388;"></i>
+            <span><b>Original </b>content you captured</span>
+        </div>
+        <div class="tip">
+            <i class="fa-solid fa-circle-check" style="color: #02a388;"></i>
+            <span><b>Excludes</b> graphic nudity, violence, or hate</span>
+        </div>
+        <div class="tip">
+            <i class="fa-solid fa-circle-check" style="color: #02a388;"></i>
+            <span>Mindful of the <b>rights</b> of others</span>
+        </div>
+        <div class="tip">
+            <i class="fa-solid fa-circle-check" style="color: #02a388;"></i>
+            <span><b>High quality </b>photos and videos</span>
+        </div>
+        <div class="tip">
+            <i class="fa-solid fa-circle-check" style="color: #02a388;"></i>
+            <span>It is <b>prohibited</b> to upload the same content multiple times.</span>
+        </div>
+        <div class="tip">
+            <i class="fa-solid fa-circle-check" style="color: #02a388;"></i>
+            <span>It is <b>prohibited</b> to upload content that spreads misinformation or false claims.</span>
+        </div>
+    </div>
+    <button routerLink="/public" class="skip">Skip upload</button>
+  </div>
+  <div class="edit-container" *ngIf="image">
+    <div class="image-container">
+      <img [src]="file?.url" />
+      <button class="removeImageBtn" (click)="removeImage()">Delete</button>
+    </div>
+    <div class="image-details">
+      <form class="upload-form" [formGroup]="uploadForm">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input
+            placeholder="Enter a title..."
+            type="text"
+            id="title"
+            formControlName="title"
+            class="form-control"
+          />
+          <div
+            *ngIf="
+              uploadForm.get('title')?.invalid &&
+              uploadForm.get('title')?.touched
+            "
+            class="error"
+          >
+            <div *ngIf="uploadForm.get('title')?.errors?.['required']">
+              Title is required.
+            </div>
+            <div *ngIf="uploadForm.get('title')?.errors?.['minlength']">
+              Title must be at least 10 characters long.
+            </div>
+            <div *ngIf="uploadForm.get('title')?.errors?.['maxlength']">
+              Title must be at most 50 characters long.
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <input
+            placeholder="Enter a description..."
+            type="text"
+            id="description"
+            formControlName="description"
+            class="form-control"
+          />
+          <div
+            *ngIf="
+              uploadForm.get('description')?.invalid &&
+              uploadForm.get('description')?.touched
+            "
+            class="error"
+          >
+            <div *ngIf="uploadForm.get('description')?.errors?.['required']">
+              Description is required.
+            </div>
+            <div *ngIf="uploadForm.get('description')?.errors?.['minlength']">
+              Description must be at least 15 characters long.
+            </div>
+            <div *ngIf="uploadForm.get('description')?.errors?.['maxlength']">
+              Description must be at most 200 characters long.
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input
+            placeholder="Enter a location (city)..."
+            type="text"
+            id="location"
+            formControlName="location"
+            class="form-control"
+          />
+          <div
+            *ngIf="
+              uploadForm.get('location')?.invalid &&
+              uploadForm.get('location')?.touched
+            "
+            class="error"
+          >
+            <div *ngIf="uploadForm.get('location')?.errors?.['required']">
+              Location is required.
+            </div>
+            <div *ngIf="uploadForm.get('location')?.errors?.['minlength']">
+              Location must be at least 3 characters long.
+            </div>
+            <div *ngIf="uploadForm.get('location')?.errors?.['maxlength']">
+              Location must be at most 50 characters long.
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="categories">Categories</label>
+          <div *ngIf="selectArray.length === 0">Loading categories...</div>
+          <select
+            *ngIf="selectArray.length > 0"
+            name="categories"
+            formControlName="categories"
+            class="form-control"
+            (change)="selectCategory($event)"
+            
+          >
+            <option style="color: rgb(33, 37, 41)" value="" disabled >Select a category...</option>
+            <option *ngFor="let category of selectArray" [value]="category.id">
+              {{ category.categoryName }}
+            </option>
+          </select>
+
+          <div
+            *ngIf="
+              uploadForm.get('categories')?.invalid &&
+              uploadForm.get('categories')?.touched
+            "
+            class="error"
+          >
+            <div *ngIf="uploadForm.get('categories')?.errors?.['required']">
+              Categories is required.
+            </div>
+          </div>
+          <div class="categories" *ngIf="categories.length > 0">
+            <div *ngFor="let category of categories" class="category">
+              <span>{{ category.categoryName }}</span>
+              <i
+                (click)="removeCategory(category)"
+                class="fa-solid fa-xmark"
+              ></i>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="tags">Tags</label>
+          <div class="add-tag">
+            <input
+              placeholder="Enter a tag..."
+              type="text"
+              id="tags"
+              formControlName="tags"
+              class="form-control"
+            />
+              <i *ngIf="tagInput" (click)="addTag()" class="fa-solid fa-plus"></i>
+          </div>
+          <div
+            *ngIf="
+              uploadForm.get('tags')?.invalid &&
+              uploadForm.get('tags')?.touched &&
+              tags.length === 0
+            "
+            class="error"
+          >
+            <div *ngIf="uploadForm.get('tags')?.errors?.['required']">
+              Tag is required.
+            </div>
+          </div>
+          <div class="tags" *ngIf="tags.length > 0">
+            <div *ngFor="let tag of tags" class="tag">
+              <span>{{ tag }}</span>
+              <i (click)="removeTag(tag)" class="fa-solid fa-xmark"></i>
+            </div>
+          </div>
+        </div>
+        <div class="form-group upload">
+          <button class="w-100 fw-bold p-2 d-flex align-items-center justify-content-center" 
+            [disabled]="!uploadForm.get('title')?.valid
+                || !uploadForm.get('description')?.valid
+                || !uploadForm.get('location')?.valid
+                || tags.length === 0
+                || categories.length === 0
+                || isLoading" (click)="onSubmit()">
+                <span class="text-white" *ngIf="!isLoading">Upload</span>
+                <div *ngIf="isLoading" class="spinner-border spinner-border-sm text-light" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="remove">
+      <i (click)="removeImage()" class="fa-solid fa-trash fa-2xl"></i>
+    </div>
+  </div>
+</div>

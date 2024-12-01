@@ -7,7 +7,7 @@ nav{
     left: 0;
     right: 0; 
     z-index: 1000;
-    height: auto;
+    height: 80px;
 }
 
 .container{
@@ -116,6 +116,10 @@ nav{
 i
 {
     font-size: 13px;
+}
+
+a{
+    cursor: pointer;
 }
 
  .resources:hover .dropdown-content{

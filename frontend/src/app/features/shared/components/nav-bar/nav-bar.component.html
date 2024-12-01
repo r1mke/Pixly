@@ -25,11 +25,10 @@
                         <a href="#">Leaderboard</a>
                         <a href="#">Pricing</a>
                     </div>
-                    
              </div>
 
              <div *ngIf="!user">
-                <p class="text-center mb-0">Upload</p>
+                <p  routerLink="/public/upload" style="cursor: pointer;" class="text-center mb-0">Upload</p>
             </div>
             
 
@@ -45,7 +44,7 @@
                     <i class="fa-solid ms-2" [ngClass]="profileHovered ? 'fa-angle-up' : 'fa-angle-down'"></i>
                     <div class="dropdown-content">
                         <div class="popular-searches">
-                            <a href="#">Your Profile</a>
+                            <a (click)="goToProfile()">Your Profile</a>
                         </div>
                         <div class="popular-searches">
                             <a href="#">Your Collection</a>
@@ -57,9 +56,7 @@
                     </div>
             </div>
 
-            
-
-            <div class="resources" *ngIf="!user">
+            <div class="resources p-1" *ngIf="!user">
                 <i class="fa-solid fas fa-ellipsis-h"></i>
                 <div class="dropdown-content">
                     <div class="popular-searches">
@@ -74,7 +71,7 @@
                 </div>
             </div>
     
-            <button *ngIf="user" class="upload" routerLink="/upload">Upload</button>
+            <button *ngIf="user" class="upload" routerLink="/public/profile/upload">Upload</button>
             <button *ngIf="!user" class="login" routerLink="/auth/login">Log in</button>
         </div>
    

@@ -3,75 +3,70 @@ using Microsoft.EntityFrameworkCore;
 using backend.Data;
 using System.Threading;
 using System.Threading.Tasks;
-using backend.Heleper.Api;
 using System.ComponentModel.DataAnnotations;
-using static backend.Endpoints.UserEndpoints.UserPutEndpoint;
-using Microsoft.IdentityModel.Tokens;
 using backend.Data.Models;
+using backend.Helper.Services.JwtService;
+using Azure;
+using System.Text.Json.Serialization;
 
 namespace backend.Endpoints.UserEndpoints
 {
-    [Route("api/users")]
-    public class UserPutEndpoint(AppDbContext db) : MyEndpointBaseAsync
-        .WithRequest<UpdateUserRequest>
-        .WithResult<User>
+    [Route("user")]
+    public class UserPutEndpoint(AppDbContext db, IJwtService jwtService) : ControllerBase
     {
-
-        [HttpPut("{id:int}")]
-        public override async Task<User> HandleAsync(UpdateUserRequest request, CancellationToken cancellationToken = default)
+        [HttpPut("update-user")]
+        public async Task<IActionResult> HandleAsync([FromBody] UpdateUserRequest request, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-                throw new InvalidOperationException("Invalid request data");
+            var jwtToken = Request.Cookies["jwt"];
 
-            var user = await db.Users
-                .FirstOrDefaultAsync(u => u.Id == request.Id, cancellationToken);
+            var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, db);
+            if (validationResult is UnauthorizedObjectResult)
+            {
+                var unauthorizedMessage = ((UnauthorizedObjectResult)validationResult).Value?.ToString() ?? "Unauthorized";
+                return Unauthorized(new UpdateUserResponse { Message = unauthorizedMessage });
+            }
 
-            if (user == null)
-                throw new KeyNotFoundException($"User with ID {request.Id} not found");
+            var user = (User)((OkObjectResult)validationResult).Value;
 
-            user.FirstName = request.FirstName;
-            user.LastName = request.LastName;
-            user.Username = request.Username;
-            user.Email = request.Email;
-            user.IsAdmin = request.IsAdmin;
-            user.IsCreator = request.IsCreator;
+            // Retrieve the user from the database
+            var existingUser = await db.Users
+                .FirstOrDefaultAsync(u => u.Id == user.Id, cancellationToken);
 
-            if (!string.IsNullOrWhiteSpace(request.Password))
-                user.Password = request.Password;
+            if (existingUser == null)
+                return NotFound(new UpdateUserResponse { Message = $"User with not found" });
 
-            db.Users.Update(user);
+            // Update user fields with the request values
+            existingUser.FirstName = request.FirstName;
+            existingUser.LastName = request.LastName;
+            existingUser.Username = request.Username;
+
+            db.Users.Update(existingUser);
             await db.SaveChangesAsync(cancellationToken);
 
-            return user;
+            return Ok(new UpdateUserResponse { Message = "User updated successfully" });
         }
 
-        
         public class UpdateUserRequest
         {
             [Required]
-            public int Id { get; set; }
-
-            [Required]
             [MinLength(2), MaxLength(20)]
+            [JsonPropertyName("firstName")]
             public string FirstName { get; set; }
 
             [Required]
             [MinLength(2), MaxLength(20)]
+            [JsonPropertyName("lastName")]
             public string LastName { get; set; }
 
             [Required]
             [MinLength(5), MaxLength(20)]
+            [JsonPropertyName("username")]
             public string Username { get; set; }
+        }
 
-            [Required]
-            [EmailAddress]
-            public string Email { get; set; }
-
-            [MinLength(8), MaxLength(64)]
-            public string? Password { get; set; }
-
-            public bool IsAdmin { get; set; } = false;
-            public bool IsCreator { get; set; } = false;
+        public class UpdateUserResponse
+        {
+            public string Message { get; set; }
         }
     }
 }
