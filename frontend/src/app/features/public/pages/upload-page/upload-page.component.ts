@@ -79,8 +79,13 @@ export class UploadPageComponent implements OnInit {
         }
       })
 
-      this.authService.getCurrentUser().subscribe((data: any) => {
-        this.user = data.user;
+      this.authService.currentUser$.subscribe({
+        next:(res) =>{
+          this.user = res;
+        },
+        error:(error) => {
+          console.error('Error fetching user:', error);
+        }
       });
 
 
@@ -157,7 +162,7 @@ export class UploadPageComponent implements OnInit {
 
     onSubmit():void {
       this.isLoading = true;
-      console.log("cliiick");
+      console.log(this.user);
       console.log(this.uploadForm.value);
       console.log(this.user);
 
