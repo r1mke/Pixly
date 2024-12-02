@@ -11,7 +11,7 @@ import { AuthService } from '../../../auth/services/auth.service';
   standalone: true,
   imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './nav-bar.component.html',
-  styleUrls: ['./nav-bar.component.css']
+  styleUrls: ['./nav-bar.component.css'],
 })
 
 export class NavBarComponent implements OnInit, AfterViewInit {
@@ -22,15 +22,13 @@ export class NavBarComponent implements OnInit, AfterViewInit {
   profileHovered = false;
   dotsHovered = false;
   user: any = null;
-  username! : string;
-  @Output() hoverStateChange = new EventEmitter<{ key: string, state: boolean }>();
+  @Output() hoverStateChange = new EventEmitter<{ key: string; state: boolean }>();
 
-  constructor(private windowSizeService: WindowSizeService, private router: Router, private authService: AuthService) {
-    this.windowSizeService.data$.subscribe((w) => {
-      this.windowWidth = w;
-      this.menuOpen = this.windowWidth >= 900;
-    });
-  }
+  constructor(
+    private windowSizeService: WindowSizeService,
+    private router: Router,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.windowSizeService.data$.subscribe((w) => {
@@ -38,7 +36,21 @@ export class NavBarComponent implements OnInit, AfterViewInit {
       this.menuOpen = this.windowWidth >= 900;
     });
 
-    this.fetchCurrentUser(); // Direktan poziv na dohvaćanje korisnika
+    this.getCurrentUser();
+  }
+
+  getCurrentUser(): void {
+    this.authService.currentUser$.subscribe((user) => {
+      this.user = user;
+    });
+
+    if (!this.user) {
+      this.authService.getCurrentUser().subscribe({
+        error: () => {
+          console.error('Error fetching user');
+        },
+      });
+    }
   }
 
   ngAfterViewInit() {}
@@ -51,24 +63,6 @@ export class NavBarComponent implements OnInit, AfterViewInit {
     this.router.navigate(['/']);
   }
 
-  private fetchCurrentUser() {
-    this.authService.getCurrentUser().subscribe({
-      next: (res) => {
-        if (res) {
-          this.user = res.user;
-          //console.log('User after fetch:', this.user);
-        } else {
-          //console.error('No user found');
-          this.user = null;
-        }
-      },
-      error: () => {
-        //console.error('Error fetching user');
-        this.user = null;
-      }
-    });
-  }
-
   public logout() {
     this.authService.logout().subscribe({
       next: () => {
@@ -77,28 +71,24 @@ export class NavBarComponent implements OnInit, AfterViewInit {
       },
       error: (err) => {
         console.error('Logout error:', err);
-      }
+      },
     });
   }
 
   public goToProfile(): void {
-    if (this.user && this.user.username) {
+    if (this.user && this.user.username)
       this.router.navigate([`/public/profile/user/${this.user.username}`]);
-    } else {
+    else
       console.error('User or username is not available');
-    }
   }
-
 
   emitHoverStateChange(key: string, state: boolean) {
     this.hoverStateChange.emit({ key, state });
-
-    if (key === 'explore') {
+    if (key === 'explore')
       this.exploreHovered = state;
-    } else if (key === 'profile') {
+    else if (key === 'profile') 
       this.profileHovered = state;
-    }
-    else if(key === 'dots')
+    else if (key === 'dots') 
       this.dotsHovered = state;
   }
 }
