@@ -12,6 +12,7 @@ import { Router } from '@angular/router';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
 })
+
 export class ProfileComponent implements OnInit {
   currentUser: any = null;
   profileUser: any = null;
@@ -29,7 +30,6 @@ export class ProfileComponent implements OnInit {
     private route: ActivatedRoute,
     private userService: UserService,
     private authService: AuthService,
-    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -37,16 +37,19 @@ export class ProfileComponent implements OnInit {
       this.username = params.get('username');
       if (this.username) this.getUserProfile();
     });
+
+    this.getCurrentUser();
+  }
   
-    this.authService.getCurrentUser().subscribe({
-      next: (res) => {
-        this.currentUser = res.user;
+  getCurrentUser(): void {
+    this.authService.currentUser$.subscribe({
+      next: (res) =>{
+        this.currentUser = res;
         if (this.profileUser) this.checkIfOwnProfile();
       },
       error: () => {},
     });
   }
-  
   
   getUserProfile(): void {
     if (this.username) {
@@ -55,19 +58,14 @@ export class ProfileComponent implements OnInit {
           this.profileUser = data;
           if (this.currentUser) this.checkIfOwnProfile();
         },
-        error: (error) => {
-          //console.error('Error fetching user profile:', error);
-        },
+        error: (error) => {},
       });
     }
   }
   
   private checkIfOwnProfile(): void {
-    if (this.currentUser && this.profileUser) {
-      console.log('Current User:', this.currentUser);
-      console.log('Profile User:', this.profileUser);
+    if (this.currentUser && this.profileUser)
       this.isOwnProfile = this.currentUser.username === this.profileUser.username;
-    }
   }
   
 
