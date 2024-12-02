@@ -27,5 +27,17 @@ button:hover
   color: #bfbfbf;
 }
 
+.profile-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+  image-rendering: auto;
+  transform: scale(1);
+}
+
+
 
 

@@ -35,5 +35,17 @@
         <p class="text-muted text-center">18.3K</p>
       </div>
     </div>
+
+    <!-- Navigation Tabs -->
+    <div class="d-flex justify-content-center gap-4 my-4">
+      <a
+        *ngFor="let item of navItems"
+        [ngClass]="{ active: item.active }"
+        class="nav-item text-decoration-none text-muted"
+        (click)="setActive(item, $event)"
+      >
+        <span class="fw-bold p-2">{{ item.label }}</span>
+      </a>
+    </div>
   </div>
 </div>

@@ -26,7 +26,7 @@ button:hover
   background-color: var(--pixly-color-hover);
 }
 
-/* Stil za aktivnu stavku */
+
 .nav-item.active {
   background-color: black;
   color: white !important;
@@ -35,10 +35,14 @@ button:hover
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Stil za sve stavke */
 .nav-item {
   font-size: 1rem;
   transition: color 0.3s ease;
+}
+
+a
+{
+  cursor: pointer;
 }
 
 .nav-item:hover {
@@ -46,11 +50,9 @@ button:hover
   text-decoration: none;
 }
 
-/* Dodaj padding i izbegni gužvanje */
 .d-flex > .nav-item {
   padding: 5px 10px;
 }
-
 
 @media (max-width: 768px) {
   .nav-item {
@@ -63,14 +65,6 @@ button:hover
   }
 }
 
-/* Broj postaje beo kada je nav-item aktivan ili fokusiran */
-.nav-item.active span.text-muted,
-.nav-item:focus span.text-muted {
-  color: white; /* Samo broj pored postaje beo */
-}
 
-/* Uklanjanje crnog okvira na fokusu (opciono) */
-.nav-item:focus {
-  outline: none; /* Uklanja crni okvir na klik */
-  color: white;
-}
+
+

@@ -34,6 +34,7 @@ namespace backend.Endpoints.AuthEndpoints
                     Username = user.Username,
                     IsVerified = user.IsVerified,
                     IsAdmin = user.IsAdmin,
+                    profileImgUrl = user.ProfileImgUrl
                 }
             });
         }
