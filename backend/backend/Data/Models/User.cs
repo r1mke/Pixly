@@ -14,7 +14,7 @@ namespace backend.Data.Models
         public string Email { get; set; }
         [JsonIgnore]
         public string Password { get; set; }
-        public byte[]? ProfileImg { get; set; }
+        public string? ProfileImgUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsVerified { get; set; }
         [JsonIgnore]

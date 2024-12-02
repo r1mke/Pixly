@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { UpdateUserService } from '../../services/update-user.service';
@@ -17,24 +17,31 @@ export class EditProfileComponent implements OnInit {
   isEmailDisabled: boolean = true;
   isUsernameDisabled: boolean = true;
   public usernameError: string = '';
+  profileImgUrl: string | null = null; // Store the profile image URL
+  isImageDeleted: boolean = false;
+  public isLoading: boolean = false;
+
+  @ViewChild('fileInput') fileInput!: ElementRef;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private updateUserService: UpdateUserService,
-    private registerService: RegisterService,
   ) {}
 
   ngOnInit(): void {
     this.authService.getCurrentUser().subscribe({
       next: (response: any) => {
-        if (response?.user) 
+        if (response?.user) {
           this.initForm(response.user);
+          this.profileImgUrl = response.user.profileImgUrl || null; // Set the profile image URL
+        }
       },
       error: (err) => {
         console.error('Error fetching user:', err);
       },
     });
+
   }
 
   private initForm(user: any): void {
@@ -64,35 +71,64 @@ export class EditProfileComponent implements OnInit {
   saveProfile(): void {
     if (this.editProfileForm && this.editProfileForm.valid) {
       const { firstName, lastName, username } = this.editProfileForm.getRawValue();
-
-      this.updateUserService.updateUser({ firstName, lastName, username }).subscribe({
+      const profileImg = this.isImageDeleted ? null : this.fileInput?.nativeElement?.files[0];
+      this.isLoading = true;
+      this.updateUserService.updateUser({
+        firstName,
+        lastName,
+        username,
+        profileImg,
+        isImageDeleted: this.isImageDeleted,
+      }).subscribe({
         next: (response) => {
           console.log('Profile updated successfully:', response);
-          this.checkUsername(response.username);
-          alert(response.message);
+          this.usernameError = '';
         },
         error: (err) => {
           console.error('Error updating profile:', err);
-          alert(err.message || 'An error occurred while updating the profile.');
+
+          if (err?.message) {
+            if (err.message.includes('Username is already taken')) {
+              this.usernameError = 'Username is already taken.';
+              this.editProfileForm.get('username')?.valueChanges.subscribe(() => {
+                this.usernameError = '';
+              });
+            } else {
+              alert(err.message || 'An error occurred while updating the profile.');
+            }
+          }
         },
+
+        complete:() =>{
+          this.isLoading = false;
+        }
       });
     } else {
       console.log('Form is invalid');
     }
   }
 
-
-  checkUsername(username: string): void {
-    this.usernameError = '';
-    this.registerService.checkUsername(username).subscribe({
-      next: (response) => {
-        if (!response.available) 
-          this.usernameError = response.message;
-      },
-      error: (err) => {
-        console.error('Greška prilikom provjere korisničkog imena', err);
-      }
-    });
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.profileImgUrl = reader.result as string;
+        this.editProfileForm.markAsDirty();
+      };
+      reader.readAsDataURL(file);
+      // Optionally, you can upload the image to the server here.
+    }
   }
 
+  // This method can be used to delete the profile image
+  deleteImage(): void {
+    this.profileImgUrl = null; // Uklanja prikaz slike
+    this.isImageDeleted = true; // Oznaka da je slika obrisana
+    this.editProfileForm.markAsDirty(); // Oznaka da je forma izmijenjena
+  }
+
+  resetUsernameError(): void {
+    this.usernameError = '';  // Resetuje grešku korisničkog imena
+  }
 }

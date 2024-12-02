@@ -19,12 +19,10 @@ export class ProfileComponent implements OnInit {
   username: string | null = null;
 
   navItems = [
-    { label: 'Highlights', count: 0, active: true },
-    { label: 'Gallery', count: 0, active: false },
+    { label: 'Gallery', count: 0, active: true },
     { label: 'Collections', count: null, active: false },
     { label: 'Statistics', count: null, active: false },
-    { label: 'Followers', count: 0, active: false },
-    { label: 'Following', count: 0, active: false },
+    { label: 'AI', count: null, active: false },
   ];
 
   constructor(
@@ -73,7 +71,7 @@ export class ProfileComponent implements OnInit {
   }
   
 
-  setActive(item: any, event: Event): void {
+  public setActive(item: any, event: Event): void {
     event.preventDefault();
     this.navItems.forEach((nav) => (nav.active = false));
     item.active = true;

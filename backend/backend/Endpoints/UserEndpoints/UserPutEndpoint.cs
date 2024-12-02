@@ -12,10 +12,10 @@ using System.Text.Json.Serialization;
 namespace backend.Endpoints.UserEndpoints
 {
     [Route("user")]
-    public class UserPutEndpoint(AppDbContext db, IJwtService jwtService) : ControllerBase
+    public class UserPutEndpoint(AppDbContext db, IJwtService jwtService, PhotoService photoService) : ControllerBase
     {
         [HttpPut("update-user")]
-        public async Task<IActionResult> HandleAsync([FromBody] UpdateUserRequest request, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> HandleAsync([FromForm] UpdateUserRequest request, CancellationToken cancellationToken = default)
         {
             var jwtToken = Request.Cookies["jwt"];
 
@@ -33,12 +33,29 @@ namespace backend.Endpoints.UserEndpoints
                 .FirstOrDefaultAsync(u => u.Id == user.Id, cancellationToken);
 
             if (existingUser == null)
-                return NotFound(new UpdateUserResponse { Message = $"User with not found" });
+                return NotFound(new UpdateUserResponse { Message = $"User with id {user.Id} not found" });
+
+            var usernameExists = await db.Users
+                .AnyAsync(u => u.Username == request.Username && u.Id != existingUser.Id, cancellationToken);
+
+            if (usernameExists)
+                return BadRequest(new UpdateUserResponse { Message = "Username is already taken" });
+            
 
             // Update user fields with the request values
             existingUser.FirstName = request.FirstName;
             existingUser.LastName = request.LastName;
             existingUser.Username = request.Username;
+
+            if (request.IsImageDeleted == true)
+                existingUser.ProfileImgUrl = null;
+            
+            else if (request.ProfileImg != null)
+            {
+                var imageUrl = await photoService.UploadProfilePhotoAsync(request.ProfileImg, cancellationToken);
+                existingUser.ProfileImgUrl = imageUrl;
+            }
+
 
             db.Users.Update(existingUser);
             await db.SaveChangesAsync(cancellationToken);
@@ -50,23 +67,27 @@ namespace backend.Endpoints.UserEndpoints
         {
             [Required]
             [MinLength(2), MaxLength(20)]
-            [JsonPropertyName("firstName")]
             public string FirstName { get; set; }
 
             [Required]
             [MinLength(2), MaxLength(20)]
-            [JsonPropertyName("lastName")]
             public string LastName { get; set; }
 
             [Required]
             [MinLength(5), MaxLength(20)]
-            [JsonPropertyName("username")]
             public string Username { get; set; }
+
+            [JsonIgnore]
+            public IFormFile ProfileImg { get; set; } // Profilna slika
+
+            public bool? IsImageDeleted { get; set; } // Oznaka da li se slika treba obrisati
         }
+
 
         public class UpdateUserResponse
         {
             public string Message { get; set; }
         }
+
     }
 }
