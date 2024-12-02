@@ -56,12 +56,12 @@ a
 
 @media (max-width: 768px) {
   .nav-item {
-    display: block; /* Prikazuje svaki nav-item kao blok */
-    text-align: center; /* Poravnanje teksta u centar */
+    display: block;
+    text-align: center; 
   }
   .nav-container {
-    flex-direction: column; /* Elementi idu jedan ispod drugog */
-    gap: 1rem; /* Razmak između elemenata */
+    flex-direction: column;
+    gap: 1rem;
   }
 }
 

@@ -47,11 +47,11 @@ export class VerifyEmailComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.isLoading = true; // Postavite indikator na početku.
+    this.isLoading = true;
     this.authService.getCurrentUser().subscribe({
       next: (response) => {
         if (response) {
-          this.user = response.user; // Dohvatite podatke o korisniku.
+          this.user = response.user;
           this.userEmail = response.user?.email;
         } else {
           this.errorMessage = 'Greška prilikom dohvaćanja podataka korisnika.';
