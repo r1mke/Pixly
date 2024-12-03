@@ -48,6 +48,10 @@ export const routes: Routes = [
           }
         ]
       },
+      {
+        path: 'generate-image',
+        loadComponent: () => import('./features/public/pages/generate-image-page/generate-image-page.component').then(m => m.GenerateImagePageComponent),
+      },
       { path: '**', redirectTo: 'home', pathMatch: 'full' }
     ] 
   },
