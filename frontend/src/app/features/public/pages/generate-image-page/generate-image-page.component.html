@@ -1,0 +1,43 @@
+<app-nav-bar></app-nav-bar>
+
+<div class="hero-section">
+    <img src="../../../../../assets/img/aibg.webp" alt="">
+    <div class="overlay">
+        <div class="container">
+            <h1>Al Generator</h1>
+            <p>This is an AI Image Generator. It creates an image from scratch from a text description.
+            </p>
+            <form action="#" class="generate-form">
+                <input type="text" placeholder="Enter a prompt..." [(ngModel)]="input" name="input">
+                <div class="controls">
+                    <select  #quantitySelect class="img-quantity">
+                        <option value="1">1 Image</option>
+                        <option value="2">2 Image</option>
+                        <option value="3">3 Image</option>
+                        <option value="4">4 Image</option>
+                    </select>
+                    <button (click)="generateImage(quantitySelect.value)">Generate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="image-gallery">
+    <div class="img-card" *ngFor="let image of images; let i = index" >
+        <div class="overlaay card"></div>
+        <img *ngIf="!loading" [src]="image" alt=""> 
+        <a href="#" 
+        class="download-button" 
+        (click)="downloadImage(image, i)">
+            <i class="fa-solid fa-download fa-lg"></i>
+        </a>
+    </div> 
+    <div class="image-gallery-loading" *ngIf="images.length === 0 && loading">
+        <div class="loading-screen" *ngFor="let number of numberArray">
+            <img src="assets/img/loader.svg" alt="">
+        </div> 
+    </div>
+
+</div>
+
+
