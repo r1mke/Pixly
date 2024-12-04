@@ -26,9 +26,9 @@
     <div class="img-card" *ngFor="let image of images; let i = index" >
         <div class="overlaay card"></div>
         <img *ngIf="!loading" [src]="image" alt=""> 
-        <a href="#" 
+        <a 
         class="download-button" 
-        (click)="downloadImage(image, i)">
+        [href]="image" download="image-{{i+1}}.png">
             <i class="fa-solid fa-download fa-lg"></i>
         </a>
     </div> 
