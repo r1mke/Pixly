@@ -69,6 +69,12 @@ nav{
     align-items: center;
 }
 
+.profile-img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
 
 .resources{
     position: relative;
