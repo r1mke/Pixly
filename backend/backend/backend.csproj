@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <Folder Include="Helper\DTO-s\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

@@ -24,7 +24,7 @@ namespace backend.Helper.Services
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddMinutes(1)
+                Expires = DateTime.UtcNow.AddHours(1)
             });
         }
 
@@ -36,7 +36,7 @@ namespace backend.Helper.Services
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddHours(1)
+                Expires = DateTime.UtcNow.AddDays(7)
             });
         }
 

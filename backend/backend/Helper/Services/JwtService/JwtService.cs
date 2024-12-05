@@ -69,7 +69,7 @@ public class JwtService : IJwtService
             issuer: _issuer,
             audience: _audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(1),
+            expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: creds
         );
 
@@ -89,7 +89,7 @@ public class JwtService : IJwtService
             Token = Convert.ToBase64String(randomNumber),
             UserId = userId,
             CreatedAt = DateTime.UtcNow,
-            ExpiresAt = DateTime.UtcNow.AddHours(1),
+            ExpiresAt = DateTime.UtcNow.AddDays(7),
         };
     }
 

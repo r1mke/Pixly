@@ -47,7 +47,7 @@ public class LoginEndpoint(AppDbContext db, IPasswordHasher passwordHasher, IJwt
         {
             UserId = user.Id,
             Token = Guid.NewGuid().ToString(),
-            ExpiresAt = DateTime.UtcNow.AddHours(1),
+            ExpiresAt = DateTime.UtcNow.AddDays(7),
             CreatedAt = DateTime.UtcNow
         };
         db.RefreshTokens.Add(newRefreshToken);
