@@ -25,8 +25,9 @@ namespace backend.Endpoints.AuthEndopints
                 return await HandleError("Invalid verification request.", 400);
 
             var jwtToken = Request.Cookies["jwt"];
+            var refreshToken = Request.Cookies["refreshToken"];
 
-            var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, db);
+            var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, refreshToken, db);
             if (validationResult is UnauthorizedObjectResult)
             {
                 var unauthorizedMessage = ((UnauthorizedObjectResult)validationResult).Value?.ToString() ?? "Unauthorized";

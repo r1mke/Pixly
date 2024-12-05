@@ -14,29 +14,38 @@ namespace backend.Endpoints.AuthEndpoints
         public async Task<IActionResult> GetCurrentUserAsync()
         {
             var jwtToken = Request.Cookies["jwt"];
+            var refreshToken = Request.Cookies["refreshToken"];
 
-            var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, dbContext);
+            var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, refreshToken, dbContext);
+
             if (validationResult is UnauthorizedObjectResult unauthorizedResult)
                 return unauthorizedResult;
 
-            var user = (User)((OkObjectResult)validationResult).Value;
-
-            return Ok(new
+            if (validationResult is OkObjectResult okResult)
             {
-                IsValid = true,
-                Message = "Token is valid.",
-                User = new
+                var user = okResult.Value as User;
+
+                if (user == null) 
+                    return Unauthorized(new { Message = "Invalid user data." });    
+
+                return Ok(new
                 {
-                    UserId = user.Id,
-                    Email = user.Email,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Username = user.Username,
-                    IsVerified = user.IsVerified,
-                    IsAdmin = user.IsAdmin,
-                    profileImgUrl = user.ProfileImgUrl
-                }
-            });
+                    IsValid = true,
+                    User = new
+                    {
+                        UserId = user.Id,
+                        Email = user.Email,
+                        FirstName = user.FirstName,
+                        LastName = user.LastName,
+                        Username = user.Username,
+                        IsVerified = user.IsVerified,
+                        IsAdmin = user.IsAdmin,
+                        ProfileImgUrl = user.ProfileImgUrl
+                    }
+                });
+            }
+            return Unauthorized(new { Message = "Invalid token." });
         }
+
     }
 }

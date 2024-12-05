@@ -23,8 +23,9 @@ public class ResendVerificationCodeEndpoint(AppDbContext db, IEmailSender emailS
     public async Task<ActionResult> HandleAsync(CancellationToken cancellationToken = default)
     {
         var jwtToken = Request.Cookies["jwt"];
+        var refreshToken = Request.Cookies["refreshToken"];
 
-        var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, db);
+        var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, refreshToken, db);
         if (validationResult is UnauthorizedObjectResult unauthorizedResult)
             return unauthorizedResult;
 

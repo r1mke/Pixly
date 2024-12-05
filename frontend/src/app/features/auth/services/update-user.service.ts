@@ -19,15 +19,12 @@ export class UpdateUserService {
     formData.append('lastName', data.lastName);
     formData.append('username', data.username);
 
-    if (data.profileImg) {
+    if (data.profileImg) 
       formData.append('profileImg', data.profileImg, data.profileImg.name);
-    }
-
-    // Dodavanje statusa obrisane slike
-    if (data.isImageDeleted) {
-      formData.append('isImageDeleted', String(data.isImageDeleted)); // Pretvara boolean u string ("true" ili "false")
-    }
-
+    
+    if (data.isImageDeleted) 
+      formData.append('isImageDeleted', String(data.isImageDeleted));
+    
     return this.http.put(this.apiUpdateUser, formData, { withCredentials: true }).pipe(
       catchError(this.authService.handleError)
     );
