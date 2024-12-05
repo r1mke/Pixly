@@ -50,13 +50,7 @@ export class GenerateImagePageComponent {
 
   }
 
-  downloadImage(imageUrl: string, index: number): void {
-    const a = document.createElement('a');
-    a.href = imageUrl;
-    a.download = `image${index + 1}.png`;
-    a.click();
-  }
-
+  
 
   // openInNewTab() {
   //   if (this.imageUrl) {
