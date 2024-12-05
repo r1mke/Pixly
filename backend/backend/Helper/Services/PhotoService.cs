@@ -4,7 +4,6 @@ using backend.Data;
 using Microsoft.Extensions.Options;
 using backend.Data.Models;
 using backend.Helper;
-using backend.Helper.DTO_s;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 
@@ -71,7 +70,7 @@ public class PhotoService
         return compressedUploadResult.Url.ToString();
     } 
 
-    public async Task<PostPhotoResult> UploadPhotoAsync(string title, string description, string location, int userId, IFormFile file, List<string> tags, List<CategoryDTO> categories, CancellationToken cancellationToken)
+    public async Task<PostPhotoResult> UploadPhotoAsync(string title, string description, string location, int userId, IFormFile file, List<string> tags, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(title))
             throw new ArgumentException("Title is required.");
@@ -79,8 +78,6 @@ public class PhotoService
             throw new ArgumentException("File is required.");
         if (tags == null || !tags.Any())
             throw new ArgumentException("At least one tag is required.");
-        if (categories == null || !categories.Any())
-            throw new ArgumentException("At least one category is required.");
          
         using var memoryStream = new MemoryStream();
         await file.CopyToAsync(memoryStream, cancellationToken);
@@ -125,17 +122,6 @@ public class PhotoService
 
         _context.Photos.Add(photo);
         await _context.SaveChangesAsync();
-
-        photo.PhotoCategories = categories.Select(c => new PhotoCategory
-        {
-            
-            CategoryId = c.id,
-            PhotoId = photo.Id,
-            Category = new Category { Id = c.id, Name = c.categoryName},
-            Photo = photo,
-
-        }).ToList();
-
 
         // Save resolutions
         var resolutions = new List<PhotoResolution>

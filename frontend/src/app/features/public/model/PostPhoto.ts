@@ -1,5 +1,3 @@
-import { Category } from "./category";
-
 export interface PostPhoto {
     Title:string;
     Description:string;
@@ -7,6 +5,6 @@ export interface PostPhoto {
     UserId : number;
     Files : File;
     Tags : string[];
-    Categories : Category[];    
+    
   }
   

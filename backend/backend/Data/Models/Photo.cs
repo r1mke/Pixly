@@ -18,6 +18,5 @@
         public ICollection<PhotoResolution> Resolutions { get; set; } = new List<PhotoResolution>();
 
         public ICollection<PhotoColor> PhotoColors { get; set; } = new List<PhotoColor>();
-        public ICollection<PhotoCategory> PhotoCategories { get; set; } = new List<PhotoCategory>();
     }
 }

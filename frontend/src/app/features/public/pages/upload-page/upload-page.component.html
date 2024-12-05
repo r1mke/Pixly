@@ -143,44 +143,6 @@
           </div>
         </div>
         <div class="form-group">
-          <label for="categories">Categories</label>
-          <div *ngIf="selectArray.length === 0">Loading categories...</div>
-          <select
-            *ngIf="selectArray.length > 0"
-            name="categories"
-            formControlName="categories"
-            class="form-control"
-            (change)="selectCategory($event)"
-            
-          >
-            <option style="color: rgb(33, 37, 41)" value="" disabled >Select a category...</option>
-            <option *ngFor="let category of selectArray" [value]="category.id">
-              {{ category.categoryName }}
-            </option>
-          </select>
-
-          <div
-            *ngIf="
-              uploadForm.get('categories')?.invalid &&
-              uploadForm.get('categories')?.touched
-            "
-            class="error"
-          >
-            <div *ngIf="uploadForm.get('categories')?.errors?.['required']">
-              Categories is required.
-            </div>
-          </div>
-          <div class="categories" *ngIf="categories.length > 0">
-            <div *ngFor="let category of categories" class="category">
-              <span>{{ category.categoryName }}</span>
-              <i
-                (click)="removeCategory(category)"
-                class="fa-solid fa-xmark"
-              ></i>
-            </div>
-          </div>
-        </div>
-        <div class="form-group">
           <label for="tags">Tags</label>
           <div class="add-tag">
             <input
@@ -217,7 +179,6 @@
                 || !uploadForm.get('description')?.valid
                 || !uploadForm.get('location')?.valid
                 || tags.length === 0
-                || categories.length === 0
                 || isLoading" (click)="onSubmit()">
                 <span class="text-white" *ngIf="!isLoading">Upload</span>
                 <div *ngIf="isLoading" class="spinner-border spinner-border-sm text-light" role="status">
