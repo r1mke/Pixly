@@ -40,7 +40,14 @@
                 class="resources text-center" 
                 (mouseenter)="emitHoverStateChange('profile', true)" 
                 (mouseleave)="emitHoverStateChange('profile', false)" *ngIf="user">
-                    <button class="p-0 m-0 border-0"><img src="assets/img/user_dflt.png" height="30px" width="30px" alt="Profile"></button>
+                    <button class="p-0 m-0 border-0">
+                        <img [src]="user.profileImgUrl || 'assets/img/user_dflt.png'" 
+                            height="30px" 
+                            width="30px" 
+                            alt="Profile" 
+                            class="rounded-circle img-fluid profile-img"
+                        />
+                    </button>
                     <i class="fa-solid ms-2" [ngClass]="profileHovered ? 'fa-angle-up' : 'fa-angle-down'"></i>
                     <div class="dropdown-content">
                         <div class="popular-searches">

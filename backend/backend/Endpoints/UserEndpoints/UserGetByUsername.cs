@@ -19,6 +19,7 @@ namespace backend.Endpoints.UserEndpoints
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     Username = u.Username,
+                    ProfileImgUrl = u.ProfileImgUrl,
                 })
                 .FirstOrDefaultAsync();
 
