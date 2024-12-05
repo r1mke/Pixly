@@ -14,7 +14,7 @@ import _ from 'lodash';
 export class GalleryComponent implements OnInit {
   photos: any[] = [];
   originalPhotos: any[] = []; 
-   selectedFilter: string = 'trending';
+  selectedFilter: string = 'trending';
   constructor(private getAllPhotosService: GetAllPhotosService ) { }
 
   ngOnInit() {
