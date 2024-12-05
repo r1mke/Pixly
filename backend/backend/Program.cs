@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using backend.Helper.Auth.PasswordHasher;
+using backend.Helper.Services;
+
 
 public class Program
 {
@@ -53,6 +55,8 @@ public class Program
         builder.Services.AddScoped<PhotoService>();
         builder.Services.AddScoped<IJwtService, JwtService>();
         builder.Services.AddScoped<IStringHelper, StringHelper>();
+        builder.Services.AddScoped<AuthService>();
+        builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
@@ -116,6 +120,7 @@ public class Program
         //app.UseHttpsRedirection();
 
         // Middleware za autentifikaciju i autorizaciju
+        app.UseMiddleware<JwtRefreshMiddleware>();
         app.UseAuthentication();
         app.UseAuthorization();
 

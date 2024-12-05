@@ -13,29 +13,30 @@ using backend.Helper.Services.JwtService;
 using Azure;
 using backend.Heleper.Api;
 using System.Linq;
+using backend.Helper.Services;
 
 namespace backend.Endpoints.AuthEndopints
 {
     [AllowAnonymous]
     [Route("auth")]
-    public class RegisterEndpoint(AppDbContext db, IEmailSender emailSender, IPasswordHasher passwordHasher, IJwtService jwtService, IStringHelper stringHelper) : MyEndpointBaseAsync
+    public class RegisterEndpoint(AppDbContext db, IEmailSender emailSender, IPasswordHasher passwordHasher, IJwtService jwtService, IStringHelper stringHelper, AuthService authService) : MyEndpointBaseAsync
         .WithRequest<CreateUserRequest>
         .WithResult<UserRegistrationResponse>
     {
         [HttpPost("register")]
         public override async Task<UserRegistrationResponse> HandleAsync(CreateUserRequest request, CancellationToken cancellationToken = default)
         {
-            if (!ModelState.IsValid)
-                throw new InvalidOperationException("Invalid request data");
-
+            // checking Email
             var existingUser = await db.Users.FirstOrDefaultAsync(u => u.Email == request.Email, cancellationToken);
             if (existingUser != null)
                 throw new InvalidOperationException("User with this email already exists");
 
+            // checking Username
             var usernameExists = await db.Users.AnyAsync(u => u.Username == request.Username, cancellationToken);
             if (usernameExists)
                 throw new InvalidOperationException("User with this username already exists");
 
+            // saving User in DB
             var hash = await passwordHasher.Hash(request.Password);
             var user = new User
             {
@@ -52,6 +53,7 @@ namespace backend.Endpoints.AuthEndopints
             db.Users.Add(user);
             await db.SaveChangesAsync(cancellationToken);
 
+            // creating & saving verification email code
             var verificationCode = new Random().Next(100000, 1000000).ToString();
             var newVerificationCode = new EmailVerificationCode
             {
@@ -64,9 +66,11 @@ namespace backend.Endpoints.AuthEndopints
             db.EmailVerificationCodes.Add(newVerificationCode);
             await db.SaveChangesAsync(cancellationToken);
 
+            // sending email code
             await emailSender.SendEmailAsync(user.Email, "Verify your email",
                 $"Code to verify your email: <strong>{verificationCode}</strong>");
 
+            // creating JWT and RefreshToken
             var jwtToken = jwtService.GenerateJwtToken(user);
             var refreshToken = jwtService.GenerateRefreshToken(user.Id);
             var refreshTokenRecord = new RefreshToken
@@ -80,22 +84,9 @@ namespace backend.Endpoints.AuthEndopints
             db.RefreshTokens.Add(refreshTokenRecord);
             await db.SaveChangesAsync(cancellationToken);
 
-
-            Response.Cookies.Append("jwt", jwtToken, new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddHours(1),
-                Secure = true,
-            });
-
-            Response.Cookies.Append("refreshToken", refreshToken.Token, new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.None,
-                Expires = DateTime.UtcNow.AddDays(7),
-                Secure = true,
-            });
+            // Set Cookie
+            authService.SetJwtCookie(jwtToken);
+            authService.SetRefreshTokenCookie(refreshToken.Token);
 
             return new UserRegistrationResponse
             {

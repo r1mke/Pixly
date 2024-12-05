@@ -11,16 +11,18 @@ using Microsoft.EntityFrameworkCore;
 using backend.Helper.Auth.PasswordHasher;
 using backend.Heleper.Api;
 using Newtonsoft.Json.Linq;
+using backend.Helper.Services;
 
 [Route("auth")]
-public class LogoutEndpoint(AppDbContext db, IPasswordHasher passwordHasher, IJwtService jwtService) : ControllerBase
+public class LogoutEndpoint(AppDbContext db, IPasswordHasher passwordHasher, IJwtService jwtService, AuthService authService) : ControllerBase
 {
     [HttpPost("logout")]
     public async Task<IActionResult> Logout(CancellationToken cancellationToken = default)
     {
         var jwtToken = Request.Cookies["jwt"];
+        var refreshToken = Request.Cookies["refreshToken"];
 
-        var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, db);
+        var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, refreshToken, db);
         if (validationResult is UnauthorizedObjectResult unauthorizedResult)
             return unauthorizedResult;
 
@@ -28,23 +30,8 @@ public class LogoutEndpoint(AppDbContext db, IPasswordHasher passwordHasher, IJw
 
         jwtService.Logout(user.Id);
 
-        Response.Cookies.Delete("jwt", new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            Path = "/" // Dodaj ovu opciju
-        });
-
-
-        Response.Cookies.Delete("refreshToken", new CookieOptions
-        {
-            HttpOnly = true,
-            Secure = true,
-            SameSite = SameSiteMode.None,
-            Path = "/" // Dodaj ovu opciju
-        });
-
+        authService.DeleteJwtCookie();
+        authService.DeleteRefreshToken();
 
         return Ok(new { message = "Successfully logged out" });
     }

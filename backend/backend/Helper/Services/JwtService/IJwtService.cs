@@ -14,6 +14,7 @@ namespace backend.Helper.Services.JwtService
         string ExtractEmailFromJwt(string jwtToken);
         public bool IsValidJwt(string token);
         void Logout(int userId);
-        Task<IActionResult> ValidateJwtAndUserAsync(string jwtToken, AppDbContext db);
+        Task<IActionResult> ValidateJwtAndUserAsync(string jwtToken, string refreshToken, AppDbContext db);
+        public ClaimsPrincipal GetPrincipalFromToken(string token);
     }
 }
