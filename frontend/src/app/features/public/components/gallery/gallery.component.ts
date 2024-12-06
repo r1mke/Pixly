@@ -4,6 +4,7 @@ import { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import _ from 'lodash';
 import { InfiniteScrollModule   } from '@robingenz/ngx-infinite-scroll';
+import { AuthService } from '../../../auth/services/auth.service';
 
 
 export class AppModule {}
@@ -20,8 +21,9 @@ export class GalleryComponent implements OnInit {
   originalPhotos: any[] = []; 
   selectedFilter: string = 'trending';
   isLoading: boolean = false;
-  constructor(private getAllPhotosService: GetAllPhotosService ) { }
+  user: any = null;
 
+  constructor(private getAllPhotosService: GetAllPhotosService, private authService: AuthService ) { }
 
   ngOnInit(): void {
     this.loadPhotos();
@@ -48,6 +50,18 @@ export class GalleryComponent implements OnInit {
       }
     }  
     )
+
+    this.authService.currentUser$.subscribe((user) => {
+      this.user = user;
+    });
+
+    if (!this.user) {
+      this.authService.getCurrentUser().subscribe({
+        error: () => {
+          console.error('Error fetching user');
+        },
+      });
+    }
   }
 
   loadMoreItems(){
@@ -92,6 +106,32 @@ export class GalleryComponent implements OnInit {
         this.loadMoreItems();
       }
     }
+
+
+  toggleLike(photo: any) {
+    const userId = this.user.userId;
+
+    if (!photo.isLiked) {
+      this.getAllPhotosService.likePhoto(photo.id, userId).subscribe({
+        next: (res) => {
+          photo.isLiked = true;
+        },
+        error: (err) => {
+          console.error('Error liking photo:', err.error?.Message || err.message);
+        },
+      });
+    } 
+    else {
+      this.getAllPhotosService.unlikePhoto(photo.id, userId).subscribe({
+        next: (res) => {
+          photo.isLiked = false;
+        },
+        error: (err) => {
+          console.error('Error unliking photo:', err.error?.Message || err.message);
+        },
+      });
+    }
+  }    
 }
 
 

@@ -14,7 +14,7 @@ export class GetAllPhotosService {
   constructor(private http: HttpClient) { }
  
   getAllPhotos(pageNumber : number = this.pageNumber, pageSize : number = this.pageSize): Observable<any> {
-      return this.http.get<any>(`${MYCONFIG.apiUrl}/api/photos/page/${pageNumber}/${pageSize}`);
+      return this.http.get<any>(`${MYCONFIG.apiUrl}/api/photos/page/${pageNumber}/${pageSize}`, {withCredentials: true});
   }
 
   incrementPageNumber() {
@@ -28,5 +28,19 @@ export class GetAllPhotosService {
   getPageSize() {
     return this.pageSize;
   }
+
+  likePhoto(photoId: number, userId: number): Observable<any> {
+    return this.http.post<any>(
+      `${MYCONFIG.apiUrl}/api/photos/${photoId}/like?userId=${userId}`, 
+      {}
+    );
+  }
+  
+  unlikePhoto(photoId: number, userId: number): Observable<any> {
+    return this.http.delete<any>(
+      `${MYCONFIG.apiUrl}/api/photos/${photoId}/like?userId=${userId}`
+    );
+  }
+  
   
 }
