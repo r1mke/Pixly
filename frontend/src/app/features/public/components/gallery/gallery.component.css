@@ -185,6 +185,14 @@ select{
 	align-items: center;
 }
 
+.profile-img {
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto;
+  image-rendering: auto;
+  transform: scale(1);
+}
+
 @media (max-width:900px){
 	.container{
 		width: calc(100% - 40px);

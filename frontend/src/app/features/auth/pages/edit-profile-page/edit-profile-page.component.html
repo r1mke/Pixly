@@ -7,10 +7,10 @@
   <!-- Profile Picture -->
   <div class="row mb-5 align-items-center">
     <div class="col-md-6 text-center text-md-end">
-      <img [src]="profileImgUrl || 'assets/img/big_user_dflt.png'" alt="Profile Image" class="rounded-circle img-fluid profile-img">
+      <img [src]="profileImgUrl || 'assets/img/big_user_dflt.png'" alt="Profile Image" class="rounded-circle profile-img">
     </div>
     <div class="col-md-6 text-center">
-      <button class="bg-warning text-white w-75 w-md-75 mb-3" (click)="fileInput.click()">Change image</button>
+      <button class="text-white w-75 w-md-75 mb-3" (click)="fileInput.click()">Change image</button>
       <button class="bg-secondary text-white w-75 w-md-75" (click)="deleteImage()">Delete image</button>
       <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" style="display: none" />
     </div>
