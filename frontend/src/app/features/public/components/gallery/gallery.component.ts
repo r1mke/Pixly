@@ -20,6 +20,7 @@ export class GalleryComponent implements OnInit {
   originalPhotos: any[] = []; 
   selectedFilter: string = 'trending';
   isLoading: boolean = false;
+  totalPhotos: number = 0;
   constructor(private getAllPhotosService: GetAllPhotosService ) { }
 
 
@@ -39,6 +40,7 @@ export class GalleryComponent implements OnInit {
         this.originalPhotos = [...this.originalPhotos, ...res.photos];
         this.photos = this.originalPhotos;
         this.getAllPhotosService.incrementPageNumber();
+        this.totalPhotos = res.totalPhotos;
       },
       error:(error) => {
         console.error('Error fetching user:', error);
@@ -51,6 +53,7 @@ export class GalleryComponent implements OnInit {
   }
 
   loadMoreItems(){
+    if (this.totalPhotos === this.originalPhotos.length) return;
     if (this.isLoading) return;
     console.log("load more items");
     if(this.getAllPhotosService.getCurrentPageNumber() <= this.totalPages){
@@ -87,7 +90,7 @@ export class GalleryComponent implements OnInit {
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
   
-      // Provjera je li korisnik došao do 90% stranice
+      if (this.totalPhotos === this.originalPhotos.length) return;
       if (scrollPosition + windowHeight >= documentHeight * 0.9) {
         this.loadMoreItems();
       }
