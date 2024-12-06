@@ -1,6 +1,7 @@
 ﻿using backend.Data;
 using backend.Data.Models;
 using backend.Heleper.Api;
+using backend.Helper.Services.JwtService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static backend.API.Endpoints.UserEndpoints.UserGetAllEndpoint;
@@ -8,21 +9,15 @@ using static backend.API.Endpoints.UserEndpoints.UserGetAllEndpoint;
 namespace backend.Endpoints.PhotoEndpoints
 {
     [Route("api/photos/page/{pageNumber}/{pageSize}")]
-    public class PhotoGetAllEndpoint : MyEndpointBaseAsync
+    public class PhotoGetAllEndpoint(AppDbContext db, IJwtService jwtService) : MyEndpointBaseAsync
         .WithRequest<PhotoGetAllRequest>
         .WithResult<PhotoGetAllResult>
     {
-        private readonly AppDbContext _db;
-
-        public PhotoGetAllEndpoint(AppDbContext db)
-        {
-            _db = db;
-        }
-
+        
+        [HttpGet]
         [HttpGet]
         public override async Task<PhotoGetAllResult> HandleAsync([FromRoute] PhotoGetAllRequest request, CancellationToken cancellationToken = default)
         {
-
             if (request.pageNumber < 1 || request.pageSize < 1)
             {
                 return new PhotoGetAllResult
@@ -35,15 +30,20 @@ namespace backend.Endpoints.PhotoEndpoints
                 };
             }
 
-
             var skip = (request.pageNumber - 1) * request.pageSize;
 
-            var totalPhotos = await _db.Photos.CountAsync();
-
+            var totalPhotos = await db.Photos.CountAsync();
             var totalPages = (int)Math.Ceiling((double)totalPhotos / request.pageSize);
 
+            var jwtToken = Request.Cookies["jwt"];
+            var refreshToken = Request.Cookies["refreshToken"];
 
-            var photos = await _db.Photos
+            var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, refreshToken, db);
+
+            // Ako je korisnik validan, uzimamo korisnika iz odgovora
+            var user = validationResult is OkObjectResult okResult ? (User)okResult.Value : null;
+
+            var photos = await db.Photos
                 .Select(p => new PhotoDTO
                 {
                     Id = p.Id,
@@ -57,13 +57,14 @@ namespace backend.Endpoints.PhotoEndpoints
                     Approved = p.Approved,
                     CreateAt = p.CreateAt,
                     Orientation = p.Orientation,
-                    Url = _db.PhotoResolutions.Where(r => r.PhotoId == p.Id && r.Resolution == "compressed").Select(r => r.Url).FirstOrDefault(),
-                    Size = _db.PhotoResolutions.Where(r => r.PhotoId == p.Id && r.Resolution == "compressed").Select(r => r.Size).FirstOrDefault(),
-
-                }).Skip(skip).Take(request.pageSize).ToArrayAsync(cancellationToken);
-
-
-
+                    Url = db.PhotoResolutions.Where(r => r.PhotoId == p.Id && r.Resolution == "compressed").Select(r => r.Url).FirstOrDefault(),
+                    Size = db.PhotoResolutions.Where(r => r.PhotoId == p.Id && r.Resolution == "compressed").Select(r => r.Size).FirstOrDefault(),
+                    // Provjera da li je korisnik lajkovao sliku
+                    IsLiked = user != null && db.Likes.Any(l => l.PhotoId == p.Id && l.UserId == user.Id)
+                })
+                .Skip(skip)
+                .Take(request.pageSize)
+                .ToArrayAsync(cancellationToken);
 
             return new PhotoGetAllResult
             {
@@ -74,6 +75,7 @@ namespace backend.Endpoints.PhotoEndpoints
                 pageSize = request.pageSize,
             };
         }
+
     }
 
     public class PhotoGetAllResult
@@ -109,5 +111,7 @@ namespace backend.Endpoints.PhotoEndpoints
         public string? Orientation { get; set; }
         public string Url { get; set; }
         public long? Size { get; set; }
+
+        public bool IsLiked { get; set; }
     }
 }

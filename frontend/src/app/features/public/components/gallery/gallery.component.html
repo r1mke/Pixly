@@ -16,13 +16,20 @@
 			<div class="layout">
 				<div class="layout-content">
 					<div class="row-1">
-						<button class="like-button">
-							<i class="fa-regular fa-heart text-secondary"></i>
+						<button 
+							class="like-button" 
+							(click)="toggleLike(photo)" 
+							[ngClass]="{'liked': photo.isLiked}">
+							<i 
+								class="fa" 
+								[ngClass]="photo.isLiked ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart text-secondary'">
+							</i>
 						</button>
 						<button class="collect-button">
 							<i class="fa-regular fa-bookmark text-secondary"></i>
 						</button>
 					</div>
+					
 					<div class="row-2">
 						<div class="user">
 							<img [src]="photo.user?.profileImgUrl || 'assets/img/user_dflt.png'" 
