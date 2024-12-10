@@ -2,16 +2,18 @@
 <app-nav-bar/>
 
 <div class="container">
-  <h1 class="text-center mb-5">Profile settings</h1>
+  <h1 class="text-center mb-3 mb-md-5">Profile settings</h1>
   
   <!-- Profile Picture -->
   <div class="row mb-5 align-items-center">
-    <div class="col-md-6 text-center text-md-end">
+    <div class="col-md-6 text-center text-md-end mb-3 mb-md-0">
       <img [src]="profileImgUrl || 'assets/img/big_user_dflt.png'" alt="Profile Image" class="rounded-circle profile-img">
     </div>
     <div class="col-md-6 text-center">
-      <button class="text-white w-75 w-md-75 mb-3" (click)="fileInput.click()">Change image</button>
-      <button class="bg-secondary text-white w-75 w-md-75" (click)="deleteImage()">Delete image</button>
+      <button class="text-white mb-3 responsive-btn" (click)="fileInput.click()">Change image</button>
+
+
+      <button class="bg-secondary text-white responsive-btn" (click)="deleteImage()">Delete image</button>
       <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" style="display: none" />
     </div>
   </div>
