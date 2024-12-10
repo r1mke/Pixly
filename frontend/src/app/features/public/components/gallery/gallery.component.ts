@@ -5,6 +5,8 @@ import { CommonModule } from '@angular/common';
 import _ from 'lodash';
 import { InfiniteScrollModule   } from '@robingenz/ngx-infinite-scroll';
 import { AuthService } from '../../../auth/services/auth.service';
+import { PhotoService } from '../../services/photo.service';
+import { Router } from '@angular/router';
 
 
 export class AppModule {}
@@ -22,8 +24,9 @@ export class GalleryComponent implements OnInit {
   selectedFilter: string = 'trending';
   isLoading: boolean = false;
   user: any = null;
+  userId : number = 0;
 
-  constructor(private getAllPhotosService: GetAllPhotosService, private authService: AuthService ) { }
+  constructor(private getAllPhotosService: GetAllPhotosService, private authService: AuthService, private router: Router, private photoService: PhotoService ) { }
 
   ngOnInit(): void {
     this.loadPhotos();
@@ -108,11 +111,16 @@ export class GalleryComponent implements OnInit {
     }
 
 
-  toggleLike(photo: any) {
-    const userId = this.user.userId;
+  toggleLike(photo: any, event: Event) {
+    event.stopPropagation(); 
+
+    if(this.user)
+      this.userId = this.user.userId;
+    else 
+      this.router.navigate(['auth/login']);
 
     if (!photo.isLiked) {
-      this.getAllPhotosService.likePhoto(photo.id, userId).subscribe({
+      this.photoService.likePhoto(photo.id, this.userId).subscribe({
         next: (res) => {
           photo.isLiked = true;
         },
@@ -122,7 +130,7 @@ export class GalleryComponent implements OnInit {
       });
     } 
     else {
-      this.getAllPhotosService.unlikePhoto(photo.id, userId).subscribe({
+      this.photoService.unlikePhoto(photo.id, this.userId).subscribe({
         next: (res) => {
           photo.isLiked = false;
         },
@@ -131,7 +139,11 @@ export class GalleryComponent implements OnInit {
         },
       });
     }
-  }    
+  }
+  
+  openPhotoDetail(photo: any) {
+    this.router.navigate(['public/photo', photo.id]);
+  }
 }
 
 

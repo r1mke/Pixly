@@ -28,19 +28,6 @@ export class GetAllPhotosService {
   getPageSize() {
     return this.pageSize;
   }
-
-  likePhoto(photoId: number, userId: number): Observable<any> {
-    return this.http.post<any>(
-      `${MYCONFIG.apiUrl}/api/photos/${photoId}/like?userId=${userId}`, 
-      {}
-    );
-  }
-  
-  unlikePhoto(photoId: number, userId: number): Observable<any> {
-    return this.http.delete<any>(
-      `${MYCONFIG.apiUrl}/api/photos/${photoId}/like?userId=${userId}`
-    );
-  }
   
   
 }

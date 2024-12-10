@@ -1,6 +1,7 @@
 ﻿using backend.Data;
 using backend.Data.Models;
 using backend.Heleper.Api;
+using backend.Helper.DTO_s;
 using backend.Helper.Services.JwtService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,14 +16,13 @@ namespace backend.Endpoints.PhotoEndpoints
     {
         
         [HttpGet]
-        [HttpGet]
         public override async Task<PhotoGetAllResult> HandleAsync([FromRoute] PhotoGetAllRequest request, CancellationToken cancellationToken = default)
         {
             if (request.pageNumber < 1 || request.pageSize < 1)
             {
                 return new PhotoGetAllResult
                 {
-                    Photos = new PhotoDTO[0],
+                    Photos = new PhotoGetAllDTO[0],
                     totalPhotos = 0,
                     totalPages = 0,
                     pageNumber = 0,
@@ -40,26 +40,21 @@ namespace backend.Endpoints.PhotoEndpoints
 
             var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, refreshToken, db);
 
-            // Ako je korisnik validan, uzimamo korisnika iz odgovora
             var user = validationResult is OkObjectResult okResult ? (User)okResult.Value : null;
 
             var photos = await db.Photos
-                .Select(p => new PhotoDTO
+                .Select(p => new PhotoGetAllDTO
                 {
                     Id = p.Id,
-                    Title = p.Title,
-                    Description = p.Description,
-                    LikeCount = p.LikeCount,
-                    ViewCount = p.ViewCount,
-                    Price = p.Price,
-                    Location = p.Location,
                     User = p.User,
                     Approved = p.Approved,
                     CreateAt = p.CreateAt,
-                    Orientation = p.Orientation,
-                    Url = db.PhotoResolutions.Where(r => r.PhotoId == p.Id && r.Resolution == "compressed").Select(r => r.Url).FirstOrDefault(),
-                    Size = db.PhotoResolutions.Where(r => r.PhotoId == p.Id && r.Resolution == "compressed").Select(r => r.Size).FirstOrDefault(),
-                    // Provjera da li je korisnik lajkovao sliku
+                    LikeCount = p.LikeCount,
+                    ViewCount = p.ViewCount,
+                    Url = db.PhotoResolutions
+                        .Where(r => r.PhotoId == p.Id && r.Resolution == "compressed")
+                        .Select(r => r.Url)
+                        .FirstOrDefault(),
                     IsLiked = user != null && db.Likes.Any(l => l.PhotoId == p.Id && l.UserId == user.Id)
                 })
                 .Skip(skip)
@@ -78,9 +73,22 @@ namespace backend.Endpoints.PhotoEndpoints
 
     }
 
+    public class PhotoGetAllDTO
+    {
+        public int Id { get; set; }
+        public User User { get; set; }
+        public bool Approved { get; set; }
+        public string? Url { get; set; }
+        public bool IsLiked { get; set; }
+        public int LikeCount { get; set; }
+        public int ViewCount { get; set; }
+        public DateTime CreateAt { get; set; }
+
+    }
+
     public class PhotoGetAllResult
     {
-        public PhotoDTO[] Photos { get; set; }
+        public PhotoGetAllDTO[] Photos { get; set; }
         public int totalPhotos { get; set; }
         public int totalPages { get; set; }
         public int pageNumber { get; set; }
@@ -94,24 +102,4 @@ namespace backend.Endpoints.PhotoEndpoints
         public int pageSize { get; set; }
     }
 
-
-    public class PhotoDTO
-    {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public int LikeCount { get; set; }
-        public int ViewCount { get; set; }
-        public int Price { get; set; }
-        public string Location { get; set; }
-        public int? UserId { get; set; }
-        public User? User { get; set; }
-        public bool Approved { get; set; }
-        public DateTime CreateAt { get; set; }
-        public string? Orientation { get; set; }
-        public string Url { get; set; }
-        public long? Size { get; set; }
-
-        public bool IsLiked { get; set; }
-    }
 }

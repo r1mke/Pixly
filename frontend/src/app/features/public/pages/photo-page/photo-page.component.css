@@ -1,0 +1,159 @@
+.container-fluid
+{
+  margin-top: 85px;
+}
+
+.profile-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto;
+  image-rendering: auto;
+  transform: scale(1);
+}
+
+
+.btn-follow
+{
+  color: #02A388;
+  background-color: transparent;
+}
+
+.btn-follow:hover
+{
+  color: #02A388;
+  background-color: transparent;
+}
+
+.btn-purchase
+{
+  width: 100%;
+  padding: 10px 0;
+  background-color: #FE423F;
+  color: white;
+}
+
+.btn-plans-and-pricing
+{
+  width: 100%;
+  padding: 10px 0;
+  background-color: transparent;
+  color: black;
+  border: 1px solid gray;
+}
+
+.btn-plans-and-pricing:hover
+{
+  background-color: white;
+  color: black;
+}
+
+.option-label {
+  background-color: transparent;
+  transition: background-color 0.3s;
+}
+
+.option-label:has(input[type="radio"]:checked) {
+  background-color: transparent;
+  border-color: transparent;
+}
+
+input[type="radio"]:checked {
+  accent-color: #0070F0
+}
+
+
+.gtext{
+  color: #02A388;
+  font-weight: 500;
+}
+
+.image-container {
+  width: 100%;
+  height: 550px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
+.btn-only-from-pixly
+{
+  padding: 5px 10px;
+  background-color: black;
+  font-size:11px;
+  border-radius: 20px;
+  margin-right: 20px;
+}
+
+
+
+hr
+{
+  color: gray;
+}
+
+button
+{
+  background-color: var(--pixly-color);
+  border-color: gainsboro;
+}
+
+button:hover
+{
+  background-color: var(--pixly-color-hover);
+}
+
+/* Dugmad za akcije na mobilnim uređajima */
+@media (max-width: 768px) {
+  .photo-info {
+    padding: 1rem !important;
+  }
+
+  .profile-img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .btn-follow {
+    font-size: 0.8rem;
+  }
+
+  .tags-container button {
+    margin-bottom: 0.5rem;
+  }
+
+  .option-label {
+    font-size: 0.9rem;
+  }
+
+  .btn-outline-secondary, .btn-purchase {
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .action-buttons {
+    justify-content: space-evenly;
+  }
+
+  .action-buttons button .hide-text {
+    display: none; /* Sakrij tekst na mobilnim uređajima */
+  }
+
+  .image-container {
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+

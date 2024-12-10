@@ -52,6 +52,10 @@ export const routes: Routes = [
         path: 'generate-image',
         loadComponent: () => import('./features/public/pages/generate-image-page/generate-image-page.component').then(m => m.GenerateImagePageComponent),
       },
+      {
+        path: 'photo/:id',
+        loadComponent: () => import('./features/public/pages/photo-page/photo-page.component').then(m => m.PhotoPageComponent)
+      },
       { path: '**', redirectTo: 'home', pathMatch: 'full' }
     ] 
   },

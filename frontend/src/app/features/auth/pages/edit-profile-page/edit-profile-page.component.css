@@ -40,4 +40,28 @@ button:hover
 
 
 
+@media (min-width: 768px) {
+  .responsive-btn {
+    width: 75%;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-img
+   {
+    width: 120px;
+    height: 120px;
+   }
+  
+   button{
+    padding: 5px;
+   }
+
+   .responsive-btn {
+    width: 51%;
+  }
+  }
+
+
+
 
