@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { WindowSizeService } from '../../../../services/window-size.service';
 import { AuthService } from '../../../auth/services/auth.service';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-nav-bar',
@@ -14,7 +15,7 @@ import { AuthService } from '../../../auth/services/auth.service';
   styleUrls: ['./nav-bar.component.css'],
 })
 
-export class NavBarComponent implements OnInit, AfterViewInit {
+export class NavBarComponent implements OnInit {
   isScrolled: boolean = false;
   windowWidth: number = 0;
   menuOpen: boolean = false;
@@ -22,28 +23,44 @@ export class NavBarComponent implements OnInit, AfterViewInit {
   profileHovered = false;
   dotsHovered = false;
   user: any = null;
+  currentSearch: string = '';
+  currentUrl: string = '';
   @Output() hoverStateChange = new EventEmitter<{ key: string; state: boolean }>();
 
   constructor(
     private windowSizeService: WindowSizeService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
-    this.windowSizeService.data$.subscribe((w) => {
-      this.windowWidth = w;
-      this.menuOpen = this.windowWidth >= 900;
-    });
-
+    this.checkUrl();
     this.getCurrentUser();
   }
 
+  checkUrl(): void {
+      this.route.url.subscribe((segment) => {
+        this.currentUrl = segment.join('/');
+        if(this.currentUrl.includes('search')){
+          this.route.queryParams.subscribe(params => {
+            this.currentSearch = params['q'];
+          })
+        }
+      })
+  }
+
+  goToSearchPage(): void {
+    if(this.currentSearch === '') return;
+    this.router.navigate(['/public/search'], { queryParams: { q: this.currentSearch } });
+  }
+
   getCurrentUser(): void {
+
     this.authService.currentUser$.subscribe((user) => {
       this.user = user;
     });
-
+ 
     if (!this.user) {
       this.authService.getCurrentUser().subscribe({
         error: () => {
@@ -51,9 +68,9 @@ export class NavBarComponent implements OnInit, AfterViewInit {
         },
       });
     }
+
   }
 
-  ngAfterViewInit() {}
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;

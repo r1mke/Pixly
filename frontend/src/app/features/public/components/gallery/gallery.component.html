@@ -1,10 +1,99 @@
 
-<div class="options">
-	<div class="container filter">
-		<select name="filter" id="" (change)="filter($event)" >
-			<option selected value="trending">Trending</option>
-			<option value="latest">Latest</option>
-		</select>
+<div class="options" *ngIf="currentUrl.includes('search')">
+	<div class="container">
+		<div class="info">
+			<div (click)="selectOption('photos')" class="info-option" [ngClass]="selectedOption === 'photos' ? 'active' : '' ">
+				<span>Photos</span>
+			</div>
+			<div (click)="selectOption('users')" class="info-option" [ngClass]="selectedOption === 'users' ? 'active' : '' ">
+				<span>Users</span>
+			</div>
+		</div>
+
+		<div class="filter-select">
+			<div class="dropdown-item" (click)="toggleMoreFilterDropdown()">	
+				<a (click)="$event.preventDefault()">Filters</a>
+			</div>
+			<div class="dropdown" (click)="toggleFilterDropdown()">
+				<div class="dropdown-item">
+					<a (click)="$event.preventDefault()">{{currentPopularity}}</a>
+				</div>
+				<div class="dropdown-content" *ngIf="isFilterDropdownOpen">
+					<div class="dropdown-item" (click)="selectPopularity('Trending')">
+						<a (click)="$event.preventDefault()">Trending</a>
+					</div>
+					<div class="dropdown-item" (click)="selectPopularity('Latest')">
+						<a (click)="$event.preventDefault()">Latest</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="more-filters" *ngIf="isMoreFiltersDropdownOpen">
+			<div class="dropdown" (click)="toggleMoreFiltersDropdown('orientations')">
+				<div class="dropdown-item">
+					<a (click)="$event.preventDefault()">{{currentOrientation}}</a>
+				</div>
+				<div class="dropdown-content" *ngIf="openMoreFiltersDropdown === 'orientations'" >
+					<div class="dropdown-item" (click)="selectOrientation('All Orientations')">
+						<a (click)="$event.preventDefault()">All Orientations</a>
+					</div>
+					<div class="dropdown-item" (click)="selectOrientation('Landscape')">
+						<a (click)="$event.preventDefault()">Landscape</a>
+					</div>
+					<div class="dropdown-item" (click)="selectOrientation('Portrait')">
+						<a (click)="$event.preventDefault()">Portrait</a>
+					</div>
+					<div class="dropdown-item" (click)="selectOrientation('Square')">
+						<a (click)="$event.preventDefault()">Square</a>
+					</div>
+				</div>
+			</div>
+			<div class="dropdown" (click)="toggleMoreFiltersDropdown('sizes')">
+				<div class="dropdown-item">
+					<a (click)="$event.preventDefault()">{{currentSize}}</a>
+				</div>
+				<div class="dropdown-content" *ngIf="openMoreFiltersDropdown === 'sizes'" >
+					<div class="dropdown-item" (click)="selectSize('All Sizes')">
+						<a (click)="$event.preventDefault()">All Sizes</a>
+					</div>
+					<div class="dropdown-item" (click)="selectSize('Large')">
+						<a (click)="$event.preventDefault()">Large</a>
+					</div>
+					<div class="dropdown-item" (click)="selectSize('Medium')">
+						<a (click)="$event.preventDefault()">Medium</a>
+					</div>
+					<div class="dropdown-item" (click)="selectSize('Small')">
+						<a (click)="$event.preventDefault()">Small</a>
+					</div>
+				</div>
+			</div>
+			<div class="dropdown"  (click)="toggleMoreFiltersDropdown('color')">
+				<div class="dropdown-item colors">
+					<div class="color" [style.backgroundColor]="selectedColor" style="padding:10px; border-radius: 50%;" ></div>
+					<input
+						style="font-size: small;" 
+						(keyup)="validateHexCode() === true ? updateQueryString() : null"
+						type="text" 
+						[(ngModel)]="selectedColor" 
+						placeholder="Enter hex color" 
+						(input)="validateHexCode()"
+						[ngStyle]="{'color': validateHexCode() ? 'black' : 'red'}"
+					/>
+				</div>
+				<div class="dropdown-content" *ngIf="openMoreFiltersDropdown === 'color'" >
+					<div class="color-palette">
+						<div 
+						  *ngFor="let color of predefinedColors" 
+						  class="color-box" 
+						  [style.background-color]="color" 
+						  (click)="setColor(color)" 
+						  [title]="color">
+						</div>
+					  </div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
 <div class="container">

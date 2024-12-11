@@ -104,6 +104,18 @@ public class PhotoService
         if (compressedUploadResult.Error != null)
             throw new InvalidOperationException($"Compressed upload failed: {compressedUploadResult.Error.Message}");
 
+        var transformationrRegular = imageOrientation switch
+        {
+            "landscape" => new Transformation().Named("landscapeRegular_transformation"),
+            "portrait" => new Transformation().Named("portraitRegular_transformation"),
+            "square" => new Transformation().Named("squareRegular_transformation"),
+            _ => null
+        };
+
+        var compressedRegularUploadResult = await UploadToCloudinaryAsync(file.FileName, imageBytes, "photos/compressedRegular", cancellationToken, transformationrRegular);
+        if (compressedRegularUploadResult.Error != null)
+            throw new InvalidOperationException($"Compressed upload failed: {compressedRegularUploadResult.Error.Message}");
+
         // Save photo metadata to the database
         var photo = new Photo
         {
@@ -130,7 +142,7 @@ public class PhotoService
         {
             Resolution = "full_resolution",
             Url = uploadResult.Url.ToString(),
-            Size = uploadResult.Bytes,
+            Size = GetSizeCategory(uploadResult.Bytes),
             Date = DateTime.UtcNow,
             Photo = photo
         },
@@ -138,7 +150,15 @@ public class PhotoService
         {
             Resolution = "compressed",
             Url = compressedUploadResult.Url.ToString(),
-            Size = compressedUploadResult.Bytes,
+            Size = GetSizeCategory(compressedUploadResult.Bytes),
+            Date = DateTime.UtcNow,
+            Photo = photo
+        },
+         new PhotoResolution
+        {
+            Resolution = "compressedRegular",
+            Url = compressedRegularUploadResult.Url.ToString(),
+            Size = GetSizeCategory(compressedRegularUploadResult.Bytes),
             Date = DateTime.UtcNow,
             Photo = photo
         }
@@ -212,6 +232,16 @@ public class PhotoService
                 _context.PhotoColors.Add(photoColor);
             }
         }
+    }
+
+    public string GetSizeCategory(long sizeInBytes)
+    {
+        if (sizeInBytes >= 5_000_000) 
+            return "Large";
+        else if (sizeInBytes >= 1_000_000)
+            return "Medium";
+        else
+            return "Small";
     }
 
     private async Task SaveTagsAsync(List<string> tags, int photoId, CancellationToken cancellationToken)

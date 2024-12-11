@@ -1,33 +1,24 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { MYCONFIG } from '../../../my-config';
-import { HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { MYCONFIG } from '../../../../my-config';
+import { Observable } from 'rxjs';
+import { PhotoGetAllRequest } from '../../model/PhotoGetAllRequest';
+import { PhotoGetAllResult } from '../../model/PhotoGetAllResult';
 @Injectable({
   providedIn: 'root'
 })
 export class GetAllPhotosService {
-  pageNumber : number = 1;
-  pageSize : number = 10;
-
 
   constructor(private http: HttpClient) { }
  
-  getAllPhotos(pageNumber : number = this.pageNumber, pageSize : number = this.pageSize): Observable<any> {
-      return this.http.get<any>(`${MYCONFIG.apiUrl}/api/photos/page/${pageNumber}/${pageSize}`, {withCredentials: true});
+  getAllPhotos(request: PhotoGetAllRequest): Observable<any> {
+    const params = {
+      pageNumber: request.PageNumber,
+      pageSize: request.PageSize,
+    };
+      return this.http.get<PhotoGetAllResult>(`${MYCONFIG.apiUrl}/api/photos`, {params, withCredentials: true});
   }
 
-  incrementPageNumber() {
-    this.pageNumber++;
-  }
-
-  getCurrentPageNumber() {
-    return this.pageNumber;
-  }
-
-  getPageSize() {
-    return this.pageSize;
-  }
 
   likePhoto(photoId: number, userId: number): Observable<any> {
     return this.http.post<any>(

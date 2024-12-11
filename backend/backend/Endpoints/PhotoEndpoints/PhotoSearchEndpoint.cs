@@ -1,0 +1,127 @@
+﻿using backend.Data;
+using backend.Heleper.Api;
+using backend.Helper.DTO_s;
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
+
+namespace backend.Endpoints.PhotoEndpoints
+{
+    [Route("api/photos/search")]
+    public class PhotoSearchEndpoint : MyEndpointBaseAsync.WithRequest<SearchRequest>.WithResult<SearchResult>
+    {
+        private readonly AppDbContext _db;
+
+        public PhotoSearchEndpoint(AppDbContext db) {
+            _db = db;
+        }
+
+        [HttpGet]
+        public override async Task<SearchResult> HandleAsync( [FromQuery] SearchRequest request, CancellationToken cancellationToken = default)
+        {
+            string? title = request.Title;
+            string? popularity = request.Popularity;
+            string ? size = request.Size == "All Sizes" ? null : request.Size;
+            string? orientation = request.Orientation == "All Orientations" ? null : request.Orientation;
+            string? color = string.IsNullOrEmpty(request.Color) ? null : request.Color;
+
+            if (request.PageNumber < 1 || request.PageSize < 1)
+            {
+                return new SearchResult
+                {
+                    Photos = new PhotoDTO[0],
+                    TotalPhotos = 0,
+                    TotalPages = 0,
+                    PageNumber = 0,
+                    PageSize = 0,
+                };
+            }
+
+            var skip = (request.PageNumber - 1) * request.PageSize;
+
+          
+
+
+            var query = _db.Photos
+             .Include(p => p.Resolutions)
+             .Include(p => p.PhotoTags).ThenInclude(pt => pt.Tag)
+             .Include(p => p.PhotoColors).ThenInclude(pc => pc.Color)
+             .Where(p =>
+                 (title == null ||
+                  p.Title.Contains(title) ||
+                  p.Description.Contains(title) ||
+                  p.PhotoTags.Any(pt => pt.Tag.TagName.Contains(title))) &&
+                 (orientation == null || p.Orientation == orientation.ToLower()) &&
+                 (size == null || p.Resolutions.Any(pr => pr.Size.ToLower() == size.ToLower() && pr.Resolution == "full_resolution")) &&
+                 (color == null || p.PhotoColors.Any(pc => pc.Color.HexCode.ToLower() == color.ToLower())))
+             .Select(p => new
+             {
+                 Photo = p,
+                 CompressedResolution = p.Resolutions.FirstOrDefault(pr => pr.Resolution == "compressed")
+             });
+
+            var photos = await query.Select(result => new PhotoDTO
+            {
+                Id = result.Photo.Id,
+                Title = result.Photo.Title,
+                Description = result.Photo.Description,
+                LikeCount = result.Photo.LikeCount,
+                ViewCount = result.Photo.ViewCount,
+                Price = result.Photo.Price,
+                Location = result.Photo.Location,
+                User = result.Photo.User,
+                Approved = result.Photo.Approved,
+                CreateAt = result.Photo.CreateAt,
+                Orientation = result.Photo.Orientation,
+                Url = result.CompressedResolution.Url,
+                Size = result.CompressedResolution.Size
+            }).Skip(skip)
+              .Take(request.PageSize)
+              .ToArrayAsync();
+
+            var totalPhotos =  photos.Count();
+            var totalPages = (int)Math.Ceiling((double)totalPhotos / request.PageSize);
+
+            PhotoDTO[] photosResult = photos; // Defaultni set podataka
+
+            if (!string.IsNullOrEmpty(popularity))
+            {
+                if (popularity.ToLower() == "trending")
+                    photosResult = photos.OrderByDescending(p => p.LikeCount).ToArray();
+                else if (popularity.ToLower() == "latest")
+                    photosResult = photos.OrderByDescending(p => p.CreateAt).ToArray();
+            }
+
+            return new SearchResult
+            {
+                Photos = photosResult == null ? Array.Empty<PhotoDTO>() : photosResult,
+                TotalPhotos = totalPhotos,
+                TotalPages = totalPages,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize,
+            };
+
+
+        }
+    }
+
+    public class SearchRequest : PaginationRequest
+    {
+        public string Popularity { get; set; }
+        public string Title { get; set; }
+        public string? Orientation { get; set; }
+        public string? Size { get; set; }
+        public string? Color { get; set; }
+
+    }
+
+    public class SearchResult
+    {
+        public PhotoDTO[]? Photos {  get; set; }
+        public int TotalPhotos { get; set; }
+        public int TotalPages { get; set; }
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+    }
+}
