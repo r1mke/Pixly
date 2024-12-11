@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MYCONFIG } from '../../../../my-config';
-import { SearchRequest } from '../../model/searchRequest';
+import { SearchRequest } from '../../model/SearchRequest';
 import { SearchResult } from '../../model/SearchResult';
 
 @Injectable({
@@ -23,7 +23,7 @@ export class PhotosSearchService {
     if(request.Color) params = params.append('Color', request.Color);
     if(request.PageNumber) params = params.append('PageNumber', request.PageNumber);
     if(request.PageSize) params = params.append('PageSize', request.PageSize);
-
+    if(request.UserId) params = params.append('UserId', request.UserId)
     console.log(params);
 
     return this.http.get<SearchResult>(`${MYCONFIG.apiUrl}/api/photos/search`, {params});

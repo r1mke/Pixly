@@ -36,8 +36,15 @@ namespace backend.Endpoints.PhotoEndpoints
                         ViewCount = p.ViewCount,
                         Price = p.Price,
                         Location = p.Location,
-                        UserId = p.UserId,
-                        User = p.User,
+                        User = new UserDTO
+                        {
+                            Id = p.User.Id,
+                            FirstName = p.User.FirstName,
+                            LastName = p.User.LastName,
+                            Username = p.User.Username,
+                            Email = p.User.Email,
+                            ProfileImgUrl = p.User.ProfileImgUrl
+                        },
                         Approved = p.Approved,
                         CreateAt = p.CreateAt,
                         Orientation = p.Orientation,
