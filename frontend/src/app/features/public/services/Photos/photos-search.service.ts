@@ -23,7 +23,7 @@ export class PhotosSearchService {
     if(request.Color) params = params.append('Color', request.Color);
     if(request.PageNumber) params = params.append('PageNumber', request.PageNumber);
     if(request.PageSize) params = params.append('PageSize', request.PageSize);
-
+    if(request.UserId) params = params.append('UserId', request.UserId)
     console.log(params);
 
     return this.http.get<SearchResult>(`${MYCONFIG.apiUrl}/api/photos/search`, {params});

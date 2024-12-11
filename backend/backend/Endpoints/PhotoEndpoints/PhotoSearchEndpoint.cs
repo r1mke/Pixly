@@ -12,10 +12,6 @@ namespace backend.Endpoints.PhotoEndpoints
     [Route("api/photos/search")]
     public class PhotoSearchEndpoint(IJwtService jwtService, AppDbContext _db) : MyEndpointBaseAsync.WithRequest<SearchRequest>.WithResult<SearchResult>
     {
-        
-
-       
-
         [HttpGet]
         public override async Task<SearchResult> HandleAsync( [FromQuery] SearchRequest request, CancellationToken cancellationToken = default)
         {
@@ -73,13 +69,22 @@ namespace backend.Endpoints.PhotoEndpoints
                 ViewCount = result.Photo.ViewCount,
                 Price = result.Photo.Price,
                 Location = result.Photo.Location,
-                User = result.Photo.User,
+                User = new UserDTO
+                {
+                    Id = result.Photo.User.Id,
+                    FirstName = result.Photo.User.FirstName,
+                    LastName = result.Photo.User.LastName,
+                    Username = result.Photo.User.Username,
+                    Email = result.Photo.User.Email,
+                    ProfileImgUrl = result.Photo.User.ProfileImgUrl
+                },
                 Approved = result.Photo.Approved,
                 CreateAt = result.Photo.CreateAt,
                 Orientation = result.Photo.Orientation,
                 Url = result.CompressedResolution.Url,
                 Size = result.CompressedResolution.Size,
-                IsLiked = user != null && _db.Likes.Any(l => l.PhotoId == result.Photo.Id && l.UserId == result.Photo.User.Id)
+                IsLiked = request.UserId == null ? false : _db.Likes.Any(l => l.Photo.Id == result.Photo.Id && l.UserId == request.UserId)
+
             }).Skip(skip)
               .Take(request.PageSize)
               .ToArrayAsync();
@@ -96,6 +101,7 @@ namespace backend.Endpoints.PhotoEndpoints
                 else if (popularity.ToLower() == "latest")
                     photosResult = photos.OrderByDescending(p => p.CreateAt).ToArray();
             }
+            Console.WriteLine(photos[0].IsLiked);
 
             return new SearchResult
             {
@@ -117,7 +123,7 @@ namespace backend.Endpoints.PhotoEndpoints
         public string? Orientation { get; set; }
         public string? Size { get; set; }
         public string? Color { get; set; }
-
+        public int? UserId { get; set; }
     }
 
     public class SearchResult

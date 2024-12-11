@@ -6,4 +6,5 @@ export interface SearchRequest {
     Color: string | null;
     PageNumber: number;
     PageSize: number;
+    UserId: number | null;
 }

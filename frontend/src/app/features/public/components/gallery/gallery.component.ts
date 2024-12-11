@@ -30,7 +30,9 @@ export class GalleryComponent implements OnInit {
      Size: null,
      Color: null,
      PageNumber: 1,
-     PageSize: 10 
+     PageSize: 10,
+     UserId: null,
+  
   };
 
   searchResult : SearchResult = {
@@ -62,9 +64,8 @@ export class GalleryComponent implements OnInit {
   selectedOption: string = 'photos';
   selectedFilter: string = 'trending';
   
-  user: any = null;
+  user: any | null = null;
   currentUrl : string = '';
-  userId : number = 0;
 
   
   
@@ -94,9 +95,9 @@ export class GalleryComponent implements OnInit {
 
 
   ngOnInit(): void {
+    this.checkUser();
     this.checkQueryParams();
     this.checkUrl();
-    this.checkUser();
   }
 
 
@@ -118,7 +119,8 @@ export class GalleryComponent implements OnInit {
          Size: params['size'],
          Color: params['color'],
          PageNumber: 1,
-         PageSize: 10
+         PageSize: 10,
+         UserId: params['UserId'],
       };
       if (this.currentUrl.includes('search')) {
         this.loadSearchPhotos();
@@ -128,7 +130,8 @@ export class GalleryComponent implements OnInit {
 
   checkUser(){
     this.authService.currentUser$.subscribe((user) => {
-      this.user = user;
+      this.user = user === null ? null : user
+      console.log(this.user);
     });
  
     if (!this.user) {
@@ -147,10 +150,12 @@ export class GalleryComponent implements OnInit {
     this.photosSearchService.searchPhotos(this.searchRequest).subscribe({
       next: (res) => {
         this.searchResult.Photos = [...this.searchResult.Photos, ...res.photos]; 
-        this.photos = this.searchResult.Photos  
+        this.photos = this.searchResult.Photos
+        this.updateQueryString();  
         this.searchResult.TotalPhotos = res.totalPhotos;
         this.searchResult.TotalPages = res.totalPages;
         this.searchRequest.PageNumber++;
+        console.log(this.photos);
       },
       error: (error) => {
         console.error('Error fetching photos:', error);
@@ -217,35 +222,24 @@ export class GalleryComponent implements OnInit {
     }
 
 
-  toggleLike(photo: any, event: Event) {
-    event.stopPropagation(); 
+    toggleLike(photo: any, event: Event) {
+      if(!this.user)
+        this.router.navigate(['auth/login']);
 
-    if(this.user)
-      this.userId = this.user.userId;
-    else 
-      this.router.navigate(['auth/login']);
-
-    if (!photo.isLiked) {
-      this.photoService.likePhoto(photo.id, this.userId).subscribe({
-        next: (res) => {
-          photo.isLiked = true;
+      event.stopPropagation();
+      const action = photo.isLiked ? this.photoService.unlikePhoto(photo.id, this.user.userId) : this.photoService.likePhoto(photo.id, this.user.userId);
+    
+      action.subscribe({
+        next: () => {
+          photo.isLiked = !photo.isLiked; // Toggle state
         },
         error: (err) => {
-          console.error('Error liking photo:', err.error?.Message || err.message);
-        },
-      });
-    } 
-    else {
-      this.photoService.unlikePhoto(photo.id, this.userId).subscribe({
-        next: (res) => {
-          photo.isLiked = false;
-        },
-        error: (err) => {
-          console.error('Error unliking photo:', err.error?.Message || err.message);
-        },
+          console.error('Error updating like status:', err.error?.Message || err.message);
+        }
       });
     }
-  }
+    
+    
   
   openPhotoDetail(photo: any) {
     this.router.navigate(['public/photo', photo.id]);
@@ -301,6 +295,8 @@ export class GalleryComponent implements OnInit {
     queryParams.color = this.selectedColor !== null
     ? this.selectedColor.toLowerCase()
     : null;
+
+    queryParams.UserId = this.user.userId === null ? null : this.user.userId;
 
     this.router.navigate([], {
       queryParams,

@@ -7,7 +7,7 @@ import { FooterComponent } from '../../../shared/components/footer/footer.compon
 @Component({
   selector: 'app-home-page',
   standalone: true,
-  imports: [NavBarComponent, FooterComponent, HeroSectionComponent, DisplayCategoriesComponent, GalleryComponent],
+  imports: [NavBarComponent, HeroSectionComponent, DisplayCategoriesComponent, GalleryComponent],
   templateUrl: './home-page.component.html',
   styleUrl: './home-page.component.css'
 })
