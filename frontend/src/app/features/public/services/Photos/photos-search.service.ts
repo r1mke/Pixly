@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MYCONFIG } from '../../../../my-config';
-import { SearchRequest } from '../../model/searchRequest';
+import { SearchRequest } from '../../model/SearchRequest';
 import { SearchResult } from '../../model/SearchResult';
 
 @Injectable({

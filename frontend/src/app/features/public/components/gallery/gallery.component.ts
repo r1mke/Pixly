@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { PhotosSearchService } from '../../services/Photos/photos-search.service';
 import { FormsModule } from '@angular/forms';
-import { SearchRequest } from '../../model/searchRequest';
+import { SearchRequest } from '../../model/SearchRequest';
 import { PhotoGetAllRequest } from '../../model/PhotoGetAllRequest';
 import { PhotoGetAllResult } from '../../model/PhotoGetAllResult';
 import { SearchResult } from '../../model/SearchResult';
