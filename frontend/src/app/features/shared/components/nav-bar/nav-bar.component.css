@@ -8,24 +8,31 @@ nav{
     right: 0; 
     z-index: 1000;
     height: 80px;
+    border-bottom: 0.5px solid gainsboro;
 }
 
 .container{
     display: flex;
-    justify-content: space-around;
+    justify-content: space-between;
     flex-wrap: wrap;
     align-items: center;
+    gap: 15px;
+    padding: 0;
+}
+
+.btn-ai{
+    color: rgb(255, 0, 0);
 }
 
 
 .logo {
-    width: 10%;
+    
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 .search {
-    width: 40%;
+    width: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -65,7 +72,7 @@ nav{
     font-size: 15px;
     font-weight: 500;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: center;
 }
 
@@ -173,7 +180,7 @@ button:hover{
     margin: 0 auto;
     image-rendering: auto;
     transform: scale(1);
-  }
+}
 
 
 

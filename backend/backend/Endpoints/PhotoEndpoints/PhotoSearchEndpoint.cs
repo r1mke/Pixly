@@ -1,7 +1,8 @@
 ﻿using backend.Data;
+using backend.Data.Models;
 using backend.Heleper.Api;
 using backend.Helper.DTO_s;
-
+using backend.Helper.Services.JwtService;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -9,17 +10,16 @@ using System.Linq;
 namespace backend.Endpoints.PhotoEndpoints
 {
     [Route("api/photos/search")]
-    public class PhotoSearchEndpoint : MyEndpointBaseAsync.WithRequest<SearchRequest>.WithResult<SearchResult>
+    public class PhotoSearchEndpoint(IJwtService jwtService, AppDbContext _db) : MyEndpointBaseAsync.WithRequest<SearchRequest>.WithResult<SearchResult>
     {
-        private readonly AppDbContext _db;
+        
 
-        public PhotoSearchEndpoint(AppDbContext db) {
-            _db = db;
-        }
+       
 
         [HttpGet]
         public override async Task<SearchResult> HandleAsync( [FromQuery] SearchRequest request, CancellationToken cancellationToken = default)
         {
+
             string? title = request.Title;
             string? popularity = request.Popularity;
             string ? size = request.Size == "All Sizes" ? null : request.Size;
@@ -40,8 +40,11 @@ namespace backend.Endpoints.PhotoEndpoints
 
             var skip = (request.PageNumber - 1) * request.PageSize;
 
-          
+            var jwtToken = Request.Cookies["jwt"];
+            var refreshToken = Request.Cookies["refreshToken"];
+            var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, refreshToken, _db);
 
+            var user = validationResult is OkObjectResult okResult ? (User)okResult.Value : null;
 
             var query = _db.Photos
              .Include(p => p.Resolutions)
@@ -75,7 +78,8 @@ namespace backend.Endpoints.PhotoEndpoints
                 CreateAt = result.Photo.CreateAt,
                 Orientation = result.Photo.Orientation,
                 Url = result.CompressedResolution.Url,
-                Size = result.CompressedResolution.Size
+                Size = result.CompressedResolution.Size,
+                IsLiked = user != null && _db.Likes.Any(l => l.PhotoId == result.Photo.Id && l.UserId == result.Photo.User.Id)
             }).Skip(skip)
               .Take(request.PageSize)
               .ToArrayAsync();

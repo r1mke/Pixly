@@ -53,6 +53,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/public/pages/generate-image-page/generate-image-page.component').then(m => m.GenerateImagePageComponent),
       },
       {
+        path: 'photo/:id',
+        loadComponent: () => import('./features/public/pages/photo-page/photo-page.component').then(m => m.PhotoPageComponent)
+      },
+      {
         path: 'search',
         loadComponent: () => import('./features/public/pages/search-page/search-page.component').then(m => m.SearchPageComponent)
       },

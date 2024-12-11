@@ -55,6 +55,12 @@ export class NavBarComponent implements OnInit {
     this.router.navigate(['/public/search'], { queryParams: { q: this.currentSearch } });
   }
 
+  onKeyDown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      this.goToSearchPage();
+    }
+  }
+
   getCurrentUser(): void {
 
     this.authService.currentUser$.subscribe((user) => {

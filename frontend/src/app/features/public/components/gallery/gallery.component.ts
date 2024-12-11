@@ -4,11 +4,12 @@ import { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import _ from 'lodash';
 import { AuthService } from '../../../auth/services/auth.service';
+import { PhotoService } from '../../services/photo.service';
+import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
 import { PhotosSearchService } from '../../services/Photos/photos-search.service';
 import { FormsModule } from '@angular/forms';
 import { SearchRequest } from '../../model/searchRequest';
-import { Router } from '@angular/router';
 import { PhotoGetAllRequest } from '../../model/PhotoGetAllRequest';
 import { PhotoGetAllResult } from '../../model/PhotoGetAllResult';
 import { SearchResult } from '../../model/SearchResult';
@@ -60,9 +61,11 @@ export class GalleryComponent implements OnInit {
 
   selectedOption: string = 'photos';
   selectedFilter: string = 'trending';
-
+  
   user: any = null;
   currentUrl : string = '';
+  userId : number = 0;
+
   
   
   //more filters  section
@@ -83,10 +86,10 @@ export class GalleryComponent implements OnInit {
   ];
 
   constructor(private getAllPhotosService: GetAllPhotosService,
-              private authService: AuthService,
+              private authService: AuthService, private router: Router, private photoService: PhotoService,
               private route: ActivatedRoute,
               private photosSearchService: PhotosSearchService,
-              private router: Router ) { }
+              ) { }
 
 
 
@@ -214,11 +217,16 @@ export class GalleryComponent implements OnInit {
     }
 
 
-  toggleLike(photo: any) {
-    const userId = this.user.userId;
+  toggleLike(photo: any, event: Event) {
+    event.stopPropagation(); 
+
+    if(this.user)
+      this.userId = this.user.userId;
+    else 
+      this.router.navigate(['auth/login']);
 
     if (!photo.isLiked) {
-      this.getAllPhotosService.likePhoto(photo.id, userId).subscribe({
+      this.photoService.likePhoto(photo.id, this.userId).subscribe({
         next: (res) => {
           photo.isLiked = true;
         },
@@ -228,7 +236,7 @@ export class GalleryComponent implements OnInit {
       });
     } 
     else {
-      this.getAllPhotosService.unlikePhoto(photo.id, userId).subscribe({
+      this.photoService.unlikePhoto(photo.id, this.userId).subscribe({
         next: (res) => {
           photo.isLiked = false;
         },
@@ -237,7 +245,11 @@ export class GalleryComponent implements OnInit {
         },
       });
     }
-  }    
+  }
+  
+  openPhotoDetail(photo: any) {
+    this.router.navigate(['public/photo', photo.id]);
+  }
 
 
   selectOption(option: string) {

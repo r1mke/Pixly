@@ -1,6 +1,6 @@
 .container
 {
-  margin-top: 100px;
+  margin-top: 120px;
 }
 
 .profile-avatar {
@@ -65,15 +65,17 @@ a
   transform: scale(1);
 }
 
-@media (max-width: 768px) {
-  .nav-item {
-    display: block;
-    text-align: center; 
-  }
-  .nav-container {
-    flex-direction: column;
-    gap: 1rem;
-  }
+@media (max-width: 480px) {
+.profile-img
+ {
+  width: 120px;
+  height: 120px;
+ }
+
+
+ button{
+  padding: 5px;
+ }
 }
 
 

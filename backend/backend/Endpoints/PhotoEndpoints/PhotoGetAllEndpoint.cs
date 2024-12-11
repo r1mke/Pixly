@@ -24,7 +24,7 @@ namespace backend.Endpoints.PhotoEndpoints
             {
                 return new PhotoGetAllResult
                 {
-                    Photos = new PhotoDTO[0],
+                    Photos = new PhotoGetAllDTO[0],
                     TotalPhotos = 0,
                     TotalPages = 0,
                     PageNumber = 0,
@@ -42,26 +42,28 @@ namespace backend.Endpoints.PhotoEndpoints
 
             var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, refreshToken, db);
 
-            // Ako je korisnik validan, uzimamo korisnika iz odgovora
             var user = validationResult is OkObjectResult okResult ? (User)okResult.Value : null;
 
             var photos = await db.Photos
-                .Select(p => new PhotoDTO
+                .Select(p => new PhotoGetAllDTO
                 {
                     Id = p.Id,
-                    Title = p.Title,
-                    Description = p.Description,
-                    LikeCount = p.LikeCount,
-                    ViewCount = p.ViewCount,
-                    Price = p.Price,
-                    Location = p.Location,
-                    User = p.User,
+                    User = new UserDTO
+                    {
+                        Id = p.User.Id,
+                        FirstName = p.User.FirstName,
+                        LastName = p.User.LastName,
+                        Username = p.User.Username,
+                        Email = p.User.Email,
+                        ProfileImgUrl = p.User.ProfileImgUrl
+                    },
                     Approved = p.Approved,
                     CreateAt = p.CreateAt,
-                    Orientation = p.Orientation,
                     Url = db.PhotoResolutions.Where(r => r.PhotoId == p.Id && r.Resolution == "compressed").Select(r => r.Url).FirstOrDefault(),
-                    Size = db.PhotoResolutions.Where(r => r.PhotoId == p.Id && r.Resolution == "full_resolution").Select(r => r.Size).FirstOrDefault(),
                     // Provjera da li je korisnik lajkovao sliku
+                    LikeCount = p.LikeCount,
+                    ViewCount = p.ViewCount,
+                    
                     IsLiked = user != null && db.Likes.Any(l => l.PhotoId == p.Id && l.UserId == user.Id)
                 })
                 .Skip(skip)
@@ -80,9 +82,22 @@ namespace backend.Endpoints.PhotoEndpoints
 
     }
 
+    public class PhotoGetAllDTO
+    {
+        public int Id { get; set; }
+        public UserDTO User { get; set; }
+        public bool Approved { get; set; }
+        public string? Url { get; set; }
+        public bool IsLiked { get; set; }
+        public int LikeCount { get; set; }
+        public int ViewCount { get; set; }
+        public DateTime CreateAt { get; set; }
+
+    }
+
     public class PhotoGetAllResult
     {
-        public PhotoDTO[] Photos { get; set; }
+        public PhotoGetAllDTO[] Photos { get; set; }
         public int TotalPhotos { get; set; }
         public int TotalPages { get; set; }
         public int PageNumber { get; set; }

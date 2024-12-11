@@ -19,19 +19,5 @@ export class GetAllPhotosService {
       return this.http.get<PhotoGetAllResult>(`${MYCONFIG.apiUrl}/api/photos`, {params, withCredentials: true});
   }
 
-
-  likePhoto(photoId: number, userId: number): Observable<any> {
-    return this.http.post<any>(
-      `${MYCONFIG.apiUrl}/api/photos/${photoId}/like?userId=${userId}`, 
-      {}
-    );
-  }
-  
-  unlikePhoto(photoId: number, userId: number): Observable<any> {
-    return this.http.delete<any>(
-      `${MYCONFIG.apiUrl}/api/photos/${photoId}/like?userId=${userId}`
-    );
-  }
-  
   
 }

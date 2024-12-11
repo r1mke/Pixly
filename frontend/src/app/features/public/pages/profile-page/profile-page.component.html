@@ -13,7 +13,7 @@
 
     <!-- Edit Profile Button -->
     <div *ngIf="isOwnProfile; else otherProfile">
-      <button class="mt-3 mb-3 text-white py-3" routerLink="/auth/edit-profile">
+      <button class="mt-3 mb-3 text-white py-3 px-3 px-md-4" routerLink="/auth/edit-profile">
         <a class="text-white"><i class="fa-solid fa-pen text-center me-2"></i>Edit Profile</a>
       </button>
     </div>
@@ -40,15 +40,18 @@
     </div>
 
     <!-- Navigation Tabs -->
-    <div class="d-flex justify-content-center gap-4 my-4">
+    <div class="d-flex flex-row flex-wrap justify-content-evenly w-100 my-4 overflow-auto">
       <a
         *ngFor="let item of navItems"
         [ngClass]="{ active: item.active }"
-        class="nav-item text-decoration-none text-muted"
+        class="nav-item text-decoration-none text-muted text-center p-2"
         (click)="setActive(item, $event)"
       >
-        <span class="fw-bold p-2">{{ item.label }}</span>
+        <span class="fw-bold">{{ item.label }}</span>
       </a>
     </div>
+
+
+
   </div>
 </div>

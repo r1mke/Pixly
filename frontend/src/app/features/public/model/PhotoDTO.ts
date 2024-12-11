@@ -18,9 +18,9 @@ export interface PhotoDTO {
 
 export interface User {
     Id: number;
-    Username: string;
     FirstName: string;
     LastName: string;
+    Username: string;
     Email: string;
     ProfilePicture?: string;
   }
