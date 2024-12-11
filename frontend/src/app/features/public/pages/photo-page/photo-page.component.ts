@@ -38,7 +38,7 @@ export class PhotoPageComponent implements OnInit {
     }
   }
 
-  getPhotoById(): void {
+ getPhotoById(): void {
     const photoId = Number(this.route.snapshot.paramMap.get('id'));
     if (photoId) {
       this.photoService.getPhotoById(photoId).subscribe({
@@ -55,7 +55,7 @@ export class PhotoPageComponent implements OnInit {
   }
 
 
-  toggleLike(photo: any) {
+  async toggleLike(photo: any) {
     if(this.user)
       this.userId = this.user.userId;
     else 
@@ -82,6 +82,6 @@ export class PhotoPageComponent implements OnInit {
       });
     }
 
-    this.getPhotoById();
+    await this.getPhotoById();
   }
 }
