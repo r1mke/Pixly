@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ImageFile } from '../../model/image-file';
 import { ImageUploaderDirective } from '../../directives/image-uploader.directive';
-import { PhotoPostService } from '../../services/photo-post.service';
+import { PhotoPostService } from '../../services/Photos/photo-post.service';
 import { PostPhoto } from '../../model/PostPhoto';
 import { AuthService } from '../../../auth/services/auth.service';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -46,8 +46,8 @@ export class UploadPageComponent implements OnInit {
 
 
       this.uploadForm = this.formBuilder.group({
-        title: ['', [Validators.required, Validators.maxLength(50), Validators.minLength(10)]],
-        description: ['', [Validators.required, Validators.maxLength(200), Validators.minLength(15)]],
+        title: ['', [Validators.required, Validators.maxLength(50), Validators.minLength(5)]],
+        description: ['', [Validators.required, Validators.maxLength(200), Validators.minLength(5)]],
         location: ['', [Validators.required, Validators.maxLength(50), Validators.minLength(3)]],
         tags: ['', Validators.required]
       });

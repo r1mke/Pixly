@@ -6,8 +6,8 @@
         </div>
    
         <div class="search">
-            <input type="text" placeholder="Search...">
-            <img src="../../../../../assets/img/loupe.png" width="15px" height="15px" alt="">
+            <input [(ngModel)]="currentSearch" type="text" (keydown)="onKeyDown($event)"  placeholder="Search...">
+            <img src="../../../../../assets/img/loupe.png" width="15px" height="15px" (click)="goToSearchPage()">
         </div>
 
         

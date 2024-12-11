@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { MYCONFIG } from '../../../my-config';
+import { MYCONFIG } from '../../../../my-config';
 import { HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PostPhoto } from '../model/PostPhoto';
+
 @Injectable({
   providedIn: 'root'
 })

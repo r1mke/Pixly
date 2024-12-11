@@ -12,9 +12,9 @@ namespace backend.Data.Models
         public string LastName { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
+        public string? ProfileImgUrl { get; set; }
         [JsonIgnore]
         public string Password { get; set; }
-        public string? ProfileImgUrl { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool IsVerified { get; set; }
         [JsonIgnore]

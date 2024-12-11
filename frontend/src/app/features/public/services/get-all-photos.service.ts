@@ -17,17 +17,6 @@ export class GetAllPhotosService {
       return this.http.get<any>(`${MYCONFIG.apiUrl}/api/photos/page/${pageNumber}/${pageSize}`, {withCredentials: true});
   }
 
-  incrementPageNumber() {
-    this.pageNumber++;
-  }
-
-  getCurrentPageNumber() {
-    return this.pageNumber;
-  }
-
-  getPageSize() {
-    return this.pageSize;
-  }
   
   
 }

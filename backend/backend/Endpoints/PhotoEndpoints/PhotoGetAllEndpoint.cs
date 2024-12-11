@@ -9,31 +9,33 @@ using static backend.API.Endpoints.UserEndpoints.UserGetAllEndpoint;
 
 namespace backend.Endpoints.PhotoEndpoints
 {
-    [Route("api/photos/page/{pageNumber}/{pageSize}")]
+    [Route("api/photos")]
     public class PhotoGetAllEndpoint(AppDbContext db, IJwtService jwtService) : MyEndpointBaseAsync
         .WithRequest<PhotoGetAllRequest>
         .WithResult<PhotoGetAllResult>
     {
         
+
+       
         [HttpGet]
-        public override async Task<PhotoGetAllResult> HandleAsync([FromRoute] PhotoGetAllRequest request, CancellationToken cancellationToken = default)
+        public override async Task<PhotoGetAllResult> HandleAsync([FromQuery] PhotoGetAllRequest request, CancellationToken cancellationToken = default)
         {
-            if (request.pageNumber < 1 || request.pageSize < 1)
+            if (request.PageNumber < 1 || request.PageSize < 1)
             {
                 return new PhotoGetAllResult
                 {
                     Photos = new PhotoGetAllDTO[0],
-                    totalPhotos = 0,
-                    totalPages = 0,
-                    pageNumber = 0,
-                    pageSize = 0,
+                    TotalPhotos = 0,
+                    TotalPages = 0,
+                    PageNumber = 0,
+                    PageSize = 0,
                 };
             }
 
-            var skip = (request.pageNumber - 1) * request.pageSize;
+            var skip = (request.PageNumber - 1) * request.PageSize;
 
             var totalPhotos = await db.Photos.CountAsync();
-            var totalPages = (int)Math.Ceiling((double)totalPhotos / request.pageSize);
+            var totalPages = (int)Math.Ceiling((double)totalPhotos / request.PageSize);
 
             var jwtToken = Request.Cookies["jwt"];
             var refreshToken = Request.Cookies["refreshToken"];
@@ -46,28 +48,35 @@ namespace backend.Endpoints.PhotoEndpoints
                 .Select(p => new PhotoGetAllDTO
                 {
                     Id = p.Id,
-                    User = p.User,
+                    User = new UserDTO
+                    {
+                        Id = p.User.Id,
+                        FirstName = p.User.FirstName,
+                        LastName = p.User.LastName,
+                        Username = p.User.Username,
+                        Email = p.User.Email,
+                        ProfileImgUrl = p.User.ProfileImgUrl
+                    },
                     Approved = p.Approved,
                     CreateAt = p.CreateAt,
+                    Url = db.PhotoResolutions.Where(r => r.PhotoId == p.Id && r.Resolution == "compressed").Select(r => r.Url).FirstOrDefault(),
+                    // Provjera da li je korisnik lajkovao sliku
                     LikeCount = p.LikeCount,
                     ViewCount = p.ViewCount,
-                    Url = db.PhotoResolutions
-                        .Where(r => r.PhotoId == p.Id && r.Resolution == "compressed")
-                        .Select(r => r.Url)
-                        .FirstOrDefault(),
+                    
                     IsLiked = user != null && db.Likes.Any(l => l.PhotoId == p.Id && l.UserId == user.Id)
                 })
                 .Skip(skip)
-                .Take(request.pageSize)
+                .Take(request.PageSize)
                 .ToArrayAsync(cancellationToken);
 
             return new PhotoGetAllResult
             {
                 Photos = photos,
-                totalPhotos = totalPhotos,
-                totalPages = totalPages,
-                pageNumber = request.pageNumber,
-                pageSize = request.pageSize,
+                TotalPhotos = totalPhotos,
+                TotalPages = totalPages,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize,
             };
         }
 
@@ -76,7 +85,7 @@ namespace backend.Endpoints.PhotoEndpoints
     public class PhotoGetAllDTO
     {
         public int Id { get; set; }
-        public User User { get; set; }
+        public UserDTO User { get; set; }
         public bool Approved { get; set; }
         public string? Url { get; set; }
         public bool IsLiked { get; set; }
@@ -89,17 +98,16 @@ namespace backend.Endpoints.PhotoEndpoints
     public class PhotoGetAllResult
     {
         public PhotoGetAllDTO[] Photos { get; set; }
-        public int totalPhotos { get; set; }
-        public int totalPages { get; set; }
-        public int pageNumber { get; set; }
-        public int pageSize { get; set; }
+        public int TotalPhotos { get; set; }
+        public int TotalPages { get; set; }
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
     }
 
 
-    public class PhotoGetAllRequest
+    public class PhotoGetAllRequest : PaginationRequest
     {
-        public int pageNumber { get; set; }
-        public int pageSize { get; set; }
+        
     }
 
 }

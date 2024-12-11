@@ -1,63 +1,136 @@
 import { Component, HostListener } from '@angular/core';
-import { GetAllPhotosService } from '../../services/get-all-photos.service';
+import { GetAllPhotosService } from '../../services/Photos/get-all-photos.service';
 import { OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import _ from 'lodash';
-import { InfiniteScrollModule   } from '@robingenz/ngx-infinite-scroll';
 import { AuthService } from '../../../auth/services/auth.service';
 import { PhotoService } from '../../services/photo.service';
 import { Router } from '@angular/router';
-
-
+import { ActivatedRoute } from '@angular/router';
+import { PhotosSearchService } from '../../services/Photos/photos-search.service';
+import { FormsModule } from '@angular/forms';
+import { SearchRequest } from '../../model/searchRequest';
+import { PhotoGetAllRequest } from '../../model/PhotoGetAllRequest';
+import { PhotoGetAllResult } from '../../model/PhotoGetAllResult';
+import { SearchResult } from '../../model/SearchResult';
 export class AppModule {}
 @Component({
   selector: 'app-gallery',
   standalone: true,
-  imports: [CommonModule,InfiniteScrollModule ],
+  imports: [CommonModule, FormsModule ],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.css'
 })
 export class GalleryComponent implements OnInit {
-  photos: any[] = [];
-  totalPages : number = 0;
-  originalPhotos: any[] = []; 
-  selectedFilter: string = 'trending';
-  isLoading: boolean = false;
-  user: any = null;
-  userId : number = 0;
 
-  constructor(private getAllPhotosService: GetAllPhotosService, private authService: AuthService, private router: Router, private photoService: PhotoService ) { }
+  searchRequest : SearchRequest = {
+     Popularity: '',
+     Title: '',
+     Orientation: null,
+     Size: null,
+     Color: null,
+     PageNumber: 1,
+     PageSize: 10 
+  };
 
-  ngOnInit(): void {
-    this.loadPhotos();
+  searchResult : SearchResult = {
+    Photos: [],
+    TotalPhotos: 0,
+    TotalPages: 0,
+    PageNumber: 1,
+    PageSize: 0
   }
 
-  loadPhotos() {
-    if (this.isLoading) return;
-    this.isLoading = true;
+  getAllRequest : PhotoGetAllRequest = {
+    PageNumber: 1,
+    PageSize: 2
+  }
 
-    this.getAllPhotosService.getAllPhotos().subscribe(
-    {
-      next:(res)=>{
-        console.log(res);
-        this.totalPages = res.totalPages;
-        this.originalPhotos = [...this.originalPhotos, ...res.photos];
-        this.photos = this.originalPhotos;
-        this.getAllPhotosService.incrementPageNumber();
-      },
-      error:(error) => {
-        console.error('Error fetching user:', error);
-      }, 
-      complete: () => {
-        this.isLoading = false; 
+  getAllResult : PhotoGetAllResult = {
+    Photos: [],
+    TotalPhotos: 0,
+    TotalPages: 0,
+    PageNumber: 1,
+    PageSize: 0
+  }
+
+  photos: any[] = [];
+  originalPhotos: any[] = []; 
+
+  isLoading: boolean = false;
+
+  selectedOption: string = 'photos';
+  selectedFilter: string = 'trending';
+  
+  user: any = null;
+  currentUrl : string = '';
+  userId : number = 0;
+
+  
+  
+  //more filters  section
+  currentPopularity : string = 'Trending';
+  currentOrientation : string = 'All Orientations';
+  currentSize : string = 'All Sizes';
+  selectedColor: string = '';
+  isMoreFiltersDropdownOpen: boolean = false;
+  openMoreFiltersDropdown: string | null = null;
+  isFilterDropdownOpen: boolean = false;
+
+  //colors dropdown
+  predefinedColors: string[] = [
+    '#795548', '#F44336', '#E91E63', '#9C27B0', '#673AB7',
+    '#3F51B5', '#2196F3', '#00BCD4', '#009688', '#4CAF50',
+    '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800',
+    '#FF5722', '#9E9E9E', '#607D8B', '#000000', '#FFFFFF'
+  ];
+
+  constructor(private getAllPhotosService: GetAllPhotosService,
+              private authService: AuthService, private router: Router, private photoService: PhotoService,
+              private route: ActivatedRoute,
+              private photosSearchService: PhotosSearchService,
+              ) { }
+
+
+
+  ngOnInit(): void {
+    this.checkQueryParams();
+    this.checkUrl();
+    this.checkUser();
+  }
+
+
+  checkUrl(){
+    this.route.url.subscribe((segment) => {
+      this.currentUrl = segment.join('/');
+      console.log(this.currentUrl);
+      this.loadPhotos();
+    })
+  }
+
+  checkQueryParams(){
+    this.route.queryParams.subscribe(params => {
+      this.searchRequest = 
+      {  
+         Popularity: this.currentPopularity,
+         Title: params['q'],
+         Orientation: params['orientation'],
+         Size: params['size'],
+         Color: params['color'],
+         PageNumber: 1,
+         PageSize: 10
+      };
+      if (this.currentUrl.includes('search')) {
+        this.loadSearchPhotos();
       }
-    }  
-    )
+    })
+  }
 
+  checkUser(){
     this.authService.currentUser$.subscribe((user) => {
       this.user = user;
     });
-
+ 
     if (!this.user) {
       this.authService.getCurrentUser().subscribe({
         error: () => {
@@ -67,36 +140,69 @@ export class GalleryComponent implements OnInit {
     }
   }
 
-  loadMoreItems(){
+  loadSearchPhotos() {
+    this.isLoading = true;
+    this.photos = [];
+    this.searchResult.Photos = [];
+    this.photosSearchService.searchPhotos(this.searchRequest).subscribe({
+      next: (res) => {
+        this.searchResult.Photos = [...this.searchResult.Photos, ...res.photos]; 
+        this.photos = this.searchResult.Photos  
+        this.searchResult.TotalPhotos = res.totalPhotos;
+        this.searchResult.TotalPages = res.totalPages;
+        this.searchRequest.PageNumber++;
+      },
+      error: (error) => {
+        console.error('Error fetching photos:', error);
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
+  }
+
+  loadPopularPhotos() {
     if (this.isLoading) return;
-    console.log("load more items");
-    if(this.getAllPhotosService.getCurrentPageNumber() <= this.totalPages){
-      this.loadPhotos();
-    }
+    if(this.getAllResult.TotalPages > 0){
+      if (this.getAllRequest.PageNumber > this.getAllResult.TotalPages) return;
+    }  
+    this.isLoading = true;
+    this.getAllPhotosService.getAllPhotos(this.getAllRequest).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.getAllResult.Photos = [...this.getAllResult.Photos, ...res.photos]; 
+        this.photos =this.getAllResult.Photos 
+        this.getAllResult.TotalPages = res.totalPages;  
+        this.getAllRequest.PageNumber++;  
+      },
+      error: (error) => {
+        console.error('Error fetching photos:', error);
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
 
-  sortByTrending(data: any) {
-    return _.orderBy(data, ['likeCount', 'viewCount'], ['desc', 'desc']);
+
+  loadPhotos() {
+    if(this.currentUrl.includes('search')) this.loadSearchPhotos();
+    if(this.currentUrl.includes('home')) this.loadPopularPhotos();
   }
 
-  sortByLatest(data: any) {
-    return _.orderBy(data, ['createAt'], ['desc']);
+  loadMoreItems() {
+    if (this.isLoading) return;
+    if (this.currentUrl.includes('search')) {
+      if (this.searchRequest.PageNumber <= this.searchResult.TotalPages) {
+        this.loadSearchPhotos(); 
+      }
+    }
+    if (this.currentUrl.includes('home')) {
+      if (this.getAllRequest.PageNumber <= this.getAllResult.TotalPages) {
+        this.loadPopularPhotos(); 
+      }
+    }
   }
-
-  filter(event: any) {
-    this.selectedFilter = event.target.value;
-
-    if (this.selectedFilter === 'trending') {
-      this.photos = [];
-      this.photos = this.sortByTrending(this.originalPhotos);
-      console.log(this.photos);
-    }
-    else{
-      this.photos = [];
-      this.photos = this.sortByLatest(this.originalPhotos);
-      console.log(this.photos);
-    }
-    }
 
     @HostListener('window:scroll', ['$event'])
     onScroll(event: Event): void {
@@ -144,6 +250,92 @@ export class GalleryComponent implements OnInit {
   openPhotoDetail(photo: any) {
     this.router.navigate(['public/photo', photo.id]);
   }
-}
 
+
+  selectOption(option: string) {
+    this.selectedOption = option;
+  }
+
+  toggleFilterDropdown() {
+    this.isFilterDropdownOpen = !this.isFilterDropdownOpen;
+  }
+
+  toggleMoreFiltersDropdown(dropdownId: string) {
+    this.openMoreFiltersDropdown = 
+      this.openMoreFiltersDropdown === dropdownId ? null : dropdownId;
+  }
+
+  closeDropdowns() {
+    this.isFilterDropdownOpen = false;
+    this.openMoreFiltersDropdown = null;
+  }
+
+  toggleMoreFilterDropdown(){
+    this.isMoreFiltersDropdownOpen = !this.isMoreFiltersDropdownOpen;
+    console.log(this.isMoreFiltersDropdownOpen);
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+
+    // Proveri da li je klik izvan dropdowna
+    if (!target.closest('.dropdown') && !target.closest('.filter-select')) {
+      this.closeDropdowns();
+    }
+  }
+
+  updateQueryString() {
+    const queryParams: any = {};
+
+    queryParams.orientation = this.currentOrientation !== 'All Orientations'
+    ? this.currentOrientation.toLowerCase()
+    : null;
+
+    queryParams.size = this.currentSize !== 'All Sizes'
+    ? this.currentSize.toLowerCase()
+    : null;
+
+    queryParams.popularity = this.currentPopularity;
+
+    queryParams.color = this.selectedColor !== null
+    ? this.selectedColor.toLowerCase()
+    : null;
+
+    this.router.navigate([], {
+      queryParams,
+      queryParamsHandling: 'merge', 
+      replaceUrl: true,
+    });
+  }
+
+  selectOrientation(orientation: string) {
+    this.currentOrientation = orientation;
+    this.updateQueryString();
+  }
+
+  selectSize(size: string) {
+    this.currentSize = size;
+    this.updateQueryString();
+  }
+  selectPopularity(popularity: string) {
+    this.currentPopularity = popularity;
+    this.updateQueryString();
+  }
+
+  setColor(color: string) {
+    this.selectedColor = color;
+    if(this.validateHexCode()) this.updateQueryString();
+  }
+
+  validateHexCode() {
+    const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+    if (!hexRegex.test(this.selectedColor)) {
+      return false;
+    }
+    return true;
+    this.checkQueryParams();
+  }
+
+}
 

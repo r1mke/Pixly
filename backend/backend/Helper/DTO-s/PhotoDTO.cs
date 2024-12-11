@@ -17,7 +17,7 @@ namespace backend.Helper.DTO_s
         public DateTime CreateAt { get; set; }
         public string? Orientation { get; set; }
         public string Url { get; set; }
-        public long? Size { get; set; }
+        public string? Size { get; set; }
 
         public bool IsLiked { get; set; }
 

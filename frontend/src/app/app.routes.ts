@@ -56,6 +56,10 @@ export const routes: Routes = [
         path: 'photo/:id',
         loadComponent: () => import('./features/public/pages/photo-page/photo-page.component').then(m => m.PhotoPageComponent)
       },
+      {
+        path: 'search',
+        loadComponent: () => import('./features/public/pages/search-page/search-page.component').then(m => m.SearchPageComponent)
+      },
       { path: '**', redirectTo: 'home', pathMatch: 'full' }
     ] 
   },
