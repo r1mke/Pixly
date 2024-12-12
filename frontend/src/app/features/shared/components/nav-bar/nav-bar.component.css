@@ -6,9 +6,8 @@ nav{
     top: 0;
     left: 0;
     right: 0; 
-    z-index: 1000;
-    height: 80px;
-    border-bottom: 0.5px solid gainsboro;
+    z-index: 5;
+    border-bottom: 0.5px solid #ccc;
 }
 
 .container{
@@ -22,11 +21,12 @@ nav{
 
 .btn-ai{
     color: rgb(255, 0, 0);
+    font-size: medium;
+    font-weight: 600;
 }
 
 
-.logo {
-    
+.logo {  
     display: flex;
     justify-content: flex-start;
 }
@@ -36,10 +36,9 @@ nav{
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid #ccc;
     border-radius: 5px;
     padding: 10px 0 10px 0;
-    background-color: #fff;
+    background-color: #f8f8f8;
 }
 
 
@@ -47,15 +46,16 @@ nav{
     width: 90%;
     border-radius: 5px;
     border: none;
-    color:#ccc;
+    color:#7c7c7c;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 600;
+    background-color: #f8f8f8
 }
 
 .search input::placeholder{
-    color: #ccc;
+    color: #7c7c7c;
     font-size: 15px;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .search input:focus{
@@ -67,10 +67,9 @@ nav{
 }
 
 .menu {
-    display: block;
+    display: flex;
     width: 40%;
-    font-size: 15px;
-    font-weight: 500;
+    font-size: medium;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -82,80 +81,83 @@ nav{
     border-radius: 50%;
 }
 
-
-.resources{
-    position: relative;
-    display: inline-block;
-    
-}
-
-.resources button{
-    background-color: #ffffff00;
-    border: none;
-    font-size: 15px;
-    font-weight: 500;
+.dropdown{
+	position: relative;
+	display: inline-block;
+    display: flex;
+    justify-content: center;
     cursor: pointer;
-    color:black;
 }
-
 
 .dropdown-content{
-    display: none;
-    position: absolute;
-    background-color: #ffffff;
-    min-width: 100px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 1;
+    border-top: 0.5px solid #ccc;
+	position: absolute;
+	z-index: 10;
+	background-color: #fff;
+	cursor: pointer;
+    border-radius: 10px;
+    margin-top: 30px;
+
 }
 
- .dropdown-content a {
-    font-size: 13px;
-    color: #000000;
-    padding: 15px;
+
+.dropdown-item{
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	color: #ccc;
+	text-decoration: none;
+	display: block;
+	padding: 10px;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+
+
+.item a{
     text-decoration: none;
-    display: block;
-    color: #4a4a4a;
-    padding: 12px 15px;
-    text-align: left;
+    font-size: 15px;
+    font-weight: 600;
+    color: #7c7c7c;
 }
 
-.popular-searches {
-    color: #4a4a4a;
-    text-align: left; 
-    font-weight: bold; 
-    white-space: nowrap; 
+
+.dropdown-item:hover{
+    background-color: #f5f5f5;
+    transition: 0.6s ease;
 }
+
+.dropdown-item .profile-img:hover .dropdown-item{
+    background-color: #fff;
+}
+
+.dropdown-item a{
+	display: inline;
+	text-align: left;
+	color: #7c7c7c;
+	font-size: 15px;
+    font-weight: 500;
+}
+
+
 
 i
 {
     font-size: 13px;
 }
 
-a{
-    cursor: pointer;
-}
 
- .resources:hover .dropdown-content{
-    display: block;
-}
-
-.resources:hover .dropdown-content a{
-    display: block;
-}
-
-.resources:hover .dropdown-content a:hover{
-    background-color:#e8e8e8
-}
 
 .menu.scrolled .resources button{
     color: black;
 }
 
-button{
-    background-color: var(--pixly-color); 
-    color: white;
-}
 
+button{
+    background-color: var(--pixly-color);
+    color:white; 
+}
 
 button:hover{
     background-color: #027d65;
@@ -184,7 +186,7 @@ button:hover{
 
 
 
-@media (max-width:899px){
+@media (max-width:990px){
 
     nav.open{
         position: fixed;

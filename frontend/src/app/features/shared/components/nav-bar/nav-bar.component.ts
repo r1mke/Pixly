@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -25,6 +25,9 @@ export class NavBarComponent implements OnInit {
   user: any = null;
   currentSearch: string = '';
   currentUrl: string = '';
+  dropDown : boolean = false;
+  dropDownExplore : boolean = false;
+  dropDownTimeout: any;
   @Output() hoverStateChange = new EventEmitter<{ key: string; state: boolean }>();
 
   constructor(
@@ -105,6 +108,10 @@ export class NavBarComponent implements OnInit {
       console.error('User or username is not available');
   }
 
+  goToAiGenerator(){
+    this.router.navigate(['/public/generate-image']);
+  }
+
   emitHoverStateChange(key: string, state: boolean) {
     this.hoverStateChange.emit({ key, state });
     if (key === 'explore')
@@ -113,5 +120,69 @@ export class NavBarComponent implements OnInit {
       this.profileHovered = state;
     else if (key === 'dots') 
       this.dotsHovered = state;
+  }
+
+  toggleDropdown() {
+    this.dropDown = !this.dropDown;
+    if (this.dropDown) {
+      this.dropDownExplore = false;
+      this.startDropdownTimeout(); // Pokreće timeout
+    } else {
+      this.clearDropdownTimeout(); // Briše timeout
+    }
+  }
+  
+  toggleDropdownExplore() {
+    this.dropDownExplore = !this.dropDownExplore;
+    if (this.dropDownExplore) {
+      this.dropDown = false;
+      this.startDropdownTimeout(); // Pokreće timeout
+    } else {
+      this.clearDropdownTimeout(); // Briše timeout
+    }
+  }
+  
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+  
+    // Proveri da li je klik izvan dropdowna
+    if (!target.closest('.dropdown') && !target.closest('.dropdown-explore')) {
+      this.dropDown = false;
+      this.dropDownExplore = false;
+      this.clearDropdownTimeout(); // Briše timeout
+    }
+  }
+  
+  startDropdownTimeout(): void {
+    this.clearDropdownTimeout(); // Očisti prethodni timeout ako postoji
+    this.dropDownTimeout = setTimeout(() => {
+      this.dropDown = false;
+      this.dropDownExplore = false;
+    }, 5000); // 5000ms = 5 sekundi
+  }
+  
+  clearDropdownTimeout(): void {
+    if (this.dropDownTimeout) {
+      clearTimeout(this.dropDownTimeout);
+      this.dropDownTimeout = null;
+    }
+  }
+  
+  // Opcionalno, praćenje hover događaja
+  @HostListener('mouseover', ['$event'])
+  onMouseOver(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (target.closest('.dropdown') || target.closest('.dropdown-explore')) {
+      this.clearDropdownTimeout(); // Očisti timeout na hover
+    }
+  }
+  
+  @HostListener('mouseleave', ['$event'])
+  onMouseLeave(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (target.closest('.dropdown') || target.closest('.dropdown-explore')) {
+      this.startDropdownTimeout(); // Pokreni timeout kada miš napusti dropdown
+    }
   }
 }

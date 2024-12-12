@@ -12,25 +12,36 @@
 
         
         <div class="menu" >
-            <button class="p-0 m-0 border-0 bg-transparent  fw-medium btn-ai">AI  Generator</button>
-            <div 
-                class="resources text-center" 
+            <div (click)="goToAiGenerator()" class="item">
+                <a style="color:red" (click)="$event.preventDefault()">AI Generator</a>
+            </div>
+             <div class="dropdown"
                 (mouseenter)="emitHoverStateChange('explore', true)" 
-                (mouseleave)="emitHoverStateChange('explore', false)">
-                    <button class="p-0 m-0 border-0">Explore</button>
+                (mouseleave)="emitHoverStateChange('explore', false)"
+                (click)="toggleDropdownExplore()"
+                >
+                <div class="item">
+                    <a (click)="$event.preventDefault()">Explore</a>
                     <i class="fa-solid ms-2" [ngClass]="exploreHovered ? 'fa-angle-up' : 'fa-angle-down'"></i>
-                    <div class="dropdown-content">
-                        <div class="popular-searches">
-                            <a href="">Popular Searches</a>
-                        </div>
-                        <a href="#">Home</a>
-                        <a href="#">Leaderboard</a>
-                        <a href="#">Pricing</a>
+                </div>
+                <div class="dropdown-content" *ngIf="dropDownExplore" style="margin-top: 40px;">
+                    <div class="dropdown-item">
+                        <a (click)="$event.preventDefault()">Popular Searches</a>
                     </div>
-             </div>
+                    <div class="dropdown-item">
+                        <a (click)="$event.preventDefault()">Home</a>
+                    </div>
+                    <div class="dropdown-item">
+                        <a (click)="$event.preventDefault()">Leaderboard</a>
+                    </div>
+                    <div class="dropdown-item">
+                        <a (click)="$event.preventDefault()">Pricing</a>
+                    </div>
+                </div>
+            </div>
 
-             <div *ngIf="!user">
-                <p  routerLink="/public/upload" style="cursor: pointer;" class="text-center mb-0">Upload</p>
+            <div class="item">
+                <a routerLink="/public/upload" (click)="$event.preventDefault()">Upload</a>
             </div>
             
 
@@ -38,47 +49,53 @@
                 <i class="fa-regular fa-bell" style="font-size: 17px;"></i>
             </div>
 
-            <div 
-                class="resources text-center" 
+           
+            <div class="dropdown" *ngIf="user"
                 (mouseenter)="emitHoverStateChange('profile', true)" 
-                (mouseleave)="emitHoverStateChange('profile', false)" *ngIf="user">
-                    <button class="p-0 m-0 border-0">
-                        <img [src]="user.profileImgUrl || 'assets/img/user_dflt.png'" 
+                (mouseleave)="emitHoverStateChange('profile', false)"
+                (click)="toggleDropdown()"
+                >
+                <div class="profile-bar" style="display: flex; justify-content: center; align-items: center;">
+                <div class="item profile-img" style="display: flex; justify-content: center; align-items: center;">
+                <img [src]="user.profileImgUrl || 'assets/img/user_dflt.png'" 
                             height="30px" 
                             width="30px" 
                             alt="Profile" 
-                            class="profile-img rounded-circle"
-                        />
-                    </button>
-                    <i class="fa-solid ms-2" [ngClass]="profileHovered ? 'fa-angle-up' : 'fa-angle-down'"></i>
-                    <div class="dropdown-content">
-                        <div class="popular-searches">
-                            <a (click)="goToProfile()">Your Profile</a>
-                        </div>
-                        <div class="popular-searches">
-                            <a href="#">Your Collection</a>
-                        </div>
-                        <div class="popular-searches">
-                            <a href="#">Settings</a>
-                        </div>
-                        <a href="#" (click)="logout()">Log out</a>
-                    </div>
-            </div>
-
-            <div class="resources p-1" *ngIf="!user">
-                <i class="fa-solid fas fa-ellipsis-h"></i>
-                <div class="dropdown-content">
-                    <div class="popular-searches">
-                        <a href="#">Log in</a>
-                    </div>
-                    <div class="popular-searches">
-                        <a href="#">Join</a>
-                    </div>
-                    <div class="popular-searches">
-                        <a href="#">Images & Video API</a>
-                    </div>
+                            class="profile-img rounded-circle" 
+                />
+                </div>
+                <i class="fa-solid ms-2" [ngClass]="profileHovered ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                </div>
+                <div class="dropdown-content" *ngIf="dropDown" style="margin-top: 40px;">
+                <div class="dropdown-item">
+                    <a (click)="$event.preventDefault()" (click)="goToProfile()">Your Profile</a>
+                </div>
+                <div class="dropdown-item">
+                    <a (click)="$event.preventDefault()">Your Collection</a>
+                </div>
+                <div class="dropdown-item">
+                    <a (click)="$event.preventDefault()">Settings</a>
+                </div>
+                <div class="dropdown-item">
+                    <a (click)="$event.preventDefault()"(click)="logout()">Log out</a>
                 </div>
             </div>
+        </div>
+
+            <div class="dropdown"  *ngIf="!user">
+					<i class="fa-solid fas fa-ellipsis-h" (click)="toggleDropdown()"></i>
+				<div class="dropdown-content" *ngIf="dropDown" >
+					<div class="dropdown-item">
+						<a (click)="$event.preventDefault()">Log in</a>
+					</div>
+					<div class="dropdown-item">
+						<a (click)="$event.preventDefault()">Join</a>
+					</div>
+					<div class="dropdown-item">
+						<a (click)="$event.preventDefault()">Images & Video API</a>
+					</div>
+				</div>
+			</div>
     
             <button *ngIf="user" class="upload" routerLink="/public/profile/upload">Upload</button>
             <button *ngIf="!user" class="login" routerLink="/auth/login">Log in</button>
