@@ -7,13 +7,14 @@ import { GalleryComponent } from "../../components/gallery/gallery.component";
 import { AuthService } from '../../../auth/services/auth.service';
 import { Router } from '@angular/router';
 import { GetAllPhotosService } from '../../services/get-all-photos.service';
+import { CustomDatePipe } from '../../helper/custom-date.pipe';
 
 @Component({
   selector: 'app-photo-page',
   standalone: true,
   templateUrl: './photo-page.component.html',
   styleUrls: ['./photo-page.component.css'],
-  imports: [NavBarComponent, CommonModule, GalleryComponent],
+  imports: [NavBarComponent, CommonModule, GalleryComponent, CustomDatePipe],
 })
 export class PhotoPageComponent implements OnInit {
   photo: any;
