@@ -296,7 +296,8 @@ export class GalleryComponent implements OnInit {
     ? this.selectedColor.toLowerCase()
     : null;
 
-    queryParams.UserId = this.user.userId === null ? null : this.user.userId;
+    queryParams.UserId = this.user?.userId ?? null;
+
 
     this.router.navigate([], {
       queryParams,
