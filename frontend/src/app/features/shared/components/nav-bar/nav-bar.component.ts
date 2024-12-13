@@ -6,7 +6,8 @@ import { Router } from '@angular/router';
 import { WindowSizeService } from '../../../../services/window-size.service';
 import { AuthService } from '../../../auth/services/auth.service';
 import { ActivatedRoute } from '@angular/router';
-
+import { PhotosSearchService } from '../../../public/services/Photos/photos-search.service';
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -20,23 +21,25 @@ export class NavBarComponent implements OnInit {
   windowWidth: number = 0;
   menuOpen: boolean = false;
   exploreHovered = false;
-
+  searchSuggestions:any;
   profileHovered = false;
   dotsHovered = false;
   user: any = null;
   currentSearch: string = '';
   currentUrl: string = '';
-  orginalUrl :string = '';
   dropDown : boolean = false;
   dropDownExplore : boolean = false;
   hoverTimeout : any;
+  isInputFocused :boolean = false;
   @Output() hoverStateChange = new EventEmitter<{ key: string; state: boolean }>();
 
   constructor(
     private windowSizeService: WindowSizeService,
     private router: Router,
     private authService: AuthService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private photosSearchService: PhotosSearchService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -59,6 +62,30 @@ export class NavBarComponent implements OnInit {
   goToSearchPage(): void {
     if(this.currentSearch === '') return;
     this.router.navigate(["/public/search"], { queryParams: { q: this.currentSearch } });
+  }
+
+  loadSuggestions(){
+    console.log(this.currentSearch);
+    if(this.currentSearch === '') return;
+    this.photosSearchService.suggestionsPhotos(this.currentSearch).subscribe((data) => {
+      this.searchSuggestions = data.suggestions;
+      console.log(this.searchSuggestions);
+    });
+  }
+
+  updateSearch(value: string) {
+    this.currentSearch = value;
+    this.goToSearchPage();
+    this.onBlur();
+  }
+
+  onFocus() {
+    this.isInputFocused = true;
+    this.loadSuggestions();
+  }
+
+  onBlur() {
+    this.isInputFocused = false;
   }
 
   onKeyDown(event: KeyboardEvent) {
@@ -162,6 +189,10 @@ export class NavBarComponent implements OnInit {
     }
     if (!target.closest('.dropdown-explore')) {
       this.dropDownExplore = false;
+    }
+
+    if(!target.closest('.search')){ 
+      this.onBlur();
     }
   }
   

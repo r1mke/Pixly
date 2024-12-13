@@ -264,12 +264,15 @@ public class PhotoService
                 TagId = existingTags[tag]
             };
 
+            // Provjeri da tag već nije povezan s ovom fotografijom
             if (!_context.PhotoTags.Any(pt => pt.PhotoId == photoId && pt.TagId == existingTags[tag]))
             {
                 _context.PhotoTags.Add(photoTag);
             }
         }
     }
+
+
 
 
     public class PostPhotoResult

@@ -73,6 +73,11 @@ export class UploadPageComponent implements OnInit {
 
 
     }
+
+    capitalizeFirstLetter(text: string): string {
+      if (!text) return ""; 
+      return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  }
     
 
   //-----------------------//
@@ -86,7 +91,7 @@ export class UploadPageComponent implements OnInit {
       }
     
       if (!this.tags.includes(this.tagInput.trim())) {
-        this.tags.push(this.tagInput);
+        this.tags.push(this.capitalizeFirstLetter(this.tagInput.trim()));
         this.uploadForm.get('tags')?.setValue(''); 
       }
 
@@ -131,15 +136,21 @@ export class UploadPageComponent implements OnInit {
         return;
       }
 
-      const formData = new FormData();
+      const title = this.uploadForm.get('title')?.value;
+      const description = this.uploadForm.get('description')?.value;
+      const location = this.uploadForm.get('location')?.value;
 
-     formData.append('Title', this.uploadForm.get('title')?.value);
-     formData.append('Description', this.uploadForm.get('description')?.value);
-     formData.append('Location', this.uploadForm.get('location')?.value);
+
+      const formData = new FormData();
+      const tagsString = this.tags.join(",");
+     formData.append('Title', this.capitalizeFirstLetter(title));
+     formData.append('Description', this.capitalizeFirstLetter(description));
+     formData.append('Location', this.capitalizeFirstLetter(location));
      formData.append('UserId', this.user.userId.toString());
      formData.append('File', this.file.file);
-     formData.append('Tags', JSON.stringify(this.tags));
-     
+     formData.append('Tags', tagsString);
+     console.log(this.tags);
+     console.log(JSON.stringify(this.tags));
     this.photoPostService.postPhoto(formData).subscribe({
       next: (response) => {
         alert("Uspjesno: ");
