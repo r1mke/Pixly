@@ -15,14 +15,14 @@
             <div (click)="goToAiGenerator()" class="item">
                 <a style="color:red" (click)="$event.preventDefault()">AI Generator</a>
             </div>
+            
              <div class="dropdown"
-                (mouseenter)="emitHoverStateChange('explore', true)" 
-                (mouseleave)="emitHoverStateChange('explore', false)"
-                (click)="toggleDropdownExplore()"
-                >
-                <div class="item">
+             (mouseenter)="onMouseEnterExplore()"
+             (mouseleave)="onMouseLeaveExplore()">
+                
+                <div class="item" (click)="toggleDropdownExplore()">
                     <a (click)="$event.preventDefault()">Explore</a>
-                    <i class="fa-solid ms-2" [ngClass]="exploreHovered ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                    <i class="fa-solid ms-2" [ngClass]="dropDownExplore ? 'fa-angle-up' : 'fa-angle-down'"></i>
                 </div>
                 <div class="dropdown-content" *ngIf="dropDownExplore" style="margin-top: 40px;">
                     <div class="dropdown-item">
@@ -51,12 +51,12 @@
 
            
             <div class="dropdown" *ngIf="user"
-                (mouseenter)="emitHoverStateChange('profile', true)" 
-                (mouseleave)="emitHoverStateChange('profile', false)"
-                (click)="toggleDropdown()"
+            (mouseenter)="onMouseEnterDropdown()"
+            (mouseleave)="onMouseLeaveDropdown()"
+               
                 >
-                <div class="profile-bar" style="display: flex; justify-content: center; align-items: center;">
-                <div class="item profile-img" style="display: flex; justify-content: center; align-items: center;">
+                <div class="profile-bar" (click)="toggleDropdown()" style="display: flex; justify-content: center; align-items: center;">
+                <div class="item profile-img "   style="display: flex; justify-content: center; align-items: center;">
                 <img [src]="user.profileImgUrl || 'assets/img/user_dflt.png'" 
                             height="30px" 
                             width="30px" 
@@ -64,7 +64,7 @@
                             class="profile-img rounded-circle" 
                 />
                 </div>
-                <i class="fa-solid ms-2" [ngClass]="profileHovered ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                <i class="fa-solid ms-2" [ngClass]="dropDown ? 'fa-angle-up' : 'fa-angle-down'"></i>
                 </div>
                 <div class="dropdown-content" *ngIf="dropDown" style="margin-top: 40px;">
                 <div class="dropdown-item">
@@ -82,7 +82,9 @@
             </div>
         </div>
 
-            <div class="dropdown"  *ngIf="!user">
+            <div class="dropdown"  *ngIf="!user" 
+            (mouseenter)="onMouseEnterDropdown()"
+            (mouseleave)="onMouseLeaveDropdown()">
 					<i class="fa-solid fas fa-ellipsis-h" (click)="toggleDropdown()"></i>
 				<div class="dropdown-content" *ngIf="dropDown" >
 					<div class="dropdown-item">
