@@ -4,19 +4,32 @@
     <img src="../../../../../assets/img/aibg.webp" alt="">
     <div class="overlay">
         <div class="container">
-            <h1>Al Generator</h1>
-            <p>This is an AI Image Generator. It creates an image from scratch from a text description.
-            </p>
+            <h2>Al Generator</h2>
+            <span>This is an AI Image Generator. It creates an image from scratch <br> from a text description.
+            </span>
             <form action="#" class="generate-form">
                 <input type="text" placeholder="Enter a prompt..." [(ngModel)]="input" name="input">
-                <div class="controls">
-                    <select  #quantitySelect class="img-quantity">
-                        <option value="1">1 Image</option>
-                        <option value="2">2 Image</option>
-                        <option value="3">3 Image</option>
-                        <option value="4">4 Image</option>
-                    </select>
-                    <button (click)="generateImage(quantitySelect.value)">Generate</button>
+                <div class="controls" (click)="toggleDropdown()">
+                    <div class="dropdown">
+                        <div class="item">
+                            <a (click)="$event.preventDefault()">{{selectedQuantity}} Images</a>
+                        </div>                        
+                        <div class="dropdown-content" *ngIf="dropDown" >
+                            <div class="dropdown-item">
+                                <a (click)="$event.preventDefault()" (click)="updatedSelectedQuantity(1)" >1 Image</a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a (click)="$event.preventDefault()" (click)="updatedSelectedQuantity(2)">2 Images</a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a (click)="$event.preventDefault()" (click)="updatedSelectedQuantity(3)">3 Images</a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a (click)="$event.preventDefault()" (click)="updatedSelectedQuantity(4)">4 Images</a>
+                            </div>
+                        </div>
+                    </div>
+                    <button (click)="generateImage()">Generate</button>
                 </div>
             </form>
         </div>

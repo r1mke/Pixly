@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component,HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OpenaiService } from '../../services/openai.service';
@@ -13,26 +13,35 @@ import { NavBarComponent } from "../../../shared/components/nav-bar/nav-bar.comp
 export class GenerateImagePageComponent {
     input: string = '';
     loading:boolean = true;
-    selectedQuantity: number = 0;
+    selectedQuantity: number = 1;
     numberArray: number[] = [];
     images: string[] = [];
     clicked: boolean = true;
+    dropDown: boolean = false;
     constructor(private openaiService: OpenaiService) { }
 
 
     updateNumberArray() {
       this.numberArray = Array.from({ length: this.selectedQuantity }, (_, index) => index + 1);
       console.log('Number array updated:', this.numberArray);
-  }
+    }
 
-  generateImage(number:string){
+    toggleDropdown() {
+      this.dropDown = !this.dropDown;
+      console.log(this.dropDown);
+    } 
+
+    updatedSelectedQuantity(quantity: number) {
+      this.selectedQuantity = quantity;
+    }
+
+  generateImage(){
     if(this.input==='') {
       alert('Please enter a prompt');
       return;
     }
     this.images = [];
 
-    this.selectedQuantity = parseInt(number, 10);
     this.updateNumberArray();
     this.loading = true;
     this.openaiService.generateImage(this.input, this.selectedQuantity).subscribe((response) => {
@@ -41,7 +50,7 @@ export class GenerateImagePageComponent {
       this.images = response.data.map((image: any) => image.url);
       this.loading = false;
       this.input = '';
-      this.selectedQuantity = 0;
+      this.selectedQuantity = 1;
     },
     (error) => {
       console.error('Error generating image:', error);
@@ -49,6 +58,16 @@ export class GenerateImagePageComponent {
     });
 
   }
+
+  @HostListener('document:click', ['$event'])
+    onDocumentClick(event: MouseEvent): void {
+      const target = event.target as HTMLElement;
+    
+      // Proveri da li je klik izvan dropdowna
+      if (!target.closest('.dropdown') && !target.closest('.dropdown-explore')) {
+        this.dropDown = false;
+      }
+    }
 
   
 

@@ -191,6 +191,10 @@
 	margin-bottom: 10px;
 	break-inside: avoid;
 	position: relative;
+	-webkit-box-shadow: 10px 10px 9px -1px rgba(124,124,124,0.61);
+	-moz-box-shadow: 10px 10px 9px -1px rgba(124,124,124,0.61);
+	box-shadow: 10px 10px 9px -1px rgba(124,124,124,0.61);
+	border-radius: 15px;
 }
 
 .container .box img{
