@@ -10,7 +10,11 @@
           <div class="d-flex flex-column flex-md-row justify-content-between align-items-center align-items-md-center mb-4">
             <!-- Author section -->
             <div class="d-flex align-items-center mb-3 mb-md-0">
-              <img [src]="photo.user.profileImgUrl" class="profile-img rounded-circle me-3" alt="Author Image">
+              <img [src]="user.profileImgUrl || 'assets/img/big_user_dflt.png'" 
+                             
+                            alt="Profile" 
+                            class="profile-img rounded-circle me-3" 
+                />
               <div>
                 <h6 class="m-0">{{ photo.user.firstName }} {{ photo.user.lastName }}</h6>
                 <button class="btn-follow small p-0">Follow</button>
@@ -47,8 +51,8 @@
         </div>
 
         <!-- Purchase section -->
-        <div class="col-12 col-md-4 d-flex flex-column mt-4 bg-white justify-content-center p-4">
-          <p class="small fw-semibold text-center">Find the type and plan that works best for your needs.</p>
+        <div class="col-12 col-md-4 d-flex flex-column mt-5 bg-white justify-content-center p-4">
+          <p class="small fw-semibold text-center mt-3">Find the type and plan that works best for your needs.</p>
           <div class="border rounded p-4">
             <form class="w-100">
               <label class="form-check-label w-100 d-flex align-items-center justify-content-start my-3 option-label fw-medium" style="cursor: pointer;">
@@ -64,8 +68,16 @@
             <button class="btn btn-purchase w-100 py-3 mb-2">Continue with purchase</button>
             <button class="btn btn-outline-secondary btn-plans-and-pricing w-100 py-2 mt-2 text-secondary">View plans and pricing</button>
           </div>
+
+          <div class="mt-4">
+            <p class="small mb-2">Includes our <a class="pixly">standard licence</a></p>
+            <p class="small mb-2 text-se">Stock photo ID: {{photo.id}}</p>
+            <p class="small mb-2 text-se">Upload date: {{photo.createAt}}</p>
+            <p class="small mb-2 text-se">Location: {{photo.location}}</p>
+          </div>
         </div>
       </div>
+      
 
       <!-- Description section -->
       <div class="row">
