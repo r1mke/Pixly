@@ -29,7 +29,7 @@
               </button> 
               <button 
                 class="btn btn-outline-secondary me-2 mb-2 bg-transparent text-black" 
-                (click)="toggleLike(photo)"
+                (click)="toggleLike(photo, $event)"
                 [ngClass]="{'liked': photo.isLiked}">
                 <i class="fa me-1" 
                   [ngClass]="photo.isLiked ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart text-secondary'"></i> 

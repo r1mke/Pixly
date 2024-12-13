@@ -55,33 +55,23 @@ export class PhotoPageComponent implements OnInit {
   }
 
 
-  async toggleLike(photo: any) {
+  toggleLike(photo: any, event: Event) {
     if(this.user)
       this.userId = this.user.userId;
     else 
       this.router.navigate(['auth/login']);
 
-    if (!photo.isLiked) {
-      this.photoService.likePhoto(photo.id, this.userId).subscribe({
-        next: (res) => {
-          photo.isLiked = true;
+      event.stopPropagation();
+      const action = photo.isLiked ? this.photoService.unlikePhoto(photo.id, this.user.userId) : this.photoService.likePhoto(photo.id, this.user.userId);
+   
+      action.subscribe({
+        next: () => {
+          photo.isLiked = !photo.isLiked;
+          this.getPhotoById();
         },
         error: (err) => {
-          console.error('Error liking photo:', err.error?.Message || err.message);
-        }
-      });
-    } 
-    else {
-      this.photoService.unlikePhoto(photo.id, this.userId).subscribe({
-        next: (res) => {
-          photo.isLiked = false;
-        },
-        error: (err) => {
-          console.error('Error unliking photo:', err.error?.Message || err.message);
+          console.error('Error updating like status:', err.error?.Message || err.message);
         },
       });
-    }
-
-    await this.getPhotoById();
   }
 }
