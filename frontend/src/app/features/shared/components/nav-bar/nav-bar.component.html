@@ -22,7 +22,7 @@
                 
                 <div class="item" (click)="toggleDropdownExplore()">
                     <a (click)="$event.preventDefault()">Explore</a>
-                    <i class="fa-solid ms-2" [ngClass]="dropDownExplore ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                    <i class="fa-solid ms-2 " style="color: #7c7c7c;" [ngClass]="dropDownExplore ? 'fa-angle-up' : 'fa-angle-down'"></i>
                 </div>
                 <div class="dropdown-content" *ngIf="dropDownExplore" style="margin-top: 40px;">
                     <div class="dropdown-item">
@@ -40,13 +40,13 @@
                 </div>
             </div>
 
-            <div class="item">
+            <div class="item" *ngIf="!user">
                 <a routerLink="/public/upload" (click)="$event.preventDefault()">Upload</a>
             </div>
             
 
             <div class=" text-center" *ngIf="user">
-                <i class="fa-regular fa-bell" style="font-size: 17px;"></i>
+                <i class="fa-regular fa-bell" style="font-size: 17px; color: #7c7c7c;"></i>
             </div>
 
            
@@ -64,7 +64,7 @@
                             class="profile-img rounded-circle" 
                 />
                 </div>
-                <i class="fa-solid ms-2" [ngClass]="dropDown ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                <i class="fa-solid ms-2" style="color: #7c7c7c;" [ngClass]="dropDown ? 'fa-angle-up' : 'fa-angle-down'"></i>
                 </div>
                 <div class="dropdown-content" *ngIf="dropDown" style="margin-top: 40px;">
                 <div class="dropdown-item">

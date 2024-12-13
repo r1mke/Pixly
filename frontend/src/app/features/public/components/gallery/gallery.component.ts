@@ -22,7 +22,7 @@ export class AppModule {}
   styleUrl: './gallery.component.css'
 })
 export class GalleryComponent implements OnInit {
-
+ 
   searchRequest : SearchRequest = {
      Popularity: '',
      Title: '',
@@ -32,9 +32,9 @@ export class GalleryComponent implements OnInit {
      PageNumber: 1,
      PageSize: 10,
      UserId: null,
-  
+ 
   };
-
+ 
   searchResult : SearchResult = {
     Photos: [],
     TotalPhotos: 0,
@@ -42,12 +42,12 @@ export class GalleryComponent implements OnInit {
     PageNumber: 1,
     PageSize: 0
   }
-
+ 
   getAllRequest : PhotoGetAllRequest = {
     PageNumber: 1,
     PageSize: 2
   }
-
+ 
   getAllResult : PhotoGetAllResult = {
     Photos: [],
     TotalPhotos: 0,
@@ -55,20 +55,20 @@ export class GalleryComponent implements OnInit {
     PageNumber: 1,
     PageSize: 0
   }
-
+ 
   photos: any[] = [];
-  originalPhotos: any[] = []; 
-
+  originalPhotos: any[] = [];
+ 
   isLoading: boolean = false;
-
+ 
   selectedOption: string = 'photos';
   selectedFilter: string = 'trending';
-  
+ 
   user: any | null = null;
   currentUrl : string = '';
-
-  
-  
+ 
+ 
+ 
   //more filters  section
   currentPopularity : string = 'Trending';
   currentOrientation : string = 'All Orientations';
@@ -77,7 +77,7 @@ export class GalleryComponent implements OnInit {
   isMoreFiltersDropdownOpen: boolean = false;
   openMoreFiltersDropdown: string | null = null;
   isFilterDropdownOpen: boolean = false;
-
+ 
   //colors dropdown
   predefinedColors: string[] = [
     '#795548', '#F44336', '#E91E63', '#9C27B0', '#673AB7',
@@ -85,22 +85,22 @@ export class GalleryComponent implements OnInit {
     '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800',
     '#FF5722', '#9E9E9E', '#607D8B', '#000000', '#FFFFFF'
   ];
-
+ 
   constructor(private getAllPhotosService: GetAllPhotosService,
               private authService: AuthService, private router: Router, private photoService: PhotoService,
               private route: ActivatedRoute,
               private photosSearchService: PhotosSearchService,
               ) { }
-
-
-
+ 
+ 
+ 
   ngOnInit(): void {
     this.checkUser();
     this.checkQueryParams();
     this.checkUrl();
   }
-
-
+ 
+ 
   checkUrl(){
     this.route.url.subscribe((segment) => {
       this.currentUrl = segment.join('/');
@@ -108,10 +108,10 @@ export class GalleryComponent implements OnInit {
       this.loadPhotos();
     })
   }
-
+ 
   checkQueryParams(){
     this.route.queryParams.subscribe(params => {
-      this.searchRequest = 
+      this.searchRequest =
       {  
          Popularity: this.currentPopularity,
          Title: params['q'],
@@ -127,7 +127,7 @@ export class GalleryComponent implements OnInit {
       }
     })
   }
-
+ 
   checkUser(){
     this.authService.currentUser$.subscribe((user) => {
       this.user = user === null ? null : user
@@ -142,14 +142,14 @@ export class GalleryComponent implements OnInit {
       });
     }
   }
-
+ 
   loadSearchPhotos() {
     this.isLoading = true;
     this.photos = [];
     this.searchResult.Photos = [];
     this.photosSearchService.searchPhotos(this.searchRequest).subscribe({
       next: (res) => {
-        this.searchResult.Photos = [...this.searchResult.Photos, ...res.photos]; 
+        this.searchResult.Photos = [...this.searchResult.Photos, ...res.photos];
         this.photos = this.searchResult.Photos
         this.updateQueryString();  
         this.searchResult.TotalPhotos = res.totalPhotos;
@@ -165,7 +165,7 @@ export class GalleryComponent implements OnInit {
       }
     });
   }
-
+ 
   loadPopularPhotos() {
     if (this.isLoading) return;
     if(this.getAllResult.TotalPages > 0){
@@ -175,8 +175,8 @@ export class GalleryComponent implements OnInit {
     this.getAllPhotosService.getAllPhotos(this.getAllRequest).subscribe({
       next: (res) => {
         console.log(res);
-        this.getAllResult.Photos = [...this.getAllResult.Photos, ...res.photos]; 
-        this.photos =this.getAllResult.Photos 
+        this.getAllResult.Photos = [...this.getAllResult.Photos, ...res.photos];
+        this.photos =this.getAllResult.Photos
         this.getAllResult.TotalPages = res.totalPages;  
         this.getAllRequest.PageNumber++;  
       },
@@ -188,47 +188,47 @@ export class GalleryComponent implements OnInit {
       }
     });
   }
-
-
+ 
+ 
   loadPhotos() {
     if(this.currentUrl.includes('search')) this.loadSearchPhotos();
     if(this.currentUrl.includes('home')) this.loadPopularPhotos();
   }
-
+ 
   loadMoreItems() {
     if (this.isLoading) return;
     if (this.currentUrl.includes('search')) {
       if (this.searchRequest.PageNumber <= this.searchResult.TotalPages) {
-        this.loadSearchPhotos(); 
+        this.loadSearchPhotos();
       }
     }
     if (this.currentUrl.includes('home')) {
       if (this.getAllRequest.PageNumber <= this.getAllResult.TotalPages) {
-        this.loadPopularPhotos(); 
+        this.loadPopularPhotos();
       }
     }
   }
-
+ 
     @HostListener('window:scroll', ['$event'])
     onScroll(event: Event): void {
       const scrollPosition = window.scrollY;
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
-  
+ 
       // Provjera je li korisnik došao do 90% stranice
       if (scrollPosition + windowHeight >= documentHeight * 0.9) {
         this.loadMoreItems();
       }
     }
-
-
+ 
+ 
     toggleLike(photo: any, event: Event) {
       if(!this.user)
         this.router.navigate(['auth/login']);
-
+ 
       event.stopPropagation();
       const action = photo.isLiked ? this.photoService.unlikePhoto(photo.id, this.user.userId) : this.photoService.likePhoto(photo.id, this.user.userId);
-    
+   
       action.subscribe({
         next: () => {
           photo.isLiked = !photo.isLiked; // Toggle state
@@ -238,78 +238,79 @@ export class GalleryComponent implements OnInit {
         }
       });
     }
-    
-    
-  
+   
+   
+ 
   openPhotoDetail(photo: any) {
     this.router.navigate(['public/photo', photo.id]);
   }
-
-
+ 
+ 
   selectOption(option: string) {
     this.selectedOption = option;
   }
-
+ 
   toggleFilterDropdown() {
     this.isFilterDropdownOpen = !this.isFilterDropdownOpen;
   }
-
+ 
   toggleMoreFiltersDropdown(dropdownId: string) {
-    this.openMoreFiltersDropdown = 
+    this.openMoreFiltersDropdown =
       this.openMoreFiltersDropdown === dropdownId ? null : dropdownId;
   }
-
+ 
   closeDropdowns() {
     this.isFilterDropdownOpen = false;
     this.openMoreFiltersDropdown = null;
   }
-
+ 
   toggleMoreFilterDropdown(){
     this.isMoreFiltersDropdownOpen = !this.isMoreFiltersDropdownOpen;
     console.log(this.isMoreFiltersDropdownOpen);
   }
-
+ 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     const target = event.target as HTMLElement;
-
+ 
     // Proveri da li je klik izvan dropdowna
     if (!target.closest('.dropdown') && !target.closest('.filter-select')) {
       this.closeDropdowns();
     }
   }
-
+ 
   updateQueryString() {
     const queryParams: any = {};
-
+ 
     queryParams.orientation = this.currentOrientation !== 'All Orientations'
     ? this.currentOrientation.toLowerCase()
     : null;
-
+ 
     queryParams.size = this.currentSize !== 'All Sizes'
     ? this.currentSize.toLowerCase()
     : null;
-
+ 
     queryParams.popularity = this.currentPopularity;
-
+ 
     queryParams.color = this.selectedColor !== null
     ? this.selectedColor.toLowerCase()
     : null;
-
-    queryParams.UserId = this.user.userId === null ? null : this.user.userId;
-
+ 
+    queryParams.UserId = this.user?.userId ?? null;
+ 
+ 
     this.router.navigate([], {
       queryParams,
-      queryParamsHandling: 'merge', 
+      queryParamsHandling: 'merge',
       replaceUrl: true,
     });
   }
-
+ 
   selectOrientation(orientation: string) {
     this.currentOrientation = orientation;
     this.updateQueryString();
   }
-
+ 
   selectSize(size: string) {
     this.currentSize = size;
     this.updateQueryString();
@@ -318,12 +319,12 @@ export class GalleryComponent implements OnInit {
     this.currentPopularity = popularity;
     this.updateQueryString();
   }
-
+ 
   setColor(color: string) {
     this.selectedColor = color;
     if(this.validateHexCode()) this.updateQueryString();
   }
-
+ 
   validateHexCode() {
     const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
     if (!hexRegex.test(this.selectedColor)) {
@@ -332,6 +333,6 @@ export class GalleryComponent implements OnInit {
     return true;
     this.checkQueryParams();
   }
-
+ 
 }
-
+ 

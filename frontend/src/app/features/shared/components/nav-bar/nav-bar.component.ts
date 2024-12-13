@@ -26,6 +26,7 @@ export class NavBarComponent implements OnInit {
   user: any = null;
   currentSearch: string = '';
   currentUrl: string = '';
+  orginalUrl :string = '';
   dropDown : boolean = false;
   dropDownExplore : boolean = false;
   hoverTimeout : any;
@@ -45,6 +46,7 @@ export class NavBarComponent implements OnInit {
 
   checkUrl(): void {
       this.route.url.subscribe((segment) => {
+        console.log (segment);
         this.currentUrl = segment.join('/');
         if(this.currentUrl.includes('search')){
           this.route.queryParams.subscribe(params => {
@@ -56,7 +58,7 @@ export class NavBarComponent implements OnInit {
 
   goToSearchPage(): void {
     if(this.currentSearch === '') return;
-    this.router.navigate(['/public/search'], { queryParams: { q: this.currentSearch } });
+    this.router.navigate(["/public/search"], { queryParams: { q: this.currentSearch } });
   }
 
   onKeyDown(event: KeyboardEvent) {
@@ -93,7 +95,7 @@ export class NavBarComponent implements OnInit {
   public logout() {
     this.authService.logout().subscribe({
       next: () => {
-        this.router.navigate(['/auth/login']);
+        this.router.navigate(["public/home"]);
         this.user = null;
       },
       error: (err) => {
@@ -136,7 +138,7 @@ export class NavBarComponent implements OnInit {
   onMouseLeaveDropdown(): void {
     this.hoverTimeout = setTimeout(() => {
       this.dropDown = false;
-    }, 500); // Zatvori nakon 5 sekundi
+    }, 200); // Zatvori nakon 5 sekundi
   }
 
   onMouseEnterExplore(): void {
@@ -147,7 +149,7 @@ export class NavBarComponent implements OnInit {
   onMouseLeaveExplore(): void {
     this.hoverTimeout = setTimeout(() => {
       this.dropDownExplore = false;
-    }, 500);
+    }, 200);
   }
 
   @HostListener('document:click', ['$event'])
