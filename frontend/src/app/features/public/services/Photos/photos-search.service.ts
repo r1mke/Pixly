@@ -29,4 +29,11 @@ export class PhotosSearchService {
     return this.http.get<SearchResult>(`${MYCONFIG.apiUrl}/api/photos/search`, {params});
   }
 
+  suggestionsPhotos(title : string): Observable<any> {
+
+    let params = new HttpParams().append('Title', title);
+
+    return this.http.get<any>(`${MYCONFIG.apiUrl}/api/photos/search/suggestions`, {params});
+  }
+
 }

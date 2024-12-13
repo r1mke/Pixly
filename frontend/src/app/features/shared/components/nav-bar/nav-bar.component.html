@@ -6,8 +6,22 @@
         </div>
    
         <div class="search">
-            <input [(ngModel)]="currentSearch" type="text" (keydown)="onKeyDown($event)"  placeholder="Search...">
-            <img src="../../../../../assets/img/loupe.png" width="15px" height="15px" (click)="goToSearchPage()">
+            <div class="search-bar">
+                <input (keyup)="loadSuggestions()"
+                (focus)="onFocus()" 
+                class="search-input" [(ngModel)]="currentSearch" 
+                type="text" (keydown)="onKeyDown($event)"  placeholder="Search...">
+                <img src="../../../../../assets/img/loupe.png" width="15px" height="15px" (click)="goToSearchPage()">
+            </div>
+
+            <div class="search-suggestions" *ngIf="currentSearch && isInputFocused">
+                <span class="photo-items">Photos:</span>
+                <div class="search-suggestions-photos">
+                    <div class="search-item" *ngFor="let suggestion of searchSuggestions" (click)="updateSearch(suggestion)">
+                        <span>{{suggestion}}</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         
@@ -67,8 +81,8 @@
                 <i class="fa-solid ms-2" style="color: #7c7c7c;" [ngClass]="dropDown ? 'fa-angle-up' : 'fa-angle-down'"></i>
                 </div>
                 <div class="dropdown-content" *ngIf="dropDown" style="margin-top: 40px;">
-                <div class="dropdown-item">
-                    <a (click)="$event.preventDefault()" (click)="goToProfile()">Your Profile</a>
+                <div class="dropdown-item" (click)="goToProfile()">
+                    <a (click)="$event.preventDefault()" >Your Profile</a>
                 </div>
                 <div class="dropdown-item">
                     <a (click)="$event.preventDefault()">Your Collection</a>

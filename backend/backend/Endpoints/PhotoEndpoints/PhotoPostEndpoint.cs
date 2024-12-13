@@ -30,17 +30,16 @@ namespace backend.Endpoints.PhotoEndpoints
                     PhotoId = null,
                 };
             }
-
+            List<string> tags = request.Tags.Split(',').Select(tag => tag.Trim()).ToList();
             try
             {
-               
                 var photo = await _photoService.UploadPhotoAsync(
                     request.Title,
                     request.Description,
                     request.Location,
                     request.UserId,
                     request.File,
-                    request.Tags,
+                    tags,
                     cancellationToken
                 );
 
@@ -71,7 +70,7 @@ namespace backend.Endpoints.PhotoEndpoints
         public int UserId { get; set; }
         public IFormFile File { get; set; } 
 
-        public List<string> Tags { get; set; } = new List<string>();
+        public string Tags { get; set; }
  
     }
 
