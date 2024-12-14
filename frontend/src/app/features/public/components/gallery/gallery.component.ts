@@ -13,6 +13,8 @@ import { SearchRequest } from '../../model/SearchRequest';
 import { PhotoGetAllRequest } from '../../model/PhotoGetAllRequest';
 import { PhotoGetAllResult } from '../../model/PhotoGetAllResult';
 import { SearchResult } from '../../model/SearchResult';
+import { UserService } from '../../services/user.service';
+
 export class AppModule {}
 @Component({
   selector: 'app-gallery',
@@ -66,6 +68,7 @@ export class GalleryComponent implements OnInit {
  
   user: any | null = null;
   currentUrl : string = '';
+  username: string | null = null;
  
  
  
@@ -89,12 +92,17 @@ export class GalleryComponent implements OnInit {
   constructor(private getAllPhotosService: GetAllPhotosService,
               private authService: AuthService, private router: Router, private photoService: PhotoService,
               private route: ActivatedRoute,
-              private photosSearchService: PhotosSearchService,
+              private photosSearchService: PhotosSearchService, private userService: UserService
               ) { }
  
  
  
   ngOnInit(): void {
+    this.route.paramMap.subscribe(params => {
+      this.username = params.get('username');
+      if (this.username) this.loadUserPhotos();
+    });
+
     this.checkUser();
     this.checkQueryParams();
     this.checkUrl();
@@ -189,10 +197,25 @@ export class GalleryComponent implements OnInit {
     });
   }
  
+  loadUserPhotos(): void {
+    if (!this.username) return; // Dodajte ovu provjeru
+    this.userService.getUserByUsername(this.username).subscribe({
+      next: (res) => {
+        this.photos = res.photos;
+        console.log(res);
+      },
+      error: (error) => {
+        console.error('Error fetching photos:', error);
+      },
+    });
+  }
+  
+  
  
   loadPhotos() {
     if(this.currentUrl.includes('search')) this.loadSearchPhotos();
     if(this.currentUrl.includes('home')) this.loadPopularPhotos();
+    if(this.currentUrl.includes('user/')) this.loadUserPhotos();
   }
  
   loadMoreItems() {
@@ -225,7 +248,7 @@ export class GalleryComponent implements OnInit {
     toggleLike(photo: any, event: Event) {
       if(!this.user)
         this.router.navigate(['auth/login']);
- 
+      
       event.stopPropagation();
       const action = photo.isLiked ? this.photoService.unlikePhoto(photo.id, this.user.userId) : this.photoService.likePhoto(photo.id, this.user.userId);
    

@@ -5,7 +5,7 @@
   <div class="d-flex flex-column align-items-center">
     <!-- Avatar -->
     <div class="col-md-6 text-center text-md-end">
-      <img [src]="profileUser.profileImgUrl || 'assets/img/big_user_dflt.png'" alt="Profile Image" class="rounded-circle profile-img">
+      <img [src]="profileUser?.profileImgUrl || 'assets/img/big_user_dflt.png'" alt="Profile Image" class="rounded-circle profile-img">
     </div>
 
     <!-- User Info -->
@@ -40,18 +40,19 @@
     </div>
 
     <!-- Navigation Tabs -->
-    <div class="d-flex flex-row flex-wrap justify-content-evenly w-100 my-4 overflow-auto">
+    <div class="d-flex flex-row flex-wrap justify-content-evenly w-100 mt-4 overflow-auto">
       <a
         *ngFor="let item of navItems"
         [ngClass]="{ active: item.active }"
-        class="nav-item text-decoration-none text-muted text-center p-2"
+        class="nav-item text-decoration-none text-muted text-center px-2 py-1 px-md-4 py-md-2 "
         (click)="setActive(item, $event)"
       >
         <span class="fw-bold">{{ item.label }}</span>
       </a>
     </div>
 
-
-
+    <div class="container mt-0" *ngIf="navItems[0].active">
+      <app-gallery> </app-gallery>
+    </div>
   </div>
 </div>
