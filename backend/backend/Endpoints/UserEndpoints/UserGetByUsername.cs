@@ -13,6 +13,13 @@ namespace backend.Endpoints.UserEndpoints
         [HttpGet("user/{username}")]
         public async Task<IActionResult> GetUserByUsernameAsync(string username)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, refreshToken, db);
+
+            var userObj = validationResult is OkObjectResult okResult ? (User)okResult.Value : null;
+
             var user = await db.Users
                 .AsNoTracking()
                 .Include(u => u.Photos)
@@ -54,7 +61,7 @@ namespace backend.Endpoints.UserEndpoints
                             .FirstOrDefault(),
                         LikeCount = p.LikeCount,
                         ViewCount = p.ViewCount,
-                        IsLiked =  db.Likes.Any(l => l.PhotoId == p.Id && l.User.Username == username)
+                        IsLiked = userObj!=null && db.Likes.Any(l => l.PhotoId == p.Id && l.User.Username == username)
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();
