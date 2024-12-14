@@ -14,9 +14,6 @@ namespace backend.Endpoints.PhotoEndpoints
         .WithRequest<PhotoGetAllRequest>
         .WithResult<PhotoGetAllResult>
     {
-        
-
-       
         [HttpGet]
         public override async Task<PhotoGetAllResult> HandleAsync([FromQuery] PhotoGetAllRequest request, CancellationToken cancellationToken = default)
         {

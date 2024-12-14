@@ -4,11 +4,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../../auth/services/auth.service';
 import { NavBarComponent } from "../../../shared/components/nav-bar/nav-bar.component";
+import { GalleryComponent } from "../../components/gallery/gallery.component";
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterLink, NavBarComponent],
+  imports: [CommonModule, RouterLink, NavBarComponent, GalleryComponent],
   templateUrl: './profile-page.component.html',
   styleUrls: ['./profile-page.component.css'],
 })
@@ -22,7 +23,7 @@ export class ProfilePageComponent implements OnInit {
   navItems = [
     { label: 'Gallery', count: 0, active: true },
     { label: 'Collections', count: null, active: false },
-    { label: 'Statistics', count: null, active: false },
+    { label: 'Liked', count: null, active: false },
     { label: 'AI', count: null, active: false },
   ];
 
