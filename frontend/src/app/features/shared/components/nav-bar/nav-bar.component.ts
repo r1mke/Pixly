@@ -8,6 +8,8 @@ import { AuthService } from '../../../auth/services/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { PhotosSearchService } from '../../../public/services/Photos/photos-search.service';
 import { HttpClient } from '@angular/common/http';
+import { debounceTime, Subject } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -21,7 +23,8 @@ export class NavBarComponent implements OnInit {
   windowWidth: number = 0;
   menuOpen: boolean = false;
   exploreHovered = false;
-  searchSuggestions:any;
+  PhotoSuggestions:any;
+  AuthorsSuggestions:any;
   profileHovered = false;
   dotsHovered = false;
   user: any = null;
@@ -31,6 +34,7 @@ export class NavBarComponent implements OnInit {
   dropDownExplore : boolean = false;
   hoverTimeout : any;
   isInputFocused :boolean = false;
+  searchSubject: Subject<string> = new Subject();
   @Output() hoverStateChange = new EventEmitter<{ key: string; state: boolean }>();
 
   constructor(
@@ -45,6 +49,18 @@ export class NavBarComponent implements OnInit {
   ngOnInit(): void {
     this.checkUrl();
     this.getCurrentUser();
+    this.debounceSearch();
+  }
+
+  debounceSearch() {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      switchMap((value) => this.photosSearchService.suggestionsPhotos(value))
+    ) .subscribe((data) => {
+      console.log(data);
+      this.PhotoSuggestions = data.suggestionsPhotos;
+      this.AuthorsSuggestions = data.suggestionsAuthors;
+    })
   }
 
   checkUrl(): void {
@@ -64,24 +80,25 @@ export class NavBarComponent implements OnInit {
     this.router.navigate(["/public/search"], { queryParams: { q: this.currentSearch } });
   }
 
-  loadSuggestions(){
-    console.log(this.currentSearch);
-    if(this.currentSearch === '') return;
-    this.photosSearchService.suggestionsPhotos(this.currentSearch).subscribe((data) => {
-      this.searchSuggestions = data.suggestions;
-      console.log(this.searchSuggestions);
-    });
+  goToProfilePage(name:string): void {
+    this.router.navigate([`/public/profile/user/${name}`]);
   }
 
+
   updateSearch(value: string) {
+    if(this.currentSearch === '') return;
     this.currentSearch = value;
     this.goToSearchPage();
     this.onBlur();
   }
 
+  updateSearchWithoutValue(){
+    if(this.currentSearch === '') return;
+    this.searchSubject.next(this.currentSearch);
+  }
+
   onFocus() {
     this.isInputFocused = true;
-    this.loadSuggestions();
   }
 
   onBlur() {

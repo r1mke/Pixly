@@ -7,9 +7,9 @@
    
         <div class="search">
             <div class="search-bar">
-                <input (keyup)="loadSuggestions()"
+                <input (keyup)="updateSearchWithoutValue()"
                 (focus)="onFocus()" 
-                class="search-input" [(ngModel)]="currentSearch" 
+                class="search-input" [(ngModel)]="currentSearch"
                 type="text" (keydown)="onKeyDown($event)"  placeholder="Search...">
                 <img src="../../../../../assets/img/loupe.png" width="15px" height="15px" (click)="goToSearchPage()">
             </div>
@@ -17,7 +17,13 @@
             <div class="search-suggestions" *ngIf="currentSearch && isInputFocused">
                 <span class="photo-items">Photos:</span>
                 <div class="search-suggestions-photos">
-                    <div class="search-item" *ngFor="let suggestion of searchSuggestions" (click)="updateSearch(suggestion)">
+                    <div class="search-item" *ngFor="let suggestion of PhotoSuggestions" (click)="updateSearch(suggestion)">
+                        <span>{{suggestion}}</span>
+                    </div>
+                </div>
+                <span class="photo-items">Authors:</span>
+                <div class="search-suggestions-photos">
+                    <div class="search-item" *ngFor="let suggestion of AuthorsSuggestions" (click)="goToProfilePage(suggestion)">
                         <span>{{suggestion}}</span>
                     </div>
                 </div>

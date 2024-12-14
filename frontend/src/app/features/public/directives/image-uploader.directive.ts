@@ -18,7 +18,7 @@ enum DropColor {
   standalone: true,
 })
 export class ImageUploaderDirective {
-  @Output() dropFiles: EventEmitter<ImageFile> = new EventEmitter();  // Emitiraj samo jedan file
+  @Output() dropFiles: EventEmitter<ImageFile> = new EventEmitter();  
   @HostBinding("style.background") backgroundColor = DropColor.Default;
 
   constructor(private sanitizer: DomSanitizer) {}
@@ -44,7 +44,6 @@ export class ImageUploaderDirective {
 
     const fileList = event.dataTransfer.files;
     if (fileList.length > 1) {
-      // Ako se dropa više od jednog fajla, zanemariti
       console.warn("Only one file is allowed.");
       return;
     }
@@ -53,6 +52,6 @@ export class ImageUploaderDirective {
     const url = this.sanitizer.bypassSecurityTrustUrl(window.URL.createObjectURL(file));
     const imageFile: ImageFile = { file, url };
 
-    this.dropFiles.emit(imageFile);  // Emituj samo jedan file
+    this.dropFiles.emit(imageFile); 
   }
 }
