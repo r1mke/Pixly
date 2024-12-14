@@ -198,7 +198,7 @@ export class GalleryComponent implements OnInit {
   }
  
   loadUserPhotos(): void {
-    if (!this.username) return; // Dodajte ovu provjeru
+    if (!this.username) return; 
     this.userService.getUserByUsername(this.username).subscribe({
       next: (res) => {
         this.photos = res.photos;
