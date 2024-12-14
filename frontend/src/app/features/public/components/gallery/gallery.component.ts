@@ -202,7 +202,7 @@ export class GalleryComponent implements OnInit {
     this.userService.getUserByUsername(this.username).subscribe({
       next: (res) => {
         this.photos = res.photos;
-        console.log(res);
+        //console.log(res);
       },
       error: (error) => {
         console.error('Error fetching photos:', error);
