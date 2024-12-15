@@ -1,3 +1,7 @@
+:root{
+  --bs-form-invalid-color: white; 
+}
+
 .container
 {
   margin-top: 100px;
@@ -16,3 +20,23 @@ button:hover
 i{
   color: white;
 }
+
+
+.card-header{
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.card-body h4{
+  font-weight: 600;
+}
+
+
+input:focus{
+  box-shadow: none;
+  outline: 0;
+  border: 1px solid #f8f8f8;
+}
+
