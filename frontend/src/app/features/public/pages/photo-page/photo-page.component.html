@@ -71,9 +71,10 @@
 
           <div class="mt-4">
             <p class="small mb-2">Includes our <a class="pixly">standard licence</a></p>
-            <p class="small mb-2 text-se">Stock photo ID: {{photo.id}}</p>
-            <p class="small mb-2 text-se">Upload date: {{photo.createAt | customDate}}</p>
-            <p class="small mb-2 text-se">Location: {{photo.location}}</p>
+            <p class="small mb-2 text-se">Stock photo ID: <span class="text-secondary">{{photo.id}}</span></p>
+            <p class="small mb-2 text-se">Upload date: <span class="text-secondary">{{photo.createAt | customDate}}</span></p>
+            <p class="small mb-2 text-se">Location: <span class="text-secondary">{{photo.location}}</span></p>
+            <p class="small mb-2 text-se">Views: <span class="text-secondary">{{photo.viewCount}}</span></p>
           </div>
         </div>
       </div>
