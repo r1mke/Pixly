@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { AuthService } from '../../../auth/services/auth.service';
 import { NavBarComponent } from "../../../shared/components/nav-bar/nav-bar.component";
@@ -21,16 +21,17 @@ export class ProfilePageComponent implements OnInit {
   username: string | null = null;
 
   navItems = [
-    { label: 'Gallery', count: 0, active: true },
-    { label: 'Collections', count: null, active: false },
-    { label: 'Liked', count: null, active: false },
-    { label: 'AI', count: null, active: false },
+    { label: 'Gallery', active: false },
+    { label: 'Collections', active: false },
+    { label: 'Liked', active: false },
+    { label: 'AI', active: false },
   ];
 
   constructor(
     private route: ActivatedRoute,
     private userService: UserService,
     private authService: AuthService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -38,20 +39,23 @@ export class ProfilePageComponent implements OnInit {
       this.username = params.get('username');
       if (this.username) this.getUserProfile();
     });
-
     this.getCurrentUser();
+
+    this.route.url.subscribe(urlSegments => {
+      this.updateActiveTab(urlSegments);
+    });
   }
   
   getCurrentUser(): void {
     this.authService.currentUser$.subscribe({
-      next: (res) =>{
+      next: (res) => {
         this.currentUser = res;
         if (this.profileUser) this.checkIfOwnProfile();
       },
       error: () => {},
     });
   }
-  
+
   getUserProfile(): void {
     if (this.username) {
       this.userService.getUserByUsername(this.username).subscribe({
@@ -68,11 +72,28 @@ export class ProfilePageComponent implements OnInit {
     if (this.currentUser && this.profileUser)
       this.isOwnProfile = this.currentUser.username === this.profileUser.username;
   }
+
+  private updateActiveTab(urlSegments: any[]): void {
+    const currentPath = urlSegments.map(segment => segment.path).join('/');
+    this.navItems.forEach(nav => {
+      nav.active = currentPath.includes(nav.label.toLowerCase());
+    });
+  }
   
 
   public setActive(item: any, event: Event): void {
     event.preventDefault();
+
     this.navItems.forEach((nav) => (nav.active = false));
     item.active = true;
+
+    if (item.label === 'Liked') {
+      this.router.navigate([`public/profile/user/${this.username}/liked`]);
+    }
+
+    if (item.label === 'Gallery') {
+      this.router.navigate([`public/profile/user/${this.username}/gallery`]);
+    }
   }
 }
+

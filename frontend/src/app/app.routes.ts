@@ -39,14 +39,35 @@ export const routes: Routes = [
         children: [
           {
             path: 'user/:username',
+            loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent),
+          },
+          {
+            path: 'user/:username/liked',
+            loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent)
+            
+          },
+          {
+            path: 'user/:username/gallery',
             loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent)
           },
+         
           {
             path: 'upload',
             loadComponent: () => import('./features/public/pages/upload-page/upload-page.component').then(m => m.UploadPageComponent),
             canActivate: [AuthGuard]
           }
         ]
+        /* {
+    path: 'profile/user/:username',
+    loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent),
+    children: [
+      { path: '', redirectTo: 'gallery', pathMatch: 'full' },
+      { path: 'gallery', component: GalleryComponent },
+      { path: 'liked', component: GalleryComponent },
+      { path: 'collections', component: GalleryComponent },
+      { path: 'ai', component: GalleryComponent }
+    ]
+  },*/
       },
       {
         path: 'generate-image',

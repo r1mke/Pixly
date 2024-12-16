@@ -21,6 +21,19 @@ namespace backend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Like>()
+                .HasKey(l => l.LikeId);
+
+            modelBuilder.Entity<Like>()
+                .HasOne(l => l.User)
+                .WithMany(u => u.Likes)
+                .HasForeignKey(l => l.UserId);
+
+            modelBuilder.Entity<Like>()
+                .HasOne(l => l.Photo)
+                .WithMany(p => p.Likes)
+                .HasForeignKey(l => l.PhotoId);
+
             modelBuilder.Entity<Photo>()
                 .HasOne(p => p.User)
                 .WithMany(u => u.Photos)

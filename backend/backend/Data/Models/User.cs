@@ -23,6 +23,7 @@ namespace backend.Data.Models
         public ICollection<Photo> Photos { get; set; }
         [JsonIgnore]
         public ICollection<RefreshToken> RefreshTokens { get; set; }
-        
+        public ICollection<Like> Likes { get; set; } = new List<Like>();
+
     }
 }
