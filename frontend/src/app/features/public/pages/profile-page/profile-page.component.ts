@@ -74,10 +74,16 @@ export class ProfilePageComponent implements OnInit {
   }
 
   private updateActiveTab(urlSegments: any[]): void {
-    const currentPath = urlSegments.map(segment => segment.path).join('/');
-    this.navItems.forEach(nav => {
-      nav.active = currentPath.includes(nav.label.toLowerCase());
-    });
+    this.navItems.forEach(nav => nav.active = false);
+
+    if (urlSegments.some(segment => segment.path === 'liked')) {
+      this.navItems[2].active = true;
+    } 
+    else if (urlSegments.some(segment => segment.path === 'gallery')) {
+      this.navItems[0].active = true;
+    }
+    else 
+    this.navItems[0].active = true; 
   }
   
 
