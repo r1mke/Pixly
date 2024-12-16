@@ -69,6 +69,7 @@ export class GalleryComponent implements OnInit {
   user: any | null = null;
   currentUrl : string = '';
   username: string | null = null;
+  param : string | null = null;
  
  
  
@@ -100,7 +101,11 @@ export class GalleryComponent implements OnInit {
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
       this.username = params.get('username');
-      if (this.username) this.loadUserPhotos();
+      if (this.param) this.loadPhotos();
+      
+
+      this.param = params.get('liked')
+      if (this.param) this.loadLikedPhotos();
     });
 
     this.checkUser();
@@ -202,7 +207,7 @@ export class GalleryComponent implements OnInit {
     this.userService.getUserByUsername(this.username).subscribe({
       next: (res) => {
         this.photos = res.photos;
-        //console.log(res);
+        console.log(this.photos);
       },
       error: (error) => {
         console.error('Error fetching photos:', error);
@@ -215,8 +220,25 @@ export class GalleryComponent implements OnInit {
   loadPhotos() {
     if(this.currentUrl.includes('search')) this.loadSearchPhotos();
     if(this.currentUrl.includes('home')) this.loadPopularPhotos();
-    if(this.currentUrl.includes('user/')) this.loadUserPhotos();
+    if(this.currentUrl === (`user/${this.username}`)) this.loadUserPhotos();
+    if(this.currentUrl === (`user/${this.username}/liked`)) this.loadLikedPhotos();
+    if(this.currentUrl === (`user/${this.username}/gallery`)) this.loadUserPhotos();
   }
+
+  loadLikedPhotos(): void {
+    if (!this.username) return;
+    this.userService.getUserLikedPhotos(this.username).subscribe({
+      next: (res) => {
+        this.photos = []
+        this.photos = res;
+        console.log(this.photos);
+      },
+      error: (error) => {
+        console.error('Error fetching liked photos:', error);
+      },
+    });
+  }
+  
  
   loadMoreItems() {
     if (this.isLoading) return;
