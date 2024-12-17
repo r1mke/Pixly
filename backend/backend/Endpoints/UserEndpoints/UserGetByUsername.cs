@@ -24,13 +24,15 @@ namespace backend.Endpoints.UserEndpoints
                 .AsNoTracking()
                 .Include(u => u.Photos)
                 .Where(u => u.Username == username)
-                .Select(u => new
+                .Select(u => new 
                 {
                     UserId = u.Id,
                     Email = u.Email,
                     FirstName = u.FirstName,
                     LastName = u.LastName,
                     Username = u.Username,
+                    TotalViews = u.Photos.Sum(p => p.ViewCount),
+                    TotalLikes = u.Photos.Sum(p => p.LikeCount),
                     ProfileImgUrl = u.ProfileImgUrl,
                     Photos = u.Photos.Select(p => new PhotoDTO
                     {
