@@ -277,6 +277,7 @@ export class GalleryComponent implements OnInit {
       action.subscribe({
         next: () => {
           photo.isLiked = !photo.isLiked; // Toggle state
+          if(this.currentUrl === (`user/${this.username}/liked`)) this.loadLikedPhotos();
         },
         error: (err) => {
           console.error('Error updating like status:', err.error?.Message || err.message);
