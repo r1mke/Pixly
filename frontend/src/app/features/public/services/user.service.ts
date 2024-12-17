@@ -16,6 +16,6 @@ export class UserService {
   }
 
   getUserLikedPhotos(username: string): Observable<any> {
-    return this.http.get(`${this.apiUser}/${username}/liked-photos`);
+    return this.http.get(`${this.apiUser}/${username}/liked-photos`, {withCredentials: true});
   }
 }
