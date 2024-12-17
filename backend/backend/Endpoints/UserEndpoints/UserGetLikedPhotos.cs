@@ -1,4 +1,5 @@
 ﻿using backend.Data;
+using backend.Data.Models;
 using backend.Helper.DTO_s;
 using backend.Helper.Services.JwtService;
 using Microsoft.AspNetCore.Http;
@@ -11,9 +12,15 @@ namespace backend.Endpoints.UserEndpoints
     public class UserGetLikedPhotos(AppDbContext db, IJwtService jwtService) : ControllerBase
     {
         [HttpGet("user/{username}/liked-photos")]
-
         public async Task<IActionResult> GetLikedPhotoByUsernameAsync(string username)
         {
+            var jwtToken = Request.Cookies["jwt"];
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            var validationResult = await jwtService.ValidateJwtAndUserAsync(jwtToken, refreshToken, db);
+
+            var userObj = validationResult is OkObjectResult okResult ? (User)okResult.Value : null;
+
             var user = await db.Users
             .Include(u => u.Likes)
             .ThenInclude(l => l.Photo)
@@ -52,7 +59,7 @@ namespace backend.Endpoints.UserEndpoints
                     .FirstOrDefault(),
                 LikeCount = l.Photo.LikeCount,
                 ViewCount = l.Photo.ViewCount,
-                //IsLiked = true // Pretpostavljamo da su sve ove fotografije lajkovane
+                IsLiked = userObj != null && db.Likes.Any(like => like.PhotoId == l.PhotoId  && like.User.Username == username)
             }).ToList();
 
             return Ok(likedPhotos);
