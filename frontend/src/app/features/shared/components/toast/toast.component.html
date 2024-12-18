@@ -1,0 +1,34 @@
+<div class="toast-container position-fixed bottom-0 start-50 translate-middle-x p-2">
+  <div
+    id="liveToast"
+    class="toast"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    [class.show]="showToast"
+  >
+    <div class="d-flex align-items-center px-3 py-3 bg-dark text-white">
+      <i class="me-3 fs-4"
+			[ngClass]="{
+				'fas fa-check-circle': toastType === 'success',
+				'fas fa-exclamation-triangle': toastType === 'warning',
+				'fas fa-info-circle': toastType === 'info',
+				'fas fa-times-circle': toastType === 'error',
+				'text-success': toastType === 'success',
+				'text-warning': toastType === 'warning',
+				'text-info': toastType === 'info',
+				'text-danger': toastType === 'error'
+			}"			
+			></i> 
+
+      <span class="toast-message" style="flex-grow: 1;">{{ toastMessage }}</span>
+      <button
+        type="button"
+        class="btn-close small btn-close-white"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+        (click)="showToast = false"
+      ></button>
+    </div>
+  </div>
+</div>
