@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NavBarComponent } from "../../../shared/components/nav-bar/nav-bar.component";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -10,13 +10,14 @@ import { AuthService } from '../../../auth/services/auth.service';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { inject } from '@angular/core';
 import {RouterModule} from  '@angular/router';
+import { NgbdToast } from "../../../shared/components/toast/toast.component";
 
 
 
 @Component({
   selector: 'app-upload-page',
   standalone: true,
-  imports: [NavBarComponent, CommonModule,RouterModule, FormsModule, ImageUploaderDirective, ReactiveFormsModule],
+  imports: [NavBarComponent, CommonModule, RouterModule, FormsModule, ImageUploaderDirective, ReactiveFormsModule, NgbdToast],
   templateUrl: './upload-page.component.html',
   styleUrl: './upload-page.component.css'
 })
@@ -37,6 +38,8 @@ export class UploadPageComponent implements OnInit {
   tagInput: string = ''; 
   //-----------------------//
   isLoading: boolean = false;
+  @ViewChild(NgbdToast)
+  ngbdToast!: NgbdToast;
   
   uploadForm: FormGroup;
 
@@ -153,12 +156,11 @@ export class UploadPageComponent implements OnInit {
      console.log(JSON.stringify(this.tags));
     this.photoPostService.postPhoto(formData).subscribe({
       next: (response) => {
-        alert("Uspjesno: ");
         this.isLoading = false;
+        this.ngbdToast.showMessage('Successfully uploaded!', 'success');
         this.removeImage();
       },
       error: (err) => {
-        alert("Uspjesno al u k: ");
         this.isLoading = false;
       }
     }); 

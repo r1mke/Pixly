@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { GalleryComponent } from "../../components/gallery/gallery.component";
 import { AuthService } from '../../../auth/services/auth.service';
 import { Router } from '@angular/router';
-import { GetAllPhotosService } from '../../services/get-all-photos.service';
+import { UserService } from '../../services/user.service';
 import { CustomDatePipe } from '../../helper/custom-date.pipe';
 
 @Component({
@@ -18,19 +18,25 @@ import { CustomDatePipe } from '../../helper/custom-date.pipe';
 })
 export class PhotoPageComponent implements OnInit {
   photo: any;
-  user: any = null;
-  userId : number = 0;
+  currentUser: any = null;
+  currentUserId : number = 0;
+  profileUserId: number = 0;
+  isOwnProfile: boolean = false;
 
-  constructor(private getAllPhotosService: GetAllPhotosService, private photoService: PhotoService, private route: ActivatedRoute, private authService: AuthService, private router: Router) {}
+  constructor(
+    private photoService: PhotoService, 
+    private route: ActivatedRoute, 
+    private authService: AuthService, 
+    private router: Router,) {}
 
   ngOnInit(): void {
      this.getPhotoById();
 
      this.authService.currentUser$.subscribe((user) => {
-      this.user = user;
+      this.currentUser = user;
     });
 
-    if (!this.user) {
+    if (!this.currentUser) {
       this.authService.getCurrentUser().subscribe({
         error: () => {
           console.error('Error fetching user');
@@ -39,12 +45,18 @@ export class PhotoPageComponent implements OnInit {
     }
   }
 
+  goToEditPhoto() {
+    this.router.navigate([`auth/photo/${this.photo.id}/edit`]);
+  }
+
  getPhotoById(): void {
     const photoId = Number(this.route.snapshot.paramMap.get('id'));
     if (photoId) {
       this.photoService.getPhotoById(photoId).subscribe({
         next: (data) => {
           this.photo = data;
+          this.profileUserId = data.user.id;
+          this.checkIfOwnprofile();
         },
         error: (error) => {
           console.error('Error fetching photo:', error);
@@ -55,15 +67,22 @@ export class PhotoPageComponent implements OnInit {
     }
   }
 
+  private checkIfOwnprofile(): void{
+    if(this.currentUser && this.currentUser.userId === this.profileUserId)
+      this.isOwnProfile = true;
+    else
+      this.isOwnProfile = false; 
+  }
+
 
   toggleLike(photo: any, event: Event) {
-    if(this.user)
-      this.userId = this.user.userId;
+    if(this.currentUser)
+      this.currentUserId = this.currentUser.userId;
     else 
       this.router.navigate(['auth/login']);
 
       event.stopPropagation();
-      const action = photo.isLiked ? this.photoService.unlikePhoto(photo.id, this.user.userId) : this.photoService.likePhoto(photo.id, this.user.userId);
+      const action = photo.isLiked ? this.photoService.unlikePhoto(photo.id, this.currentUser.userId) : this.photoService.likePhoto(photo.id, this.currentUser.userId);
    
       action.subscribe({
         next: () => {

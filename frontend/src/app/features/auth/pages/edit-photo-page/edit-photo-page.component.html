@@ -1,0 +1,114 @@
+<app-nav-bar/>
+
+<div class="container">
+  <h1 class="text-center mb-3 mb-md-5">Edit Photo</h1>
+  <div class="edit-container">
+    <div class="image-container">
+      <img [src]="photo?.url" />
+      <button class="removeImageBtn">Delete</button>
+    </div>
+    <div class="image-details">
+      <form class="upload-form" [formGroup]="editPhotoForm">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input
+            placeholder="Enter a title..."
+            type="text"
+            id="title"
+            formControlName="title"
+            class="form-control"
+          />
+          <div
+            *ngIf="
+              editPhotoForm.get('title')?.invalid &&
+              editPhotoForm.get('title')?.touched
+            "
+            class="error"
+          >
+            <div *ngIf="editPhotoForm.get('title')?.errors?.['required']">
+              Title is required.
+            </div>
+            <div *ngIf="editPhotoForm.get('title')?.errors?.['minlength']">
+              Title must be at least 10 characters long.
+            </div>
+            <div *ngIf="editPhotoForm.get('title')?.errors?.['maxlength']">
+              Title must be at most 50 characters long.
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <input
+            placeholder="Enter a description..."
+            type="text"
+            id="description"
+            formControlName="description"
+            class="form-control"
+          />
+          <div
+            *ngIf="
+              editPhotoForm.get('description')?.invalid &&
+              editPhotoForm.get('description')?.touched
+            "
+            class="error"
+          >
+            <div *ngIf="editPhotoForm.get('description')?.errors?.['required']">
+              Description is required.
+            </div>
+            <div *ngIf="editPhotoForm.get('description')?.errors?.['minlength']">
+              Description must be at least 15 characters long.
+            </div>
+            <div *ngIf="editPhotoForm.get('description')?.errors?.['maxlength']">
+              Description must be at most 200 characters long.
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input
+            placeholder="Enter a location (city)..."
+            type="text"
+            id="location"
+            formControlName="location"
+            class="form-control"
+          />
+          <div
+            *ngIf="
+              editPhotoForm.get('location')?.invalid &&
+              editPhotoForm.get('location')?.touched
+            "
+            class="error"
+          >
+            <div *ngIf="editPhotoForm.get('location')?.errors?.['required']">
+              Location is required.
+            </div>
+            <div *ngIf="editPhotoForm.get('location')?.errors?.['minlength']">
+              Location must be at least 3 characters long.
+            </div>
+            <div *ngIf="editPhotoForm.get('location')?.errors?.['maxlength']">
+              Location must be at most 50 characters long.
+            </div>
+          </div>
+        </div>
+        <div class="form-group upload">
+          <button class="w-100 fw-bold p-2 d-flex align-items-center justify-content-center" 
+            [disabled]="!editPhotoForm.get('title')?.valid
+                || !editPhotoForm.get('description')?.valid
+                || !editPhotoForm.get('location')?.valid
+                || isLoading
+                " (click)="onSubmit()">
+                <span class="text-white" *ngIf="!isLoading">Upload</span>
+                <div *ngIf="isLoading"  class="spinner-border spinner-border-sm text-light" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+          </button>
+        </div>
+      </form>
+    </div>
+    <div class="remove">
+      <i  class="fa-solid fa-trash fa-2xl"></i>
+    </div>
+  </div>
+</div>
+
+<ngbd-toast/>
