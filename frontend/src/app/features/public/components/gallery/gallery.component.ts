@@ -103,6 +103,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
  
   ngOnInit(): void {
     this.checkUrl();
+    console.log(this.isAdminPage);
     if(!this.isAdminPage){
     this.route.paramMap.pipe(takeUntil(this.ngOnDestory)).subscribe(params => {
       this.username = params.get('username');
@@ -115,6 +116,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
 
     this.checkUser();
     this.checkQueryParams();
+    this.loadPhotos();
   }
     this.showImagesToAdmin();
   }
@@ -159,7 +161,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
       this.currentUrl = segment.join('/');
       this.isAdminPage = this.router.url.includes('admin');
       
-      this.loadPhotos();
+      
     })
   }
  
