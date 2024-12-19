@@ -103,8 +103,8 @@
 			src="{{ photo.url }}"
 			>
 			<div class="layout">
-				<div class="layout-content">
-					<div class="row-1">
+				<div class="layout-content" *ngIf="!isAdminPage">
+					<div class="row-1" >
 						<button 
 							class="like-button" 
 							(click)="toggleLike(photo, $event)"  

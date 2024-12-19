@@ -24,7 +24,9 @@ namespace backend.API.Endpoints.UserEndpoints
                     ID = u.Id,
                     FirstName = u.FirstName,
                     LastName = u.LastName,
+                    Username = u.Username,
                     Email = u.Email,
+                    ProfileImgUrl = u.ProfileImgUrl,
                     IsAdmin = u.IsAdmin,
                     IsCreator = u.IsCreator
                 })
@@ -38,7 +40,9 @@ namespace backend.API.Endpoints.UserEndpoints
             public required int ID { get; set; }
             public required string FirstName { get; set; }
             public required string LastName { get; set; }
+            public string Username { get; set; }
             public required string Email { get; set; }
+            public string? ProfileImgUrl { get; set; }
             public bool IsAdmin { get; set; }
             public bool IsCreator { get; set; }
         }
