@@ -28,6 +28,33 @@ public class PhotoService
         _context = context;
     }
 
+    public async Task<Photo> UpdatePhotoAsync(int photoId, string? title, string? description, string? location)
+    {
+        var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == photoId);
+
+        if (photo == null)
+        {
+            return null;
+        }
+
+        /*
+        if (photo.UserId != currentUserId)
+        {
+            return null;
+        }
+        */
+
+        if (!string.IsNullOrEmpty(description)) photo.Description = description;
+        if (!string.IsNullOrEmpty(title)) photo.Title = title;
+        if (!string.IsNullOrEmpty(location)) photo.Location = location;
+        //if (price.HasValue) photo.Price = Convert.ToInt32(price);
+
+        await _context.SaveChangesAsync();
+
+        return photo;
+    }
+
+
     public async Task<string> UploadProfilePhotoAsync(IFormFile file, CancellationToken cancellationToken)
     {
          

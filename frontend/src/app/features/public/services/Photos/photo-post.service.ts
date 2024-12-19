@@ -16,9 +16,4 @@ export class PhotoPostService {
     
     return this.http.post<any>(url, data);
   }
-
- 
-  
-  
-
 }
