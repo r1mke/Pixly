@@ -1,0 +1,21 @@
+.navigation{
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+    padding: 15px 0;
+}
+
+.item{
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: medium;
+}
+
+.item i{
+    margin-right: 10px;
+}
+
+.item img{
+    margin-left: 10px;
+}

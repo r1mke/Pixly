@@ -7,27 +7,34 @@
    
         <div class="search">
             <div class="search-bar">
-                <input (keyup)="updateSearchWithoutValue()"
+                <input (keyup)="updateSearchWithoutValue($event)"
                 (focus)="onFocus()" 
-                class="search-input" [(ngModel)]="currentSearch"
+                class="search-input"
+                [(ngModel)]="currentSearch"
                 type="text" (keydown)="onKeyDown($event)"  placeholder="Search...">
                 <img src="../../../../../assets/img/loupe.png" width="15px" height="15px" (click)="goToSearchPage()">
             </div>
 
-            <div class="search-suggestions" *ngIf="currentSearch && isInputFocused">
-                <span class="photo-items">Photos:</span>
-                <div class="search-suggestions-photos">
-                    <div class="search-item" *ngFor="let suggestion of PhotoSuggestions" (click)="updateSearch(suggestion)">
-                        <span>{{suggestion}}</span>
-                    </div>
+            <ng-container *ngIf="currentSearch">
+                <div class="search-suggestions" *ngIf="Suggestions$ | async as data">
+                    <ng-container *ngIf="data.suggestionsPhotos?.length>0">
+                        <span class="photo-items">Photos:</span>
+                        <div class="search-suggestions-photos"  *ngIf="isInputFocused" >
+                            <div class="search-item" *ngFor="let suggestion of data.suggestionsPhotos, let i = index" (click)="updateSearch(suggestion)">
+                                <span>{{suggestion}}</span>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="data.suggestionsAuthors?.length>0">
+                        <span class="photo-items">Authors:</span>
+                        <div class="search-suggestions-photos">
+                            <div class="search-item" *ngFor="let suggestion of data.suggestionsAuthors, let i = index" (click)="goToProfilePage(suggestion)">
+                                <span>{{suggestion}}</span>
+                            </div>
+                        </div>
+                    </ng-container>
                 </div>
-                <span class="photo-items">Authors:</span>
-                <div class="search-suggestions-photos">
-                    <div class="search-item" *ngFor="let suggestion of AuthorsSuggestions" (click)="goToProfilePage(suggestion)">
-                        <span>{{suggestion}}</span>
-                    </div>
-                </div>
-            </div>
+            </ng-container>
         </div>
 
         

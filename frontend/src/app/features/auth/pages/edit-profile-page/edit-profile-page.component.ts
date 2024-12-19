@@ -1,20 +1,26 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit,OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { UpdateUserService } from '../../services/update-user.service';
 import { CommonModule } from '@angular/common';
 import { tap } from 'rxjs/operators';
 import { NavBarComponent } from "../../../shared/components/nav-bar/nav-bar.component";
+import { ActivatedRoute } from '@angular/router';
+import { Observable, Subject, takeUntil } from 'rxjs';
+import { NavigationComponent } from "../../../admin/components/navigation/navigation.component";
+import { Router } from '@angular/router';
+import { map } from 'rxjs/operators';
+import { UserService } from '../../../public/services/user.service';
 import { NgbdToast } from "../../../shared/components/toast/toast.component";
 
 @Component({
   selector: 'app-edit-profile',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, NavBarComponent, NgbdToast],
+  imports: [ReactiveFormsModule, CommonModule, NavBarComponent, NgbdToast, NavigationComponent],
   templateUrl: './edit-profile-page.component.html',
   styleUrls: ['./edit-profile-page.component.css'],
 })
-export class EditProfilePageComponent implements OnInit {
+export class EditProfilePageComponent implements OnInit,OnDestroy {
   editProfileForm!: FormGroup;
   isEmailDisabled: boolean = true;
   isUsernameDisabled: boolean = true;
@@ -23,6 +29,11 @@ export class EditProfilePageComponent implements OnInit {
   isImageDeleted: boolean = false;
   public isLoading: boolean = false;
   currentUser: any = null;
+  currentRoute : string = '';
+  private ngOnDestroy$ = new Subject<void>();
+  adminPage : boolean = false;
+  username : string = '';
+  userData$!: Observable<any>;
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChild(NgbdToast)
   ngbdToast!: NgbdToast;
@@ -32,22 +43,74 @@ export class EditProfilePageComponent implements OnInit {
     private fb: FormBuilder,
     private authService: AuthService,
     private updateUserService: UpdateUserService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private userService: UserService
   ) {}
 
   ngOnInit(): void {
     this.initForm();
+    this.checkUrl();
+    this.loadData();
+  }
+
+    
+
+
+  ngOnDestroy(): void {
+    this.ngOnDestroy$.next();
+    this.ngOnDestroy$.complete();
+  }
+
+  loadData(): void {
+    if(!this.adminPage) this.checkUser();
+  }
+
+  checkUser(): void {
     this.authService.currentUser$
-      .pipe(
-        tap((user) => {
-          if (user) {
-            this.updateForm(user);
-            this.profileImgUrl = user.profileImgUrl || null;
-            this.currentUser = user;
-          }
-        })
-      )
-      .subscribe({
-      });
+    .pipe(
+      takeUntil(this.ngOnDestroy$),
+      tap((user) => {
+        if (user) {
+          this.updateForm(user);
+          this.profileImgUrl = user.profileImgUrl || null;
+          this.currentUser = user;
+        }
+      })
+    )
+    .subscribe({
+      error: (err) => console.error('Error fetching current user:', err),
+    });
+   }
+
+  checkUrl(): void {
+    this.currentRoute = this.router.url;
+    this.adminPage = this.currentRoute.includes('admin'); 
+  
+    
+    this.route.paramMap.pipe(
+      takeUntil(this.ngOnDestroy$),
+      map(params => params.get('username') || '')
+    ).subscribe(username => {
+      this.username = username;
+      if (this.username) this.getUserByUsername();
+    });
+  }
+
+
+  getUserByUsername(): void {
+    this.userService.getUserByUsername(this.username).subscribe({
+      next: (data) => {
+        console.log('User Data:', data); // Provjeri podatke u konzoli
+        if (data) {
+          this.updateForm(data);
+          this.profileImgUrl = data.profileImgUrl || null;
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching user by username:', err);
+      }
+    });
   }
 
   private initForm(): void {
@@ -78,7 +141,13 @@ export class EditProfilePageComponent implements OnInit {
       this.isLoading = true;
 
       this.updateUserService
-        .updateUser({ firstName, lastName, username, profileImg, isImageDeleted: this.isImageDeleted })
+        .updateUser({
+          firstName,
+          lastName,
+          username,
+          profileImg,
+          isImageDeleted: this.isImageDeleted,
+        }).pipe(takeUntil(this.ngOnDestroy$))
         .subscribe({
           next: () => this.handleUpdateSuccess(),
           error: (err) => this.handleUpdateError(err),
@@ -145,4 +214,9 @@ export class EditProfilePageComponent implements OnInit {
   resetUsernameError(): void {
     this.usernameError = '';
   }
+
+  loadPhotos(){
+    this.userService.updateAdminPhotosSubject();
+  }
+
 }

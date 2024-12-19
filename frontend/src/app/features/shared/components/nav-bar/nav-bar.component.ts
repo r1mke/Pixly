@@ -1,15 +1,15 @@
-import { Component, EventEmitter, OnInit, Output, HostListener } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, HostListener, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { WindowSizeService } from '../../../../services/window-size.service';
 import { AuthService } from '../../../auth/services/auth.service';
 import { ActivatedRoute } from '@angular/router';
 import { PhotosSearchService } from '../../../public/services/Photos/photos-search.service';
-import { HttpClient } from '@angular/common/http';
-import { debounceTime, Subject } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { BehaviorSubject, debounceTime, Observable, Subject } from 'rxjs';
+import { catchError, switchMap,tap } from 'rxjs/operators';
+import { of } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 @Component({
   selector: 'app-nav-bar',
   standalone: true,
@@ -18,13 +18,11 @@ import { switchMap } from 'rxjs/operators';
   styleUrls: ['./nav-bar.component.css'],
 })
 
-export class NavBarComponent implements OnInit {
+export class NavBarComponent implements OnInit,OnDestroy {
   isScrolled: boolean = false;
   windowWidth: number = 0;
   menuOpen: boolean = false;
   exploreHovered = false;
-  PhotoSuggestions:any;
-  AuthorsSuggestions:any;
   profileHovered = false;
   dotsHovered = false;
   user: any = null;
@@ -34,49 +32,60 @@ export class NavBarComponent implements OnInit {
   dropDownExplore : boolean = false;
   hoverTimeout : any;
   isInputFocused :boolean = false;
-  searchSubject: Subject<string> = new Subject();
+  Suggestions$!: Observable<any>
+  private searchSubject  = new BehaviorSubject<string>('');
+  private ngOnDestroy$ = new Subject<void>();
   @Output() hoverStateChange = new EventEmitter<{ key: string; state: boolean }>();
 
   constructor(
-    private windowSizeService: WindowSizeService,
     private router: Router,
     private authService: AuthService,
     private route: ActivatedRoute,
     private photosSearchService: PhotosSearchService,
-    private http: HttpClient
   ) {}
+
 
   ngOnInit(): void {
     this.checkUrl();
     this.getCurrentUser();
-    this.debounceSearch();
+    this.Suggestions$ = this.searchSubject.pipe(
+      debounceTime(200),
+      catchError((error) => {
+        console.error('Error fetching suggestions:', error);
+        return [];
+      }),
+      switchMap((value) => {
+        console.log("vrijednost: "+ value, "suggestion "+ this.Suggestions$);
+        if (value.trim() === '') {
+          return of([]); 
+        }
+        return this.photosSearchService.suggestionsPhotos(value);
+      }), 
+      tap((res)=> console.log(res))
+    );
   }
 
-  debounceSearch() {
-    this.searchSubject.pipe(
-      debounceTime(300),
-      switchMap((value) => this.photosSearchService.suggestionsPhotos(value))
-    ) .subscribe((data) => {
-      console.log(data);
-      this.PhotoSuggestions = data.suggestionsPhotos;
-      this.AuthorsSuggestions = data.suggestionsAuthors;
-    })
+  ngOnDestroy(): void {
+    this.ngOnDestroy$.next();
+    this.ngOnDestroy$.complete();
   }
+
 
   checkUrl(): void {
-      this.route.url.subscribe((segment) => {
+      this.route.url.pipe(takeUntil(this.ngOnDestroy$)).subscribe((segment) => {
         console.log (segment);
         this.currentUrl = segment.join('/');
-        if(this.currentUrl.includes('search')){
-          this.route.queryParams.subscribe(params => {
-            this.currentSearch = params['q'];
-          })
-        }
       })
+
+      if(this.currentUrl.includes('search')){
+        this.route.queryParams.pipe(takeUntil(this.ngOnDestroy$)).subscribe(params => {
+          this.currentSearch=params['q'];
+        })
+      }
   }
 
   goToSearchPage(): void {
-    if(this.currentSearch === '') return;
+    if(this.currentSearch)
     this.router.navigate(["/public/search"], { queryParams: { q: this.currentSearch } });
   }
 
@@ -86,16 +95,22 @@ export class NavBarComponent implements OnInit {
 
 
   updateSearch(value: string) {
-    if(this.currentSearch === '') return;
-    this.currentSearch = value;
-    this.goToSearchPage();
-    this.onBlur();
+    if(this.currentSearch){
+      this.currentSearch = value;
+      this.goToSearchPage();
+      this.onBlur();
+    }
   }
 
-  updateSearchWithoutValue(){
-    if(this.currentSearch === '') return;
-    this.searchSubject.next(this.currentSearch);
+
+  updateSearchWithoutValue(event: Event) {
+    const value = (event.target as HTMLInputElement).value;
+    if(value === '') return;
+    this.searchSubject.next(value);
+    console.log(this.searchSubject);
+    
   }
+
 
   onFocus() {
     this.isInputFocused = true;
