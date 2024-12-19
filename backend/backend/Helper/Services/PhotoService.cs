@@ -131,17 +131,7 @@ public class PhotoService
         if (compressedUploadResult.Error != null)
             throw new InvalidOperationException($"Compressed upload failed: {compressedUploadResult.Error.Message}");
 
-        var transformationrRegular = imageOrientation switch
-        {
-            "landscape" => new Transformation().Named("landscapeRegular_transformation"),
-            "portrait" => new Transformation().Named("portraitRegular_transformation"),
-            "square" => new Transformation().Named("squareRegular_transformation"),
-            _ => null
-        };
-
-        var compressedRegularUploadResult = await UploadToCloudinaryAsync(file.FileName, imageBytes, "photos/compressedRegular", cancellationToken, transformationrRegular);
-        if (compressedRegularUploadResult.Error != null)
-            throw new InvalidOperationException($"Compressed upload failed: {compressedRegularUploadResult.Error.Message}");
+     
 
         // Save photo metadata to the database
         var photo = new Photo
@@ -180,15 +170,8 @@ public class PhotoService
             Size = GetSizeCategory(compressedUploadResult.Bytes),
             Date = DateTime.UtcNow,
             Photo = photo
-        },
-         new PhotoResolution
-        {
-            Resolution = "compressedRegular",
-            Url = compressedRegularUploadResult.Url.ToString(),
-            Size = GetSizeCategory(compressedRegularUploadResult.Bytes),
-            Date = DateTime.UtcNow,
-            Photo = photo
         }
+       
     };
         _context.PhotoResolutions.AddRange(resolutions);
 
