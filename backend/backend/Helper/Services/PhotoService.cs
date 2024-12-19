@@ -28,6 +28,33 @@ public class PhotoService
         _context = context;
     }
 
+    public async Task<Photo> UpdatePhotoAsync(int photoId, string? title, string? description, string? location)
+    {
+        var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == photoId);
+
+        if (photo == null)
+        {
+            return null;
+        }
+
+        /*
+        if (photo.UserId != currentUserId)
+        {
+            return null;
+        }
+        */
+
+        if (!string.IsNullOrEmpty(description)) photo.Description = description;
+        if (!string.IsNullOrEmpty(title)) photo.Title = title;
+        if (!string.IsNullOrEmpty(location)) photo.Location = location;
+        //if (price.HasValue) photo.Price = Convert.ToInt32(price);
+
+        await _context.SaveChangesAsync();
+
+        return photo;
+    }
+
+
     public async Task<string> UploadProfilePhotoAsync(IFormFile file, CancellationToken cancellationToken)
     {
          
@@ -104,17 +131,7 @@ public class PhotoService
         if (compressedUploadResult.Error != null)
             throw new InvalidOperationException($"Compressed upload failed: {compressedUploadResult.Error.Message}");
 
-        var transformationrRegular = imageOrientation switch
-        {
-            "landscape" => new Transformation().Named("landscapeRegular_transformation"),
-            "portrait" => new Transformation().Named("portraitRegular_transformation"),
-            "square" => new Transformation().Named("squareRegular_transformation"),
-            _ => null
-        };
-
-        var compressedRegularUploadResult = await UploadToCloudinaryAsync(file.FileName, imageBytes, "photos/compressedRegular", cancellationToken, transformationrRegular);
-        if (compressedRegularUploadResult.Error != null)
-            throw new InvalidOperationException($"Compressed upload failed: {compressedRegularUploadResult.Error.Message}");
+     
 
         // Save photo metadata to the database
         var photo = new Photo
@@ -153,15 +170,8 @@ public class PhotoService
             Size = GetSizeCategory(compressedUploadResult.Bytes),
             Date = DateTime.UtcNow,
             Photo = photo
-        },
-         new PhotoResolution
-        {
-            Resolution = "compressedRegular",
-            Url = compressedRegularUploadResult.Url.ToString(),
-            Size = GetSizeCategory(compressedRegularUploadResult.Bytes),
-            Date = DateTime.UtcNow,
-            Photo = photo
         }
+       
     };
         _context.PhotoResolutions.AddRange(resolutions);
 

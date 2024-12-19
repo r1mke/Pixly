@@ -27,4 +27,14 @@ export class PhotoService {
       `${MYCONFIG.apiUrl}/api/photos/${photoId}/like?userId=${userId}`
     );
   }
+
+  updatePhoto(id:number, data: {title : string, description: string, location: string}): Observable<any> {
+    const formData: FormData = new FormData();
+
+    formData.append('title', data.title);
+    formData.append('description', data.description);
+    formData.append('location', data.location);
+
+    return this.http.put<any>(`${MYCONFIG.apiUrl}/api/photos/${id}`, formData)
+  }
 }

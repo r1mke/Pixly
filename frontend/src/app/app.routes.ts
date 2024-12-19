@@ -45,6 +45,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/auth/pages/edit-profile-page/edit-profile-page.component').then(m => m.EditProfilePageComponent),
         canActivate: [AuthGuard]
       },
+      {
+        path: 'photo/:id/edit',
+        loadComponent: () => import('./features/auth/pages/edit-photo-page/edit-photo-page.component').then(m => m.EditPhotoPageComponent),
+        canActivate: [AuthGuard]
+      },
       { path: '**', redirectTo: 'register', pathMatch: 'full' }
     ]
   },
@@ -79,16 +84,16 @@ export const routes: Routes = [
           }
         ]
         /* {
-    path: 'profile/user/:username',
-    loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent),
-    children: [
-      { path: '', redirectTo: 'gallery', pathMatch: 'full' },
-      { path: 'gallery', component: GalleryComponent },
-      { path: 'liked', component: GalleryComponent },
-      { path: 'collections', component: GalleryComponent },
-      { path: 'ai', component: GalleryComponent }
-    ]
-  },*/
+        path: 'profile/user/:username',
+        loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent),
+        children: [
+          { path: '', redirectTo: 'gallery', pathMatch: 'full' },
+          { path: 'gallery', component: GalleryComponent },
+          { path: 'liked', component: GalleryComponent },
+          { path: 'collections', component: GalleryComponent },
+          { path: 'ai', component: GalleryComponent }
+        ]
+        },*/
       },
       {
         path: 'generate-image',
