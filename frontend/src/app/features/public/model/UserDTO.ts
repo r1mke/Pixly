@@ -5,4 +5,5 @@ export interface UserDTO{
     Username: string;
     Email: string;
     ProfileImgUrl? :string;
+    IsAdmin: boolean;
 }

@@ -4,6 +4,27 @@ import { AuthGuard } from './features/auth/services/auth-guard';
 
 export const routes: Routes = [
   {
+    path: 'admin',
+    children: [
+     {
+       path: 'dashboard',
+       loadComponent: () => import('./features/admin/pages/dashboard/dashboard.component').then(m => m.DashboardComponent),
+     },
+     {
+       path: 'new-posts',
+       loadComponent: () => import('./features/admin/pages/new-posts/new-posts.component').then(m => m.NewPostsComponent),
+     },
+     {
+      path: 'users',
+      loadComponent: () => import('./features/admin/pages/users/users.component').then(m => m.UsersComponent),
+     },
+     {
+      path: 'user/:username',
+      loadComponent: () => import('./features/admin/pages/user-profile/user-profile.component').then(m => m.UserProfileComponent),
+     } 
+    ]
+  },
+  {
     path: 'auth',
     children: [
       {
