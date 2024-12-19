@@ -15,15 +15,4 @@ export class AppComponent {
   user: any;
 
   constructor(private authService: AuthService) {}
-
-  ngOnInit(): void {
-    this.authService.getCurrentUser().subscribe({
-      next: (response) => {
-        this.user = response.user;
-      },
-      error: (error) => {
-        console.log('User not logged in or error occurred:', error);
-      }
-    });
-  }
 }

@@ -1,6 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { GetAllPhotosService } from '../../services/Photos/get-all-photos.service';
-import { OnInit } from '@angular/core';
+import { OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import _ from 'lodash';
 import { AuthService } from '../../../auth/services/auth.service';
@@ -14,6 +14,8 @@ import { PhotoGetAllRequest } from '../../model/PhotoGetAllRequest';
 import { PhotoGetAllResult } from '../../model/PhotoGetAllResult';
 import { SearchResult } from '../../model/SearchResult';
 import { UserService } from '../../services/user.service';
+import { Subject, takeUntil } from 'rxjs';
+import {PhotoEndpointsService} from '../../../admin/services/Endpoints/Photo/photo-endpoints.service';
 
 export class AppModule {}
 @Component({
@@ -23,7 +25,7 @@ export class AppModule {}
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.css'
 })
-export class GalleryComponent implements OnInit {
+export class GalleryComponent implements OnInit, OnDestroy {
  
   searchRequest : SearchRequest = {
      Popularity: '',
@@ -60,9 +62,9 @@ export class GalleryComponent implements OnInit {
  
   photos: any[] = [];
   originalPhotos: any[] = [];
- 
   isLoading: boolean = false;
- 
+  private ngOnDestory = new Subject<void>();
+
   selectedOption: string = 'photos';
   selectedFilter: string = 'trending';
  
@@ -70,7 +72,7 @@ export class GalleryComponent implements OnInit {
   currentUrl : string = '';
   username: string | null = null;
   param : string | null = null;
- 
+  isAdminPage: boolean = false;
  
  
   //more filters  section
@@ -93,13 +95,16 @@ export class GalleryComponent implements OnInit {
   constructor(private getAllPhotosService: GetAllPhotosService,
               private authService: AuthService, private router: Router, private photoService: PhotoService,
               private route: ActivatedRoute,
-              private photosSearchService: PhotosSearchService, private userService: UserService
+              private photosSearchService: PhotosSearchService, private userService: UserService,
+              private photoEndpointsService: PhotoEndpointsService
               ) { }
  
  
  
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
+    this.checkUrl();
+    if(!this.isAdminPage){
+    this.route.paramMap.pipe(takeUntil(this.ngOnDestory)).subscribe(params => {
       this.username = params.get('username');
       if (this.param) this.loadPhotos();
       
@@ -110,20 +115,56 @@ export class GalleryComponent implements OnInit {
 
     this.checkUser();
     this.checkQueryParams();
-    this.checkUrl();
+  }
+    this.showImagesToAdmin();
+  }
+
+
+
+
+  ngOnDestroy(): void {
+    this.ngOnDestory.next();
+    this.ngOnDestory.complete();
+  }
+
+
+  showImagesToAdmin(){
+    this.userService.updateAdminPhotos$.pipe(takeUntil(this.ngOnDestory)).subscribe((value) => {
+      const show = value === null ? null : value
+      if(show){
+        this.AdminloadUserPhotos();
+      }
+      else{
+        this.photos = [];
+      }
+    })
+  }
+
+  AdminloadUserPhotos(){
+    if(!this.username) return;
+    this.userService.getUserByUsernameAdmin(this.username).pipe(takeUntil(this.ngOnDestory)).subscribe({
+      next : (user) => {
+        this.photos = user.photos;
+        console.log(this.photos);
+      },
+      error : (error) => {
+        console.log(error);
+      }
+    })
   }
  
  
   checkUrl(){
-    this.route.url.subscribe((segment) => {
+    this.route.url.pipe(takeUntil(this.ngOnDestory)).subscribe((segment) => {
       this.currentUrl = segment.join('/');
-      console.log(this.currentUrl);
+      this.isAdminPage = this.router.url.includes('admin');
+      
       this.loadPhotos();
     })
   }
  
   checkQueryParams(){
-    this.route.queryParams.subscribe(params => {
+    this.route.queryParams.pipe(takeUntil(this.ngOnDestory)).subscribe(params => {
       this.searchRequest =
       {  
          Popularity: this.currentPopularity,
@@ -142,25 +183,17 @@ export class GalleryComponent implements OnInit {
   }
  
   checkUser(){
-    this.authService.currentUser$.subscribe((user) => {
+    this.authService.currentUser$.pipe(takeUntil(this.ngOnDestory)).subscribe((user) => {
       this.user = user === null ? null : user
       console.log(this.user);
     });
- 
-    if (!this.user) {
-      this.authService.getCurrentUser().subscribe({
-        error: () => {
-          console.error('Error fetching user');
-        },
-      });
-    }
   }
  
   loadSearchPhotos() {
     this.isLoading = true;
     this.photos = [];
     this.searchResult.Photos = [];
-    this.photosSearchService.searchPhotos(this.searchRequest).subscribe({
+    this.photosSearchService.searchPhotos(this.searchRequest).pipe(takeUntil(this.ngOnDestory)).subscribe({
       next: (res) => {
         this.searchResult.Photos = [...this.searchResult.Photos, ...res.photos];
         this.photos = this.searchResult.Photos
@@ -185,7 +218,7 @@ export class GalleryComponent implements OnInit {
       if (this.getAllRequest.PageNumber > this.getAllResult.TotalPages) return;
     }  
     this.isLoading = true;
-    this.getAllPhotosService.getAllPhotos(this.getAllRequest).subscribe({
+    this.getAllPhotosService.getAllPhotos(this.getAllRequest).pipe(takeUntil(this.ngOnDestory)).subscribe({
       next: (res) => {
         console.log(res);
         this.getAllResult.Photos = [...this.getAllResult.Photos, ...res.photos];
@@ -204,7 +237,7 @@ export class GalleryComponent implements OnInit {
  
   loadUserPhotos(): void {
     if (!this.username) return; // Dodajte ovu provjeru
-    this.userService.getUserByUsername(this.username).subscribe({
+    this.userService.getUserByUsername(this.username).pipe(takeUntil(this.ngOnDestory)).subscribe({
       next: (res) => {
         this.photos = res.photos;
         console.log(this.photos);
@@ -220,14 +253,28 @@ export class GalleryComponent implements OnInit {
   loadPhotos() {
     if(this.currentUrl.includes('search')) this.loadSearchPhotos();
     if(this.currentUrl.includes('home')) this.loadPopularPhotos();
-    if(this.currentUrl === (`user/${this.username}`)) this.loadUserPhotos();
-    if(this.currentUrl === (`user/${this.username}/liked`)) this.loadLikedPhotos();
-    if(this.currentUrl === (`user/${this.username}/gallery`)) this.loadUserPhotos();
+    if(this.currentUrl === `user/${this.username}` && !this.isAdminPage) this.loadUserPhotos();
+    if(this.currentUrl === `user/${this.username}/liked` && !this.isAdminPage) this.loadLikedPhotos();
+    if(this.currentUrl === `user/${this.username}/gallery` && !this.isAdminPage) this.loadUserPhotos();
+    if(this.currentUrl.includes('new-posts')) this.loadAdminPhotos();
+  }
+
+  loadAdminPhotos(){
+    if(this.isLoading) return;
+    this.photoEndpointsService.getAllPhotos().pipe(takeUntil(this.ngOnDestory)).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.photos = res.photos;
+      },
+      error: (error) => {
+        console.error('Error fetching photos:', error);
+      },
+    })
   }
 
   loadLikedPhotos(): void {
     if (!this.username) return;
-    this.userService.getUserLikedPhotos(this.username).subscribe({
+    this.userService.getUserLikedPhotos(this.username).pipe(takeUntil(this.ngOnDestory)).subscribe({
       next: (res) => {
         this.photos = []
         this.photos = res;
@@ -272,7 +319,7 @@ export class GalleryComponent implements OnInit {
         this.router.navigate(['auth/login']);
       
       event.stopPropagation();
-      const action = photo.isLiked ? this.photoService.unlikePhoto(photo.id, this.user.userId) : this.photoService.likePhoto(photo.id, this.user.userId);
+      const action = photo.isLiked ? this.photoService.unlikePhoto(photo.id, this.user.userId).pipe(takeUntil(this.ngOnDestory)) : this.photoService.likePhoto(photo.id, this.user.userId).pipe(takeUntil(this.ngOnDestory));
    
       action.subscribe({
         next: () => {
