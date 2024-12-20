@@ -15,7 +15,7 @@
                 <img src="../../../../../assets/img/loupe.png" width="15px" height="15px" (click)="goToSearchPage()">
             </div>
 
-            <ng-container *ngIf="currentSearch">
+            <ng-container *ngIf="currentSearch && isInputFocused">
                 <div class="search-suggestions" *ngIf="Suggestions$ | async as data">
                     <ng-container *ngIf="data.suggestionsPhotos?.length>0">
                         <span class="photo-items">Photos:</span>

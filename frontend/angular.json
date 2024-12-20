@@ -32,11 +32,7 @@
           }
         ],
         "styles": [
-<<<<<<< HEAD
          "node_modules/bootstrap/dist/css/bootstrap.min.css",
-=======
-          "node_modules/bootstrap/dist/css/bootstrap.min.css",
->>>>>>> 5bcd03845f081fb989ab26fd66fa87f990d78768
           "src/styles.css",
           "node_modules/@fortawesome/fontawesome-free/css/all.min.css"
         ],
