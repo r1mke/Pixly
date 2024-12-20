@@ -102,9 +102,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
  
  
   ngOnInit(): void {
-    this.checkUrl();
-    if(!this.isAdminPage){
-    this.route.paramMap.pipe(takeUntil(this.ngOnDestory)).subscribe(params => {
+    this.route.paramMap.subscribe(params => {
       this.username = params.get('username');
       if (this.param) this.loadPhotos();
       
@@ -115,9 +113,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
 
     this.checkUser();
     this.checkQueryParams();
-    this.loadPhotos();
-  }
-    this.showImagesToAdmin();
+    this.checkUrl();
   }
 
 
@@ -159,6 +155,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
     this.route.url.pipe(takeUntil(this.ngOnDestory)).subscribe((segment) => {
       this.currentUrl = segment.join('/');
       this.isAdminPage = this.router.url.includes('admin');
+      this.loadPhotos();
     })
   }
  
@@ -186,6 +183,13 @@ export class GalleryComponent implements OnInit, OnDestroy {
       this.user = user === null ? null : user
       console.log(this.user);
     });
+    if (!this.user) {
+      this.authService.getCurrentUser().subscribe({
+        error: () => {
+          console.error('Error fetching user');
+        },
+      });
+    }
   }
  
   loadSearchPhotos() {
