@@ -35,6 +35,6 @@ export class PhotoService {
     formData.append('description', data.description);
     formData.append('location', data.location);
 
-    return this.http.put<any>(`${MYCONFIG.apiUrl}/api/photos/${id}`, formData)
+    return this.http.put<any>(`${MYCONFIG.apiUrl}/api/photos/${id}`, formData, {withCredentials: true});
   }
 }

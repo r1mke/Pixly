@@ -49,7 +49,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
  
   getAllRequest : PhotoGetAllRequest = {
     PageNumber: 1,
-    PageSize: 2
+    PageSize: 10
   }
  
   getAllResult : PhotoGetAllResult = {
