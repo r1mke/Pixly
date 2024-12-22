@@ -10,8 +10,6 @@ using SixLabors.ImageSharp.Processing;
 using Microsoft.EntityFrameworkCore;
 using backend.Helper.Services;
 
-
-
 public class PhotoService
 {
     private readonly Cloudinary _cloudinary;
