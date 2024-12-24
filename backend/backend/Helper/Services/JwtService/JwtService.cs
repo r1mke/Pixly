@@ -54,13 +54,19 @@ public class JwtService : IJwtService
     }
 
 
-    public string GenerateJwtToken(User user)
+    public string GenerateJwtToken(User user, string? twoFactorCode = null)
     {
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email),
         };
+
+        if (!string.IsNullOrEmpty(twoFactorCode))
+        {
+            claims.Add(new Claim("two_factor_code", twoFactorCode));
+            claims.Add(new Claim("two_factor_expiry", DateTime.UtcNow.AddMinutes(5).ToString("o")));
+        }
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

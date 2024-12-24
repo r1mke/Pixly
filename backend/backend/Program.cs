@@ -35,6 +35,15 @@ public class Program
 
         builder.Services.AddMemoryCache();
 
+        builder.Services.AddDistributedMemoryCache(); // For session storage
+        builder.Services.AddSession(options =>
+        {
+            options.Cookie.HttpOnly = true;
+            options.Cookie.IsEssential = true; // Ensures session works even when cookies are disabled
+            options.IdleTimeout = TimeSpan.FromMinutes(3); // Session timeout
+        });
+
+
         // Autentifikacija putem cookies
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
@@ -121,6 +130,8 @@ public class Program
 
         // Middleware za autentifikaciju i autorizaciju
         app.UseMiddleware<JwtRefreshMiddleware>();
+        app.UseSession(); // This must be added before UseAuthentication or UseAuthorization
+
         app.UseAuthentication();
         app.UseAuthorization();
 

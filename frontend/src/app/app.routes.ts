@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { VerifyEmailGuard } from './features/auth/services/verify-email-quard';
 import { AuthGuard } from './features/auth/services/auth-guard';
+import { TwoFaGuard } from './features/auth/services/2fa-guard';
 
 export const routes: Routes = [
   {
@@ -39,6 +40,11 @@ export const routes: Routes = [
       {
         path: 'login',
         loadComponent: () => import('./features/auth/pages/login-page/login-page.component').then(m => m.LoginPageComponent),
+      },
+      {
+        path: 'verify-2fa',
+        loadComponent: () => import('./features/auth/pages/verify-twofa-page/verify-twofa-page.component').then(m => m.VerifyTwofaPageComponent),
+        canActivate: [TwoFaGuard]
       },
       {
         path: 'edit-profile',
