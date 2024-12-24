@@ -2,20 +2,18 @@ import { Component, OnInit, ViewChildren, QueryList, ElementRef, inject } from '
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormControl } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { Router, RouterLink } from '@angular/router';
-import { VerifyEmailService } from '../../services/verify-email.service';
-import { ResendVerificationCodeService } from '../../services/resend-verififcation-code.service';
-import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
+import { LoginService } from '../../services/login.service';
 
 @Component({
-  selector: 'app-verify-email',
+  selector: 'app-verify-twofa-page',
   standalone: true,
   imports: [ReactiveFormsModule, CommonModule, NgbModule],
-  templateUrl: './verify-email-page.component.html',
-  styleUrls: ['./verify-email-page.component.css']
+  templateUrl: './verify-twofa-page.component.html',
+  styleUrl: './verify-twofa-page.component.css'
 })
-export class VerifyEmailPageComponent implements OnInit {
-  public frmVerifyEmail: FormGroup;
+export class VerifyTwofaPageComponent {
+  public frmVerify2FA: FormGroup;
   public verificationCodeControls: FormControl[] = [];
   public userEmail: string | null = null;
   public errorMessage: string = ''; 
@@ -27,12 +25,11 @@ export class VerifyEmailPageComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private router = inject(Router);
-  private verifyEmailService = inject(VerifyEmailService);
-  private resendVerificationCodeService = inject(ResendVerificationCodeService);
+  private loginService = inject(LoginService);
 
   @ViewChildren('inputField') inputFields!: QueryList<ElementRef>;
   
-  constructor(private authService: AuthService) {
+  constructor() {
     this.verificationCodeControls = Array(6).fill(null).map(() => new FormControl('', [
       Validators.required,
       Validators.pattern(/^\d$/)
@@ -43,43 +40,30 @@ export class VerifyEmailPageComponent implements OnInit {
       return acc;
     }, {} as Record<string, FormControl>);
 
-    this.frmVerifyEmail = this.fb.group(formControls);
+    this.frmVerify2FA = this.fb.group(formControls);
   }
 
   ngOnInit(): void {
-    this.isLoading = true;
-    this.authService.getCurrentUser().subscribe({
-      next: (response) => {
-        if (response) {
-          this.user = response.user;
-          this.userEmail = response.user?.email;
-        } else {
-          this.errorMessage = 'Greška prilikom dohvaćanja podataka korisnika.';
-        }
-        this.isLoading = false;
-      },
-      error: (err) => {
-        console.error('Greška:', err);
-        this.errorMessage = 'Greška prilikom dohvaćanja podataka korisnika.';
-        this.isLoading = false;
-      },
-    });
+    this.userEmail = sessionStorage.getItem('email');
   }
   
   
-  submitVerificationCode() {
+  submitVerificationCode(): void {
     this.resetMessages();
     this.isLoading = true;
-  
-    if (!this.frmVerifyEmail.valid || !this.userEmail) {
-      this.errorMessage = !this.frmVerifyEmail.valid ? 'Kod nije validan.' : 'Email nije pronađen.';
+    
+    if (!this.frmVerify2FA.valid) {
+      this.errorMessage = !this.frmVerify2FA.valid ? 'Kod nije validan.' : 'Email nije pronađen.';
       this.isLoading = false;
       return;
     }
-    const code = Object.values(this.frmVerifyEmail.value).join('');
-    this.verifyEmailService.verifyEmail(code, this.userEmail).subscribe({
+  
+    const code = Object.values(this.frmVerify2FA.value).join('');
+    this.loginService.verify2FA(code).subscribe({
       next: (response) => {
-        this.router.navigate(['/login']);
+        console.log(response);
+        sessionStorage.removeItem('statusCode');
+        this.router.navigate(['/home']);
       },
       error: (error) => {
         this.isLoading = false;
@@ -92,6 +76,7 @@ export class VerifyEmailPageComponent implements OnInit {
     });
   }
   
+  
   moveToNextInput(event: any, index: number) {
     if (event.target.value && index < 5) {
       const nextInput = this.inputFields.toArray()[index + 1]?.nativeElement;
@@ -103,28 +88,23 @@ export class VerifyEmailPageComponent implements OnInit {
     this.resetMessages();
     this.isLoading = true;
     
-    if (this.userEmail) {
-      this.resendVerificationCodeService.resendVerificationCode().subscribe({
+      this.loginService.resend2FA().subscribe({
         next: (response) => {
-          console.log('Ponovno slanje koda uspješno:', response);
+          //console.log('Ponovno slanje koda uspješno:', response);
           this.resendSuccessMessage = 'New code has been sent.';
           this.resendErrorMessage = '';
           this.errorMessage = '';
         },
         error: (error) => {
-          console.error('Greška pri ponovnom slanju koda:', error);
+          //console.error('Greška pri ponovnom slanju koda:', error);
           this.resendErrorMessage = error.message || 'Došlo je do greške pri ponovnom slanju koda.';
           this.resendSuccessMessage = '';
-          this.isLoading = false;
         },
         complete: () => {
-          console.log('Ponovno slanje koda završeno.');
           this.isLoading = false;
+          //console.log('Ponovno slanje koda završeno.');
         }
       });
-    } else {
-      this.resendErrorMessage = 'Email nije pronađen.';
-    }
   }
 
   resetMessages(): void {
@@ -133,5 +113,4 @@ export class VerifyEmailPageComponent implements OnInit {
     this.resendErrorMessage = '';
     this.resendSuccessMessage = '';
   }
-  
 }

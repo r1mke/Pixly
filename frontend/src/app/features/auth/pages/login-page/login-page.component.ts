@@ -33,25 +33,32 @@ export class LoginPageComponent {
     this.showPassword = !this.showPassword;
   }
 
-  submit(): void{
-    if(this.frmLogin.valid) {
-      this.isLoading = true;
-      const loginData = this.frmLogin.value;
-      this.loginService.loginUser(loginData).subscribe({
-        next:(response) =>{
-          console.log(response.message);
-          this.router.navigate(['/home']);
-          this.loginError = '';
-        },
-        error:(error) =>{
-          console.error('Login failed', error);
-          this.loginError = error.message;
-          this.isLoading = false;
-        },
-        complete:()=>{
-          this.isLoading = false;
+  submit(): void {
+  if (this.frmLogin.valid) {
+    this.isLoading = true;
+    const loginData = this.frmLogin.value;
+
+    this.loginService.loginUser(loginData).subscribe({
+      next: (response) => {
+        if (response.statusCode === 202 || response.message === '2FA code sent. Please verify.')
+        {
+          this.router.navigate(['/auth/verify-2fa']);
+          sessionStorage.setItem('statusCode', response.statusCode.toString());
         }
-      });
-    } 
+        else
+          this.router.navigate(['/home']);
+
+        this.loginError = '';
+      },
+      error: (error) => {
+        console.error('Login failed', error);
+        this.loginError = error.message;
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
+}
 }

@@ -20,6 +20,7 @@ namespace backend.Data.Models
         [JsonIgnore]
         public bool IsAdmin { get; set; }
         public bool IsCreator { get; set; }
+        public bool TwoFactorEnabled { get; set; }
         public ICollection<Photo> Photos { get; set; }
         [JsonIgnore]
         public ICollection<RefreshToken> RefreshTokens { get; set; }

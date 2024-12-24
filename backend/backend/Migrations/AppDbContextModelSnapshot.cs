@@ -295,6 +295,9 @@ namespace backend.Migrations
                     b.Property<string>("ProfileImgUrl")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Username")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -324,13 +327,13 @@ namespace backend.Migrations
             modelBuilder.Entity("backend.Data.Models.Like", b =>
                 {
                     b.HasOne("backend.Data.Models.Photo", "Photo")
-                        .WithMany()
+                        .WithMany("Likes")
                         .HasForeignKey("PhotoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("backend.Data.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Likes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -417,6 +420,8 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Data.Models.Photo", b =>
                 {
+                    b.Navigation("Likes");
+
                     b.Navigation("PhotoColors");
 
                     b.Navigation("PhotoTags");
@@ -431,6 +436,8 @@ namespace backend.Migrations
 
             modelBuilder.Entity("backend.Data.Models.User", b =>
                 {
+                    b.Navigation("Likes");
+
                     b.Navigation("Photos");
 
                     b.Navigation("RefreshTokens");

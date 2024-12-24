@@ -7,7 +7,7 @@ namespace backend.Helper.Services.JwtService
 {
     public interface IJwtService
     {
-        string GenerateJwtToken(User user);
+        string GenerateJwtToken(User user, string? twoFacotorCode = null);
         RefreshToken GenerateRefreshToken(int userId);
         bool ValidateRefreshToken(RefreshToken refreshToken, string token);
         void RevokeRefreshToken(RefreshToken refreshToken);
