@@ -4,11 +4,12 @@ import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angula
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap'; 
 import { Router, RouterLink } from '@angular/router';
 import { LoginService } from '../../services/login.service';
+import { NavBarComponent } from "../../../shared/components/nav-bar/nav-bar.component";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, NgbModule, RouterLink],
+  imports: [ReactiveFormsModule, CommonModule, NgbModule, RouterLink, NavBarComponent],
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.css']
 })
