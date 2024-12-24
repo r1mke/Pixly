@@ -109,13 +109,11 @@ public class LoginEndpoint : MyEndpointBaseAsync
         if (string.IsNullOrEmpty(userEmail))
             return HandleError("User session expired", 401);
 
-   
         var user = await _db.Users.FirstOrDefaultAsync(u => u.Email == userEmail, cancellationToken);
 
         if (user == null)
             return HandleError("User not found", 404);
 
-        // Check if 2FA is enabled
         if (!user.TwoFactorEnabled)
             return HandleError("Two-factor authentication is not enabled for this user", 400);
 
@@ -128,7 +126,6 @@ public class LoginEndpoint : MyEndpointBaseAsync
                 return HandleError("Too many requests. Please try again later.", 400);
             
         
-        // Generate new 2FA code
         var newTwoFaCode = new Random().Next(100000, 1000000).ToString();
 
         await _emailSender.SendEmailAsync(user.Email, "Verify your login", $"Code to verify your login: <strong>{newTwoFaCode}</strong>");

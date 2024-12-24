@@ -1,17 +1,19 @@
-<div class="container p-3">
-  <div class="row justify-content-center">
+<app-nav-bar/>
+
+<div class="container-fluid p-3">
+  <div class="container">
+    <div class="row justify-content-center">
       <div class="col-12 col-sm-8 col-md-6 col-lg-4">
           <div class="card">
-              <div class="card-header  custom-header text-white text-center p-2 fs-3">Pixly</div>
+              <div class="card-header custom-header p-2 text-white text-center fs-3">Pixly</div>
               <div class="card-body">
                   <h4>Sign in</h4>
-                  <p class="text-start m-0 small mb-3">Not a member? <a routerLink="/auth/register">Join Pixly</a></p>
+                  <p class="mb-3 m-0 text-start small">Not a member? <a routerLink="/auth/register">Join Pixly</a></p>
 
                   <form [formGroup]="frmLogin" (submit)="submit()">
                       <!-- Email Field -->
                       <div class="mb-4">
                           <input 
-                            id="email" 
                             formControlName="email" 
                             type="email" 
                             class="form-control" 
@@ -19,7 +21,7 @@
                             placeholder="Email" 
                             required 
                           />
-                          <div class="invalid-feedback">
+                          <div class="invalid-feedback text-danger">
                             <span *ngIf="frmLogin.controls['email'].hasError('required')">Required!</span>
                             <span *ngIf="frmLogin.controls['email'].hasError('email')">Enter a valid email address!</span>
                           </div>
@@ -40,7 +42,7 @@
                           <button type="button" class="p-2" (click)="togglePasswordVisibility()">
                             <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
                           </button>
-                          <div class="invalid-feedback">
+                          <div class="invalid-feedback text-danger">
                             <span *ngIf="frmLogin.controls['password'].hasError('required')">Required!</span>
                             <span *ngIf="loginError">{{loginError}}</span>
                           </div>
@@ -52,7 +54,7 @@
                         <button
                           [disabled]="frmLogin.invalid || isLoading"
                           type="submit"
-                          class="w-100 fw-bold p-2 d-flex align-items-center justify-content-center"
+                          class="d-flex align-items-center justify-content-center p-2 w-100 fw-bold"
                         >
                           <span class="text-white" *ngIf="!isLoading">Login</span>
                           <div *ngIf="isLoading" class="spinner-border spinner-border-sm text-light" role="status">
@@ -66,6 +68,7 @@
               </div>
           </div>
       </div>
+  </div>
   </div>
 </div>
 
