@@ -45,3 +45,11 @@ button:hover
 i{
   color: white;
 }
+
+.card-header{
+  text-align: center;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+

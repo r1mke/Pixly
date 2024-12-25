@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
       <div class="col-12 col-sm-8 col-md-6 col-lg-4">
         <div class="card">
-          <div class="card-header fw-bold custom-header text-white text-center p-2 fs-3">Pixly</div>
+          <div class="card-header custom-header p-2 text-white text-center fs-3">Pixly</div>
           <div class="card-body">
             <h4 class="text-start fw-medium">Join</h4>
             <p class="text-start m-0 small mb-3">
@@ -17,7 +17,6 @@
                 <!-- First Name Field -->
                 <div class="col-md-6 mb-3 pe-md-1">
                   <input
-                    id="firstName"
                     formControlName="firstName"
                     type="text"
                     class="form-control"
@@ -35,7 +34,6 @@
                 <!-- Last Name Field -->
                 <div class="col-md-6 mb-3 ps-md-1">
                   <input
-                    id="lastName"
                     formControlName="lastName"
                     type="text"
                     class="form-control"
@@ -54,7 +52,6 @@
               <!-- Username Field -->
               <div class="mb-3">
                 <input
-                  id="username"
                   formControlName="username"
                   type="text"
                   class="form-control"
@@ -73,7 +70,6 @@
               <!-- Email Field -->
               <div class="mb-3">
                 <input
-                  id="email"
                   formControlName="email"
                   type="email"
                   class="form-control"
@@ -145,7 +141,7 @@
                 <button
                   [disabled]="isLoading || frmSignup.invalid || emailError || usernameError"
                   type="submit"
-                  class="w-100 fw-bold p-2 d-flex align-items-center justify-content-center"
+                  class="d-flex align-items-center justify-content-center p-2 w-100 fw-bold"
                 >
                   <span class="text-white" *ngIf="!isLoading">Sign Up</span>
                   <div *ngIf="isLoading" class="spinner-border spinner-border-sm text-light" role="status">

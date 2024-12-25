@@ -7,7 +7,7 @@
           <div class="card">
               <div class="card-header custom-header p-2 text-white text-center fs-3">Pixly</div>
               <div class="card-body">
-                  <h4>Sign in</h4>
+                  <h4 class="text-start fw-medium">Sign in</h4>
                   <p class="mb-3 m-0 text-start small">Not a member? <a routerLink="/auth/register">Join Pixly</a></p>
 
                   <form [formGroup]="frmLogin" (submit)="submit()">
@@ -31,7 +31,6 @@
                       <div class="mb-3">
                         <div class="input-group">
                           <input
-                            id="password"
                             [type]="showPassword ? 'text' : 'password'"
                             formControlName="password"
                             class="form-control"

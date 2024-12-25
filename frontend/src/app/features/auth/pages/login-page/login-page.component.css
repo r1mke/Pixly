@@ -32,11 +32,9 @@
   z-index: 2;
 }
 
-
 .card {
   border: 0;
 }
-
 
 button
 {
@@ -59,9 +57,7 @@ i{
   text-transform: uppercase;
 }
 
-.card-body h4{
-  font-weight: 600;
-}
+
 
 
 
