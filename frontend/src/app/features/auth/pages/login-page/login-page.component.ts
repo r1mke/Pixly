@@ -52,7 +52,7 @@ export class LoginPageComponent {
         this.loginError = '';
       },
       error: (error) => {
-        console.error('Login failed', error);
+        //console.error('Login failed', error);
         this.loginError = error.message;
         this.isLoading = false;
       },

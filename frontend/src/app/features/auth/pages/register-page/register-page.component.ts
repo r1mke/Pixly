@@ -66,19 +66,17 @@ export class RegisterPageComponent {
   
       this.registerService.registerUser(userData).subscribe({
         next: (response) => {
-          console.log('Registration successful', response);
+          //console.log('Registration successful', response);
           this.router.navigate(['/auth/verify-email']);
         },
         error: (err) => {
-          console.error('Error occurred during registration', err);
+          //console.error('Error occurred during registration', err);
         },
         complete: () => {
           this.isLoading = false;
         },
       });
     } 
-    else 
-      console.log('Form is invalid');
   }
   
  checkEmail(email: string): void {
@@ -92,7 +90,7 @@ export class RegisterPageComponent {
         this.emailError = response.message;
     },
     error: (err) => {
-      console.error('Greška prilikom provjere emaila', err);
+      //console.error('Greška prilikom provjere emaila', err);
     }
   });
 }
@@ -105,7 +103,7 @@ checkUsername(username: string): void {
         this.usernameError = response.message;
     },
     error: (err) => {
-      console.error('Greška prilikom provjere korisničkog imena', err);
+      //console.error('Greška prilikom provjere korisničkog imena', err);
     }
   });
 }

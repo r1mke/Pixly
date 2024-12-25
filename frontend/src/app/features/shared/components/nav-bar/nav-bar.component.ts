@@ -135,7 +135,7 @@ export class NavBarComponent implements OnInit,OnDestroy {
     if (!this.user) {
       this.authService.getCurrentUser().subscribe({
         error: () => {
-          console.error('Error fetching user');
+          //console.error('Error fetching user');
         },
       });
     }
