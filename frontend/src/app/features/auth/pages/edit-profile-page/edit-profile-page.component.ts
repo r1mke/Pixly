@@ -215,8 +215,5 @@ export class EditProfilePageComponent implements OnInit,OnDestroy {
     this.usernameError = '';
   }
 
-  loadPhotos(){
-    this.userService.updateAdminPhotosSubject();
-  }
 
 }

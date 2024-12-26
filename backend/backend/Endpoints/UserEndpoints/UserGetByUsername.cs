@@ -47,7 +47,7 @@ namespace backend.Endpoints.UserEndpoints
                     TotalViews = u.Photos.Sum(p => p.ViewCount),
                     TotalLikes = u.Photos.Sum(p => p.LikeCount),
                     ProfileImgUrl = u.ProfileImgUrl,
-                    Photos = u.Photos.Select(p => new PhotoDTO
+                    Photos = u.Photos.Where(p=>p.Approved==true).Select(p => new PhotoDTO
                     {
                         Id = p.Id,
                         Title = p.Title,

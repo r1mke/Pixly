@@ -30,7 +30,7 @@ namespace backend.Endpoints.UserEndpoints
             if (user == null)
                 return NotFound(new { Message = "User not found" });
 
-            var likedPhotos = user.Likes.Select(l => new PhotoDTO
+            var likedPhotos = user.Likes.Where(l=>l.Photo.Approved==true).Select(l => new PhotoDTO
             {
                 Id = l.Photo.Id,
                 Title = l.Photo.Title,

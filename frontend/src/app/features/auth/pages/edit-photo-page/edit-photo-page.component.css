@@ -169,7 +169,7 @@ border: none;
 
 .image-container{
   width: 50%;
-  max-height: 550px;
+  max-height: 650px;
   overflow: hidden;
 }
 
@@ -178,9 +178,7 @@ border: none;
   max-height: 550px;
 }
 
-.removeImageBtn{
-  display: none;
-}
+
 
 .image-details{
   width: 40%;
@@ -231,14 +229,15 @@ border: none;
   font-weight: 500;
 }
 
-.remove{
-  cursor: pointer;
-  color: #7c7c7c;
+.price{
+  display: flex;
+  justify-content: space-between;
 }
 
-.remove i:hover{
-  color: red;
-  transition: 0.5s ease;
+.price span{
+  font-size: 15px;
+  font-weight: 600;
+  color: #7c7c7c;
 }
 
 
@@ -264,9 +263,6 @@ border: none;
       width: 100%;
   }
 
-  .removeImageBtn{
-      display: block;
-  }
 
   .image-details{
       width: 100%;

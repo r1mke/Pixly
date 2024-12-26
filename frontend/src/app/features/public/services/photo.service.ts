@@ -37,4 +37,12 @@ export class PhotoService {
 
     return this.http.put<any>(`${MYCONFIG.apiUrl}/api/photos/${id}`, formData, {withCredentials: true});
   }
+
+  approvedPhoto(id:number, data: {approved : boolean}): Observable<any> {
+    const formData: FormData = new FormData();
+
+    formData.append('approved', data.approved.toString());
+
+    return this.http.put<any>(`${MYCONFIG.apiUrl}/api/photoApproved/${id}`, formData);
+  }
 }
