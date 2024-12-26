@@ -53,6 +53,8 @@ public class PhotoService
     }
 
 
+
+
     public async Task<string> UploadProfilePhotoAsync(IFormFile file, CancellationToken cancellationToken)
     {
          
@@ -293,4 +295,22 @@ public class PhotoService
     {
         return width > height ? "landscape" : width < height ? "portrait" : "square";
     }
+
+    public async Task<Photo?> ApprovedPhotoAsync(int photoId, bool approved)
+    {
+        var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == photoId);
+
+        if (photo == null)
+        {
+            return null;
+        }
+
+
+        photo.Approved = approved;
+
+        await _context.SaveChangesAsync();
+
+        return photo;
+    }
+
 }

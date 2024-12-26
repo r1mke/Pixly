@@ -16,6 +16,14 @@ export const routes: Routes = [
        loadComponent: () => import('./features/admin/pages/new-posts/new-posts.component').then(m => m.NewPostsComponent),
      },
      {
+      path: 'photo/:id/edit',
+      loadComponent: () => import('./features/auth/pages/edit-photo-page/edit-photo-page.component').then(m => m.EditPhotoPageComponent),
+    },
+     {
+      path: 'user/:username/gallery',
+      loadComponent: () => import('./features/admin/pages/new-posts/new-posts.component').then(m => m.NewPostsComponent),
+     },
+     {
       path: 'users',
       loadComponent: () => import('./features/admin/pages/users/users.component').then(m => m.UsersComponent),
      },

@@ -49,4 +49,10 @@ export class DisplayUsersComponent implements OnInit, OnDestroy {
     console.log(user);
     this.router.navigate([`admin/user/${user.username}`]);
   }
+
+  goToUserPhotos(user : any){
+    console.log(user);
+    this.router.navigate([`admin/user/${user.username}/gallery`]);
+  }
+
 }

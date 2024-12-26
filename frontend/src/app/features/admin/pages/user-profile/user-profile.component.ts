@@ -20,10 +20,9 @@ export class UserProfileComponent implements OnInit,OnDestroy {
   }
   
   ngOnInit(): void {
-    this.userService.updateAdminPhotos$.pipe(takeUntil(this.ngOnDestory)).subscribe((value) => {
-      this.show = value;
+   
    }
-  )}
+  
 
   ngOnDestroy(): void {
     this.ngOnDestory.next();

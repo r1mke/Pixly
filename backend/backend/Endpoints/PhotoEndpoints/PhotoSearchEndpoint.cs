@@ -51,6 +51,7 @@ namespace backend.Endpoints.PhotoEndpoints
                   p.Title.Contains(title) ||
                   p.Description.Contains(title) ||
                   p.PhotoTags.Any(pt => pt.Tag.TagName.Contains(title))) &&
+                (p.Approved == true) &&
                  (orientation == null || p.Orientation == orientation.ToLower()) &&
                  (size == null || p.Resolutions.Any(pr => pr.Size.ToLower() == size.ToLower() && pr.Resolution == "full_resolution")) &&
                  (color == null || p.PhotoColors.Any(pc => pc.Color.HexCode.ToLower() == color.ToLower())))

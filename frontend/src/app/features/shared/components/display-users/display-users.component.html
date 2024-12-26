@@ -1,10 +1,14 @@
 <div class="container">
     <app-navigation></app-navigation>
     <div class="users-list" *ngIf="users$ | async as users">
-        <div class="user" *ngFor="let user of users" (click)="goToProfilePage(user)">
+        <div class="user" *ngFor="let user of users">
             <img [src]="user.profileImgUrl ? user.profileImgUrl : 'assets/img/big_user_dflt.png'" alt="">
             <span>{{user.firstName}} {{user.lastName}}</span>
-            <button>View Profile</button>
+            <div class="options">
+                <button (click)="goToProfilePage(user)">Profile</button>
+                <button (click)="goToUserPhotos(user)">Photos</button>
+            </div>
         </div>
     </div>
 </div>
+                

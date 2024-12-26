@@ -49,7 +49,7 @@ export class NavBarComponent implements OnInit,OnDestroy {
     this.checkUrl();
     this.getCurrentUser();
     this.Suggestions$ = this.searchSubject.pipe(
-      debounceTime(200),
+      debounceTime(100),
       catchError((error) => {
         console.error('Error fetching suggestions:', error);
         return [];

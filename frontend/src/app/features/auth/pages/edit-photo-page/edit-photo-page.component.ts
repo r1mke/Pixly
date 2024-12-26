@@ -5,11 +5,16 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute } from '@angular/router';
 import { PhotoService } from '../../../public/services/photo.service';
 import { NgbdToast } from '../../../shared/components/toast/toast.component';
-
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+interface Approved {
+  text: string;
+  status: boolean;
+}
 @Component({
   selector: 'app-edit-photo-page',
   standalone: true,
-  imports: [NavBarComponent, ReactiveFormsModule, CommonModule, NgbdToast],
+  imports: [NavBarComponent, ReactiveFormsModule, CommonModule, NgbdToast,FormsModule],
   templateUrl: './edit-photo-page.component.html',
   styleUrl: './edit-photo-page.component.css'
 })
@@ -19,13 +24,26 @@ export class EditPhotoPageComponent implements OnInit {
   isLoading: boolean = false;
   @ViewChild(NgbdToast)
   ngbdToast!: NgbdToast;
-
-  constructor( private fb: FormBuilder, private route: ActivatedRoute, private photoService: PhotoService) { }
+  tags: string[] = [];
+  price: number = 0;
+  currentUrl : string = ''
+  isAdminPage : boolean = false
+  approved : Approved = {text: '', status: false}
+  constructor( private fb: FormBuilder, private route: ActivatedRoute, private photoService: PhotoService, private router: Router) { }
 
   ngOnInit(): void {
+    this.checkUrl();
     this.initForm();
     this.getPhotoById();
   }
+
+  checkUrl(): void {
+    this.route.url.subscribe(url => {
+      this.isAdminPage = this.router.url.includes('admin');
+      this.currentUrl = url.join('/');
+    })
+  }
+
 
   private initForm(): void {
     this.editPhotoForm = this.fb.group({
@@ -43,6 +61,10 @@ export class EditPhotoPageComponent implements OnInit {
       this.photoService.getPhotoById(photoId).subscribe({
         next: (data) => {
           this.photo = data;
+          this.tags = this.photo.tags;
+          this.price = this.photo.price;
+          this.approved.text = this.photo.approved === true ? 'Approved' : 'Approve';
+          console.log(this.approved);
           console.log(this.photo)
           this.updateForm(data);
           this.isLoading = false;
@@ -76,6 +98,25 @@ export class EditPhotoPageComponent implements OnInit {
       next: () => {
         this.isLoading = false;
         this.ngbdToast.showMessage('Successfully updated photo!', 'success');
+        this.getPhotoById();
+      },
+      error: (error) => {
+        console.error('Error updating photo:', error);
+        this.isLoading = false;
+      },
+      complete:() =>{
+        this.isLoading = false;
+      }
+    })
+  }
+
+  approvePhoto() {
+    this.isLoading = true;
+    this.photoService.approvedPhoto(this.photo.id, {approved: this.approved.status} )
+    .subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.ngbdToast.showMessage('Successfully approved photo!', 'success');
         this.getPhotoById();
       },
       error: (error) => {

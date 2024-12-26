@@ -124,37 +124,13 @@ export class GalleryComponent implements OnInit, OnDestroy {
     this.ngOnDestory.complete();
   }
 
-
-  showImagesToAdmin(){
-    this.userService.updateAdminPhotos$.pipe(takeUntil(this.ngOnDestory)).subscribe((value) => {
-      const show = value === null ? null : value
-      if(show){
-        this.AdminloadUserPhotos();
-      }
-      else{
-        this.photos = [];
-      }
-    })
-  }
-
-  AdminloadUserPhotos(){
-    if(!this.username) return;
-    this.userService.getUserByUsernameAdmin(this.username).pipe(takeUntil(this.ngOnDestory)).subscribe({
-      next : (user) => {
-        this.photos = user.photos;
-        console.log(this.photos);
-      },
-      error : (error) => {
-        console.log(error);
-      }
-    })
-  }
  
  
   checkUrl(){
     this.route.url.pipe(takeUntil(this.ngOnDestory)).subscribe((segment) => {
-      this.currentUrl = segment.join('/');
+      this.currentUrl = segment.map(segment => segment.path).join('/');
       this.isAdminPage = this.router.url.includes('admin');
+      console.log(this.currentUrl);
       this.loadPhotos();
     })
   }
@@ -179,12 +155,14 @@ export class GalleryComponent implements OnInit, OnDestroy {
   }
  
   checkUser(){
-    this.authService.currentUser$.pipe(takeUntil(this.ngOnDestory)).subscribe((user) => {
-      this.user = user === null ? null : user
-      console.log(this.user);
-    });
     if (!this.user) {
       this.authService.getCurrentUser().subscribe({
+        next: (res) => {
+          this.user = res.user;
+          console.log(this.user);
+          this.username = this.user.username;
+          console.log(this.username);
+        },
         error: () => {
           console.error('Error fetching user');
         },
@@ -239,15 +217,20 @@ export class GalleryComponent implements OnInit, OnDestroy {
   }
  
   loadUserPhotos(): void {
-    if (!this.username) return; // Dodajte ovu provjeru
+    if (!this.username) return; 
+    this.isLoading = true;
     this.userService.getUserByUsername(this.username).pipe(takeUntil(this.ngOnDestory)).subscribe({
       next: (res) => {
         this.photos = res.photos;
         console.log(this.photos);
+        
       },
       error: (error) => {
         console.error('Error fetching photos:', error);
       },
+      complete: () => {
+        this.isLoading = false;
+      }
     });
   }
   
@@ -260,6 +243,26 @@ export class GalleryComponent implements OnInit, OnDestroy {
     if(this.currentUrl === `user/${this.username}/liked` && !this.isAdminPage) this.loadLikedPhotos();
     if(this.currentUrl === `user/${this.username}/gallery` && !this.isAdminPage) this.loadUserPhotos();
     if(this.currentUrl.includes('new-posts')) this.loadAdminPhotos();
+    if(this.currentUrl.includes(`gallery`) && this.isAdminPage) this.loadUserPhotosAdmin();
+
+  }
+
+
+  loadUserPhotosAdmin(){
+    if (!this.username) return; 
+    this.isLoading = true;
+    this.userService.getUserByUsernameAdmin(this.username).pipe(takeUntil(this.ngOnDestory)).subscribe({
+      next: (res) => {
+        this.photos = res.photos;
+        console.log(this.photos);
+      },
+      error: (error) => {
+        console.error('Error fetching photos:', error);
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
 
   loadAdminPhotos(){
@@ -267,7 +270,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
     this.photoEndpointsService.getAllPhotos().pipe(takeUntil(this.ngOnDestory)).subscribe({
       next: (res) => {
         console.log(res);
-        this.photos = res.photos;
+        this.photos = res.photos.filter((photo : any) => !photo.isApproved);
       },
       error: (error) => {
         console.error('Error fetching photos:', error);
@@ -338,7 +341,8 @@ export class GalleryComponent implements OnInit, OnDestroy {
    
  
   openPhotoDetail(photo: any) {
-    this.router.navigate(['public/photo', photo.id]);
+    if(this.isAdminPage) this.router.navigate([`admin/photo/${photo.id}/edit`]);
+    else this.router.navigate(['public/photo', photo.id]);
   }
  
  

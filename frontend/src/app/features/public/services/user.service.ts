@@ -2,14 +2,12 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MYCONFIG } from '../../../my-config';
-import { Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
 export class UserService {
   private apiUser = `${MYCONFIG.apiUrl}/user`;
-  private updateAdminPhotos: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-  updateAdminPhotos$ = this.updateAdminPhotos.asObservable();
+
   constructor(private http: HttpClient) {}
 
   getUserByUsername(username: string): Observable<any> {
@@ -28,9 +26,5 @@ export class UserService {
     return this.http.get<any[]>(`${MYCONFIG.apiUrl}/api/users`);
   }
 
-  updateAdminPhotosSubject(): void {
-    const currentValue = this.updateAdminPhotos.getValue();
-    this.updateAdminPhotos.next(!currentValue);
-  }
 
 }

@@ -42,6 +42,7 @@ namespace backend.Endpoints.PhotoEndpoints
             var user = validationResult is OkObjectResult okResult ? (User)okResult.Value : null;
 
             var photos = await db.Photos
+                .Where(p=>p.Approved==true)
                 .Select(p => new PhotoDTO
                 {
                     Id = p.Id,
