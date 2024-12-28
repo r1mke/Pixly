@@ -25,6 +25,7 @@
     "@ng-bootstrap/ng-bootstrap": "^17.0.1",
     "@popperjs/core": "^2.11.8",
     "@robingenz/ngx-infinite-scroll": "^13.0.0",
+    "@stripe/stripe-js": "^5.4.0",
     "animate.css": "^4.1.1",
     "bootstrap": "^5.3.3",
     "express": "^4.18.2",

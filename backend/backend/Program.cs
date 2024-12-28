@@ -66,6 +66,8 @@ public class Program
         builder.Services.AddScoped<IStringHelper, StringHelper>();
         builder.Services.AddScoped<AuthService>();
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<StripeService>();
+
 
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
