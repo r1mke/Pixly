@@ -6,8 +6,8 @@ import { ActivatedRoute } from '@angular/router';
 import { GalleryComponent } from "../../components/gallery/gallery.component";
 import { AuthService } from '../../../auth/services/auth.service';
 import { Router } from '@angular/router';
-import { UserService } from '../../services/user.service';
 import { CustomDatePipe } from '../../helper/custom-date.pipe';
+import { StripeService } from '../../services/stripe.service';
 
 @Component({
   selector: 'app-photo-page',
@@ -22,12 +22,14 @@ export class PhotoPageComponent implements OnInit {
   currentUserId : number = 0;
   profileUserId: number = 0;
   isOwnProfile: boolean = false;
+  public isLoading: boolean = false;
 
   constructor(
     private photoService: PhotoService, 
     private route: ActivatedRoute, 
     private authService: AuthService, 
-    private router: Router,) {}
+    private router: Router,
+    private stripeService: StripeService ) {}
 
   ngOnInit(): void {
      this.getPhotoById();
@@ -93,5 +95,28 @@ export class PhotoPageComponent implements OnInit {
           console.error('Error updating like status:', err.error?.Message || err.message);
         },
       });
+  }
+
+  purchase() {
+    if (this.photo) {
+      this.isLoading = true;
+      const amount = 24.00;
+      const currency = 'usd';
+      const photoImage = this.photo.url;
+      const photoDescription = this.photo.description;
+      this.stripeService.checkout(amount, currency, photoImage, photoDescription).subscribe({
+        next: (response) => {
+          this.stripeService.redirectToCheckout(response.sessionId);
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error creating checkout session:', error);
+          this.isLoading = false;
+        },
+        complete: () => {
+          this.isLoading = false;
+        }
+      });
+    }
   }
 }

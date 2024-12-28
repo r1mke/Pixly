@@ -33,6 +33,11 @@
   color: white;
 }
 
+.btn-purchase:hover
+{
+  background-color: #cd3431;
+}
+
 .btn-plans-and-pricing
 {
   width: 100%;

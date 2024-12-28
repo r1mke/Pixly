@@ -67,7 +67,15 @@
               </label>
             </form>
             <hr>
-            <button class="btn btn-purchase w-100 py-3 mb-2">Continue with purchase</button>
+            <button class="btn btn-purchase w-100 py-3 mb-2" 
+              (click)="purchase()" 
+              [disabled]="isLoading"
+            >
+              <span class="text-white" *ngIf="!isLoading">Continue with purchase</span>
+                <div *ngIf="isLoading" class="spinner-border spinner-border-sm text-light" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+            </button>
             <button class="btn btn-outline-secondary btn-plans-and-pricing w-100 py-2 mt-2 text-secondary">View plans and pricing</button>
           </div>
 
