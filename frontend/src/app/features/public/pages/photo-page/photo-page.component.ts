@@ -107,7 +107,8 @@ export class PhotoPageComponent implements OnInit {
       const currency = 'usd';
       const photoImage = this.photo.url;
       const photoDescription = this.photo.description;
-      this.stripeService.checkout(amount, currency, photoImage, photoDescription).subscribe({
+      const photoId = this.photo.id;
+      this.stripeService.checkout(amount, currency, photoImage, photoDescription, photoId).subscribe({
         next: (response) => {
           this.stripeService.redirectToCheckout(response.sessionId);
           this.isLoading = false;
