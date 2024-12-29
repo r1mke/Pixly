@@ -97,7 +97,7 @@ public class PhotoService
         return compressedUploadResult.Url.ToString();
     } 
 
-    public async Task<PostPhotoResult> UploadPhotoAsync(string title, string description, string location, int userId, IFormFile file, List<string> tags, CancellationToken cancellationToken)
+    public async Task<PostPhotoResult> UploadPhotoAsync(string title, string description, string location, int userId, IFormFile file, List<string> tags,int price, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(title))
             throw new ArgumentException("Title is required.");
@@ -144,7 +144,7 @@ public class PhotoService
             CreateAt = DateTime.UtcNow,
             LikeCount = 0,
             ViewCount = 0,
-            Price = 0,
+            Price = price,
             PhotoTags = new List<PhotoTag>(),
             Orientation = imageOrientation
         };

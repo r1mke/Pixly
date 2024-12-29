@@ -173,6 +173,36 @@
             </div>
           </div>
         </div>
+        <div class="form-group">
+          <label for="price">Price</label>
+          <input
+            placeholder="Enter a price ($)..."
+            type="number"
+            id="price"
+            formControlName="price"
+            class="form-control"
+            min="0"
+            max="50"
+          />
+          <div
+            *ngIf="
+              uploadForm.get('price')?.invalid &&
+              uploadForm.get('price')?.touched
+            "
+            class="error"
+          >
+            <div *ngIf="uploadForm.get('price')?.errors?.['required']">
+              Price is required.
+            </div>
+            <div *ngIf="uploadForm.get('price')?.errors?.['min']">
+              Price must be at least 0.
+            </div>
+            <div *ngIf="uploadForm.get('price')?.errors?.['max']">
+              Price cannot exceed 50$.
+            </div>
+          </div>
+        </div>
+        
         <div class="form-group upload">
           <button class="w-100 fw-bold p-2 d-flex align-items-center justify-content-center" 
             [disabled]="!uploadForm.get('title')?.valid

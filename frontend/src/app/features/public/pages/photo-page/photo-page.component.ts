@@ -8,6 +8,7 @@ import { AuthService } from '../../../auth/services/auth.service';
 import { Router } from '@angular/router';
 import { UserService } from '../../services/user.service';
 import { CustomDatePipe } from '../../helper/custom-date.pipe';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-photo-page',
@@ -27,7 +28,8 @@ export class PhotoPageComponent implements OnInit {
     private photoService: PhotoService, 
     private route: ActivatedRoute, 
     private authService: AuthService, 
-    private router: Router,) {}
+    private router: Router,
+    private location: Location) {}
 
   ngOnInit(): void {
      this.getPhotoById();
@@ -60,6 +62,7 @@ export class PhotoPageComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error fetching photo:', error);
+          this.location.back();
         }
       });
     } else {
