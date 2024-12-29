@@ -13,13 +13,13 @@ export class StripeService {
 
   constructor(private http: HttpClient) {}
 
-  checkout(amount: number, currency: string, photoImage: string, photoDescription: string): Observable<any> {
+  checkout(amount: number, currency: string, photoImage: string, photoDescription: string, photoId: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/api/stripe/create-checkout-session`, {
       amount: amount,
       currency: currency,
       photoImage: photoImage,
       photoDescription: photoDescription,
-      successUrl: window.location.origin + '/success',
+      successUrl: window.location.origin + `/public/success/photoId/${photoId}`,
       cancelUrl: window.location.origin + '/cancel'
     });
   }
@@ -29,4 +29,9 @@ export class StripeService {
       stripe!.redirectToCheckout({ sessionId });
     });
   }
+
+  downloadPhoto(photoId: any): Observable<any> {
+    return this.http.get(`${this.apiUrl}/api/stripe/download-photo/${photoId}`, { responseType: 'blob' });
+  }
+
 }

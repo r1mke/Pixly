@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using backend.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Stripe.Checkout;
 
 [ApiController]
@@ -6,10 +8,12 @@ using Stripe.Checkout;
 public class StripeController : ControllerBase
 {
     private readonly StripeService _stripeService;
+    private readonly AppDbContext _db;
 
-    public StripeController(StripeService stripeService)
+    public StripeController(StripeService stripeService, AppDbContext db)
     {
         _stripeService = stripeService;
+        _db = db;
     }
 
     [HttpPost("create-checkout-session")]
@@ -33,6 +37,37 @@ public class StripeController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+
+    [HttpGet("download-photo/{id}")]
+    public async Task<IActionResult> DownloadPhoto([FromRoute] int id, CancellationToken cancellationToken = default)
+    {
+        var photo = await _db.PhotoResolutions
+            .Where(p => p.PhotoId == id && p.Resolution == "full_resolution")
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (photo == null || string.IsNullOrEmpty(photo.Url))
+            return NotFound();
+        
+
+        try
+        {
+            string imageUrl = photo.Url;
+
+            using (var httpClient = new HttpClient())
+            {
+                var imageBytes = await httpClient.GetByteArrayAsync(imageUrl);
+
+                var fileName = Path.GetFileName(imageUrl);
+
+                return File(imageBytes, "image/jpg", fileName);
+            }
+        }
+        catch (Exception ex)
+        {
+            return BadRequest("Greška prilikom preuzimanja slike: " + ex.Message);
+        }
+    }
+
 }
 
 public class CheckoutRequest
