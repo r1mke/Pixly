@@ -30,8 +30,8 @@ export class PhotoPageComponent implements OnInit {
     private route: ActivatedRoute, 
     private authService: AuthService, 
     private router: Router,
-    private location: Location,
-    private stripeService: StripeService ) {}
+    private stripeService: StripeService,
+    private location: Location) {}
 
   ngOnInit(): void {
      this.getPhotoById();
