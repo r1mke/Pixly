@@ -1,20 +1,20 @@
-<app-nav-bar/>
-
+<app-nav-bar *ngIf="!isAdminPage"></app-nav-bar>
+<app-navigation *ngIf="isAdminPage"></app-navigation>
 <div class="container">
   <h1 class="text-center mb-3 mb-md-5">Edit Photo</h1>
   <div class="edit-container">
-    <div class="image-container">
+    <div class="image-container" [ngStyle]="isAdminPage ? {'max-height': '650px'} : {'max-height': '550px'}">
       <img class="mb-3" [src]="photo?.url" />
-      <div  class="admin-options d-flex justify-content-evenly">
+      <div *ngIf="isAdminPage" class="admin-options d-flex justify-content-evenly">
         <button
-        *ngIf="isAdminPage" 
+         
         (click)="approvePhoto()"
         style="margin-right: 10px;" 
         class="w-100 fw-bold p-2" 
         [disabled]="approved.text === 'Approved'" >
         {{ approved.text }}
       </button>
-      <button class="w-100 bg-danger fw-bold p-2">Delete</button>
+      <button class="w-100 bg-danger fw-bold p-2" (click)="deletePhotoById()">Delete</button>
       </div>
     </div>
     <div class="image-details">
@@ -108,12 +108,12 @@
             </div>
           </div>
         </div>
-        <div class="form-group price">
+        <div *ngIf="isAdminPage" class="form-group price">
           <label for="text">Price</label>
           <span>{{price}}$</span>
         </div>
-        <div class="form-group upload">
-          <button class="w-100 fw-bold p-2 d-flex align-items-center justify-content-center" 
+        <div class="form-group upload d-flex justify-content-between">
+          <button class="w-100 fw-bold p-2 mx-1 d-flex align-items-center justify-content-center" 
             [disabled]="!editPhotoForm.get('title')?.valid
                 || !editPhotoForm.get('description')?.valid
                 || !editPhotoForm.get('location')?.valid
@@ -125,6 +125,7 @@
                   <span class="visually-hidden">Loading...</span>
                 </div>
           </button>
+          <button *ngIf="!isAdminPage" class="w-100 mx-1 fw-bold p-2 d-flex align-items-center justify-content-center bg-danger" (click)="deletePhotoById()">Delete</button>
         </div>
       </form>
     </div>

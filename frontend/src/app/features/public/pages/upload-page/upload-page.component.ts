@@ -52,7 +52,8 @@ export class UploadPageComponent implements OnInit {
         title: ['', [Validators.required, Validators.maxLength(50), Validators.minLength(5)]],
         description: ['', [Validators.required, Validators.maxLength(200), Validators.minLength(5)]],
         location: ['', [Validators.required, Validators.maxLength(50), Validators.minLength(3)]],
-        tags: ['', Validators.required]
+        tags: ['', Validators.required],
+        price: [null, [Validators.required, Validators.min(0), Validators.max(50)]]
       });
 
       this.uploadForm.get('tags')?.valueChanges.subscribe(value => {
@@ -142,7 +143,7 @@ export class UploadPageComponent implements OnInit {
       const title = this.uploadForm.get('title')?.value;
       const description = this.uploadForm.get('description')?.value;
       const location = this.uploadForm.get('location')?.value;
-
+      const price = this.uploadForm.get('price')?.value;
 
       const formData = new FormData();
       const tagsString = this.tags.join(",");
@@ -152,6 +153,7 @@ export class UploadPageComponent implements OnInit {
      formData.append('UserId', this.user.userId.toString());
      formData.append('File', this.file.file);
      formData.append('Tags', tagsString);
+     formData.append('Price', price)
      console.log(this.tags);
      console.log(JSON.stringify(this.tags));
     this.photoPostService.postPhoto(formData).subscribe({
