@@ -40,6 +40,7 @@ namespace backend.Endpoints.PhotoEndpoints
                     request.UserId,
                     request.File,
                     tags,
+                    request.Price,
                     cancellationToken
                 );
 
@@ -71,6 +72,7 @@ namespace backend.Endpoints.PhotoEndpoints
         public IFormFile File { get; set; } 
 
         public string Tags { get; set; }
+        public int Price { get; set; }
  
     }
 

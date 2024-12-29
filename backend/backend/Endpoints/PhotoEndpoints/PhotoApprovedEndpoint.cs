@@ -1,11 +1,13 @@
 ﻿using backend.Data;
+using backend.Data.Models;
+using backend.Heleper.Api;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend.Endpoints.PhotoEndpoints
 {
     [ApiController]
     [Route("api/photoApproved")]
-    public class PhotoApprovedEndpoint : ControllerBase
+    public class PhotoApprovedEndpoint : MyEndpointBaseAsync.WithRequest<PhotoApprovedRequest>.WithResult<PhotoApprovedResult>
     {
         private readonly PhotoService _photoService;
         private readonly AppDbContext _db;
@@ -16,43 +18,33 @@ namespace backend.Endpoints.PhotoEndpoints
             _db = db;
         }
 
-        [HttpPut("{photoId}")]
-        public async Task<IActionResult> ApprovedPhoto([FromRoute] int photoId, [FromForm] PhotoApprovedRequest request)
+        [HttpPut]
+        public override async Task<PhotoApprovedResult> HandleAsync(PhotoApprovedRequest request, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                var updatedPhoto = await _photoService.ApprovedPhotoAsync(photoId, request.Approved);
+            var updatedPhoto = await _photoService.ApprovedPhotoAsync(request.PhotoId, request.Approved);
 
-                if (updatedPhoto == null)
-                {
-                    return NotFound(new PhotoApprovedResult
-                    {
-                        Message = "Photo not found or not owned by the user.",
-                        Success = false
-                    });
-                }
-
-                return Ok(new PhotoApprovedResult
-                {
-                    Message = "Photo approved successfully.",
-                    Success = true,
-                    PhotoId = updatedPhoto.Id
-                });
-            }
-            catch (Exception ex)
+            if (updatedPhoto == null)
             {
-                return StatusCode(500, new PhotoApprovedResult
+                return new PhotoApprovedResult
                 {
-                    Message = $"Error: {ex.Message}",
+                    Message = "Photo not found or not owned by the user.",
                     Success = false
-                });
+                };
             }
+
+            return new PhotoApprovedResult
+            {
+                Message = "Photo approved successfully.",
+                Success = true,
+                PhotoId = updatedPhoto.Id
+            };
         }
     }
 
 
     public class PhotoApprovedRequest
     { 
+        public int PhotoId { get; set; } 
         public bool Approved { get; set; }
     }
 

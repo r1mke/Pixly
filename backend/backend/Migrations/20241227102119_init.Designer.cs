@@ -12,7 +12,7 @@ using backend.Data;
 namespace backend.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241225134410_init")]
+    [Migration("20241227102119_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -297,6 +297,9 @@ namespace backend.Migrations
 
                     b.Property<string>("ProfileImgUrl")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Username")
                         .IsRequired()
