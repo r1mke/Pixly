@@ -7,6 +7,7 @@ import { GalleryComponent } from "../../components/gallery/gallery.component";
 import { AuthService } from '../../../auth/services/auth.service';
 import { Router } from '@angular/router';
 import { CustomDatePipe } from '../../helper/custom-date.pipe';
+import { Location } from '@angular/common';
 import { StripeService } from '../../services/stripe.service';
 
 @Component({
@@ -29,7 +30,8 @@ export class PhotoPageComponent implements OnInit {
     private route: ActivatedRoute, 
     private authService: AuthService, 
     private router: Router,
-    private stripeService: StripeService ) {}
+    private stripeService: StripeService,
+    private location: Location) {}
 
   ngOnInit(): void {
      this.getPhotoById();
@@ -62,6 +64,7 @@ export class PhotoPageComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error fetching photo:', error);
+          this.location.back();
         }
       });
     } else {

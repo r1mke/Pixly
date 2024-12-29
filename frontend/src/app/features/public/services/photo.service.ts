@@ -38,11 +38,18 @@ export class PhotoService {
     return this.http.put<any>(`${MYCONFIG.apiUrl}/api/photos/${id}`, formData, {withCredentials: true});
   }
 
-  approvedPhoto(id:number, data: {approved : boolean}): Observable<any> {
-    const formData: FormData = new FormData();
+  approvedPhoto(id:number, approved: boolean): Observable<any> {
+    const payload = {
+      PhotoId: id,
+      Approved: approved,
+    };
+  
+    return this.http.put<any>(`${MYCONFIG.apiUrl}/api/photoApproved`, payload, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
 
-    formData.append('approved', data.approved.toString());
-
-    return this.http.put<any>(`${MYCONFIG.apiUrl}/api/photoApproved/${id}`, formData);
+  deletePhotoById(id: number): Observable<any> {
+    return this.http.delete<any>(`${MYCONFIG.apiUrl}/api/photos/${id}`);
   }
 }

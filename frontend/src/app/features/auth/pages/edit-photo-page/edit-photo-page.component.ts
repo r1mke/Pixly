@@ -7,6 +7,8 @@ import { PhotoService } from '../../../public/services/photo.service';
 import { NgbdToast } from '../../../shared/components/toast/toast.component';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Location } from '@angular/common';
+import { NavigationComponent } from "../../../admin/components/navigation/navigation.component";
 interface Approved {
   text: string;
   status: boolean;
@@ -14,7 +16,7 @@ interface Approved {
 @Component({
   selector: 'app-edit-photo-page',
   standalone: true,
-  imports: [NavBarComponent, ReactiveFormsModule, CommonModule, NgbdToast,FormsModule],
+  imports: [NavBarComponent, ReactiveFormsModule, CommonModule, NgbdToast, FormsModule, NavigationComponent],
   templateUrl: './edit-photo-page.component.html',
   styleUrl: './edit-photo-page.component.css'
 })
@@ -29,7 +31,9 @@ export class EditPhotoPageComponent implements OnInit {
   currentUrl : string = ''
   isAdminPage : boolean = false
   approved : Approved = {text: '', status: false}
-  constructor( private fb: FormBuilder, private route: ActivatedRoute, private photoService: PhotoService, private router: Router) { }
+  constructor( private fb: FormBuilder, private route: ActivatedRoute,
+     private photoService: PhotoService, private router: Router,
+     private location: Location) { }
 
   ngOnInit(): void {
     this.checkUrl();
@@ -72,6 +76,7 @@ export class EditPhotoPageComponent implements OnInit {
         error: (error) => {
           console.error('Error fetching photo:', error);
           this.isLoading = false;
+          this.location.back();
         }
       });
     } else {
@@ -112,7 +117,9 @@ export class EditPhotoPageComponent implements OnInit {
 
   approvePhoto() {
     this.isLoading = true;
-    this.photoService.approvedPhoto(this.photo.id, {approved: this.approved.status} )
+    console.log(this.approved.status, this.photo.id);
+    this.approved.status = !this.approved.status
+    this.photoService.approvedPhoto(this.photo.id, this.approved.status )
     .subscribe({
       next: () => {
         this.isLoading = false;
@@ -125,8 +132,28 @@ export class EditPhotoPageComponent implements OnInit {
       },
       complete:() =>{
         this.isLoading = false;
+        this.approved.status = !this.approved.status
+
       }
     })
+  }
+
+  deletePhotoById(): void {
+    this.isLoading = true;
+    this.photoService.deletePhotoById(this.photo.id).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.ngbdToast.showMessage('Successfully deleted photo!', 'success');
+      },
+      error: (error) => {
+        console.error('Error deleting photo:', error);
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+        this.location.back();
+      }
+    });
   }
   
 }
