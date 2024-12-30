@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { VerifyEmailGuard } from './features/auth/services/verify-email-quard';
 import { AuthGuard } from './features/auth/services/auth-guard';
 import { TwoFaGuard } from './features/auth/services/2fa-guard';
+import { adminGuard } from './features/admin/services/admin.guard';
 
 export const routes: Routes = [
   {
@@ -10,26 +11,32 @@ export const routes: Routes = [
      {
        path: 'dashboard',
        loadComponent: () => import('./features/admin/pages/dashboard/dashboard.component').then(m => m.DashboardComponent),
+       canActivate: [adminGuard]
      },
      {
        path: 'new-posts',
        loadComponent: () => import('./features/admin/pages/new-posts/new-posts.component').then(m => m.NewPostsComponent),
+       canActivate: [adminGuard]
      },
      {
       path: 'photo/:id/edit',
       loadComponent: () => import('./features/auth/pages/edit-photo-page/edit-photo-page.component').then(m => m.EditPhotoPageComponent),
+      canActivate: [adminGuard]
     },
      {
       path: 'user/:username/gallery',
       loadComponent: () => import('./features/admin/pages/new-posts/new-posts.component').then(m => m.NewPostsComponent),
+      canActivate: [adminGuard]
      },
      {
       path: 'users',
       loadComponent: () => import('./features/admin/pages/users/users.component').then(m => m.UsersComponent),
+      canActivate: [adminGuard]
      },
      {
       path: 'user/:username',
       loadComponent: () => import('./features/admin/pages/user-profile/user-profile.component').then(m => m.UserProfileComponent),
+      canActivate: [adminGuard]
      } 
     ]
   },
