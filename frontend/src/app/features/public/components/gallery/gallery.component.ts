@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, Output } from '@angular/core';
 import { GetAllPhotosService } from '../../services/Photos/get-all-photos.service';
 import { OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -16,6 +16,7 @@ import { SearchResult } from '../../model/SearchResult';
 import { UserService } from '../../services/user.service';
 import { Subject, takeUntil } from 'rxjs';
 import {PhotoEndpointsService} from '../../../admin/services/Endpoints/Photo/photo-endpoints.service';
+import { EventEmitter } from '@angular/core';
 
 export class AppModule {}
 @Component({
@@ -99,7 +100,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
               private photoEndpointsService: PhotoEndpointsService
               ) { }
  
- 
+ @Output() photosEvent = new EventEmitter<any>();
  
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -189,6 +190,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.isLoading = false;
+        this.photosEvent.emit(this.photos);
       }
     });
   }
@@ -212,6 +214,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.isLoading = false;
+        this.photosEvent.emit(this.photos);
       }
     });
   }
@@ -230,6 +233,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.isLoading = false;
+        this.photosEvent.emit(this.photos);
       }
     });
   }
@@ -261,6 +265,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
       },
       complete: () => {
         this.isLoading = false;
+        this.photosEvent.emit(this.photos);
       }
     });
   }
@@ -275,6 +280,9 @@ export class GalleryComponent implements OnInit, OnDestroy {
       error: (error) => {
         console.error('Error fetching photos:', error);
       },
+      complete: ()=>{
+        this.photosEvent.emit(this.photos);
+      }
     })
   }
 
@@ -288,6 +296,9 @@ export class GalleryComponent implements OnInit, OnDestroy {
       },
       error: (error) => {
         console.error('Error fetching liked photos:', error);
+      },
+      complete:() =>{
+        this.photosEvent.emit(this.photos);
       },
     });
   }

@@ -5,7 +5,7 @@
             <img [src]="user.profileImgUrl ? user.profileImgUrl : 'assets/img/big_user_dflt.png'" alt="">
             <span>{{user.firstName}} {{user.lastName}}</span>
             <div class="options">
-                <button (click)="goToProfilePage(user)">Profile</button>
+                <button (click)="goToProfilePage(user)" >Profile</button>
                 <button (click)="goToUserPhotos(user)">Photos</button>
             </div>
         </div>

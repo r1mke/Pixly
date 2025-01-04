@@ -1,7 +1,7 @@
 <app-nav-bar *ngIf="!isAdminPage"></app-nav-bar>
 <app-navigation *ngIf="isAdminPage"></app-navigation>
 <div class="container">
-  <h1 class="text-center mb-3 mb-md-5">Edit Photo</h1>
+  <h3 class="text-center mb-3 mb-md-5" style="font-weight: 600; color: #7c7c7c; letter-spacing: 1px;">Edit Photo</h3>
   <div class="edit-container">
     <div class="image-container" [ngStyle]="isAdminPage ? {'max-height': '650px'} : {'max-height': '550px'}">
       <img class="mb-3" [src]="photo?.url" />
