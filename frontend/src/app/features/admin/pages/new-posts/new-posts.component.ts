@@ -16,6 +16,7 @@ export class NewPostsComponent implements OnInit, OnDestroy {
   private ngOnDestory = new Subject<void>();
   isAdminPage: boolean = false;
   username = '';
+  photoEvent : boolean = false;
   constructor(private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit(): void {
@@ -36,5 +37,11 @@ export class NewPostsComponent implements OnInit, OnDestroy {
         console.log(this.currentUrl, this.isAdminPage);
       })
     }
+
+  receivedPhotos(photos:any){
+    this.photoEvent = photos.length>0 ? true : false;
+    console.log(photos);
+    console.log(this.photoEvent);
+  }
 
 }

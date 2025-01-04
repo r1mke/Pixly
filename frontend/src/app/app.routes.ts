@@ -9,6 +9,10 @@ export const routes: Routes = [
     path: 'admin',
     children: [
      {
+      path: 'error',
+      loadComponent: () => import('./features/admin/pages/error/error.component').then(m=>m.ErrorComponent),
+    },
+     {
        path: 'dashboard',
        loadComponent: () => import('./features/admin/pages/dashboard/dashboard.component').then(m => m.DashboardComponent),
        canActivate: [adminGuard]

@@ -1,36 +1,43 @@
-import { Component } from '@angular/core';
-import { PhotoEndpointsService } from "../../services/Endpoints/Photo/photo-endpoints.service";
-import { Observable, Subject, takeUntil } from 'rxjs';
-import { Router } from '@angular/router';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import {PhotoEndpointsService} from '../../services/Endpoints/Photo/photo-endpoints.service';
 @Component({
   selector: 'app-overview',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './overview.component.html',
   styleUrl: './overview.component.css'
 })
-export class OverviewComponent {
-   photos : any[] = [];
-   private ngOnDestroy$ = new Subject<void>();
-  
-      constructor(private photoService: PhotoEndpointsService,
-        private router: Router
-      ) {}
-  
-      ngOnInit(): void {
-          this.photoService.getAllPhotos().pipe(takeUntil(this.ngOnDestroy$)).subscribe(data => 
-            {
-              this.photos = data;
-              console.log(this.photos);
-            });
-      }
+export class OverviewComponent implements OnInit, OnDestroy {
+  activeMenuItem: string = 'Overview'; // Podrazumevano aktivna stavka
+  data:any;
+  private ngOnDestroy$ = new Subject<void>();
 
-      ngOnDestroy(): void {
-        this.ngOnDestroy$.next();
-        this.ngOnDestroy$.complete();
-    }
+  constructor(private PhotoService: PhotoEndpointsService){
+  }
 
-    goToNewPosts(){
-      this.router.navigate(['/admin/new-posts']);
-    }
+  ngOnInit(): void {
+    this.getData();
+  }
+
+  getData() {
+    this.PhotoService.getOverviewData().pipe(takeUntil(this.ngOnDestroy$))
+    .subscribe(data=> {
+      console.log(data);
+      this.data = data
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.ngOnDestroy$.next();
+    this.ngOnDestroy$.complete();
+  }
+
+
+
+  setActive(item: string) {
+    this.activeMenuItem = item;
+  }
 }
