@@ -91,25 +91,62 @@ public class StripeController(StripeService stripeService, AppDbContext db, IJwt
 
             if (existingTransaction)
                 return Ok(new { IsValid = true, status = "Transaction already exists." });
-
-            //If transaction doesn't exist, save them
-            var transaction = new Transaction
+            else
             {
-                UserId = user.Id,
-                PhotoId = request.PhotoId,
-                Amount = request.Amount,
-                Currency = "USD",
-                PlatformEarning = request.Amount * 0.20m,
-                AuthorEarning = request.Amount * 0.80m,
-                SessionId = request.SessionId,
-                PaymentStatus = "paid",
-                CreatedAt = DateTime.UtcNow
-            };
+                //If transaction doesn't exist, save them
+                var transaction = new Transaction
+                {
+                    UserId = user.Id,
+                    PhotoId = request.PhotoId,
+                    Amount = request.Amount,
+                    Currency = "USD",
+                    PlatformEarning = request.Amount * 0.20m,
+                    AuthorEarning = request.Amount * 0.80m,
+                    SessionId = request.SessionId,
+                    PaymentStatus = "paid",
+                    CreatedAt = DateTime.UtcNow
+                };
+                db.Transactions.Add(transaction);
 
-            db.Transactions.Add(transaction);
-            await db.SaveChangesAsync();
+                var authorEarning = await db.AuthorEarnings
+                    .FirstOrDefaultAsync(a => a.UserId == user.Id);
 
-            return Ok(new { IsValid = true, status = "Payment confirmed and stored." });
+                if (authorEarning == null)
+                {
+                    authorEarning = new AuthorEarning
+                    {
+                        UserId = user.Id,
+                        TotalEarnings = request.Amount * 0.80m
+                    };
+                    db.AuthorEarnings.Add(authorEarning);
+                }
+                else
+                {
+                    authorEarning.TotalEarnings += request.Amount * 0.80m;
+                    db.AuthorEarnings.Update(authorEarning);
+                }
+
+
+                var platformEarning = await db.PlatformEarnings.FirstOrDefaultAsync();
+                if (platformEarning == null)
+                {
+                    platformEarning = new PlatformEarning
+                    {
+                        TotalEarnings = request.Amount * 0.20m,
+                        LastUpdated = DateTime.UtcNow
+                    };
+                    db.PlatformEarnings.Add(platformEarning);
+                }
+                else
+                {
+                    platformEarning.TotalEarnings += request.Amount * 0.20m;
+                    db.PlatformEarnings.Update(platformEarning);
+                }
+
+                await db.SaveChangesAsync();
+
+                return Ok(new { IsValid = true, status = "Payment confirmed and stored." });
+            }
         }
         catch (Exception ex)
         {

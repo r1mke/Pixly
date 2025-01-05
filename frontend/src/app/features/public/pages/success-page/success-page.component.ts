@@ -34,8 +34,8 @@ export class SuccessPageComponent {
       this.photoId = photoIdString ? Number(photoIdString) : null;
 
       if (sessionId && this.photoId) {
-        await this.verifyPayment(sessionId, this.photoId); 
         await this.getPhotoById(this.photoId); 
+        await this.verifyPayment(sessionId, this.photoId); 
       } else {
         this.router.navigate(['public/home']);
       }
@@ -46,7 +46,7 @@ export class SuccessPageComponent {
 
   private async verifyPayment(sessionId: string, photoId: number): Promise<void> {
     try {
-      const response = await this.stripeService.savePayment(sessionId, photoId, 10).toPromise(); // Pretvaramo u promise
+      const response = await this.stripeService.savePayment(sessionId, photoId, this.photo.price).toPromise(); // Pretvaramo u promise
 
       if (!response.isValid) {
         this.router.navigate(['public/home']);
