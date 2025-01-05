@@ -90,7 +90,7 @@ public class StripeController(StripeService stripeService, AppDbContext db, IJwt
                 .AnyAsync(t => t.UserId == user.Id && t.PhotoId == request.PhotoId);
 
             if (existingTransaction)
-                return BadRequest(new { IsValid = true, status = "Transaction already exists." });
+                return Ok(new { IsValid = true, status = "Transaction already exists." });
 
             //If transaction doesn't exist, save them
             var transaction = new Transaction

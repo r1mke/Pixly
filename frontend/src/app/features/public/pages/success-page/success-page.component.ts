@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { StripeService } from '../../services/stripe.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NavBarComponent } from "../../../shared/components/nav-bar/nav-bar.component";
 import { PhotoService } from '../../services/photo.service';
 
@@ -12,29 +12,58 @@ import { PhotoService } from '../../services/photo.service';
   styleUrls: ['./success-page.component.css']
 })
 export class SuccessPageComponent {
-  photoId: any | null = null;
+  photoId: number | null = null;
   photo: any | null = null;
 
-  constructor(private stripeService: StripeService, private activatedRoute: ActivatedRoute, private photoService: PhotoService) {}
+  constructor(
+    private stripeService: StripeService,
+    private activatedRoute: ActivatedRoute,
+    private photoService: PhotoService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.getPhotoById();
+    this.getSessionAndProcessPayment();
   }
 
-  getPhotoById(): void {
-    this.photoId = this.activatedRoute.snapshot.paramMap.get('id');
+  private async getSessionAndProcessPayment(): Promise<void> {
+    try {
+      const sessionId = this.activatedRoute.snapshot.paramMap.get('session_id');
+      const photoIdString = this.activatedRoute.snapshot.paramMap.get('id');
+    
+      this.photoId = photoIdString ? Number(photoIdString) : null;
 
-    if (this.photoId) {
-      this.photoService.getPhotoById(this.photoId).subscribe({
-        next: (data) => {
-          this.photo = data;
-        },
-        error: (error) => {
-          console.error('Error fetching photo:', error);
-        }
-      });
-    } else {
-      console.error('No photo ID provided');
+      if (sessionId && this.photoId) {
+        await this.verifyPayment(sessionId, this.photoId); 
+        await this.getPhotoById(this.photoId); 
+      } else {
+        this.router.navigate(['public/home']);
+      }
+    } catch (error) {
+      this.router.navigate(['public/home']);
+    }
+  }
+
+  private async verifyPayment(sessionId: string, photoId: number): Promise<void> {
+    try {
+      const response = await this.stripeService.savePayment(sessionId, photoId, 10).toPromise(); // Pretvaramo u promise
+
+      if (!response.isValid) {
+        this.router.navigate(['public/home']);
+      } else {
+      }
+    } catch (error) {
+      console.error('Error verifying payment:', error);
+      this.router.navigate(['public/home']);
+    }
+  }
+
+  private async getPhotoById(photoId: number): Promise<void> {
+    try {
+      const data = await this.photoService.getPhotoById(photoId).toPromise();
+      this.photo = data;
+    } catch (error) {
+      console.error('Error fetching photo:', error);
     }
   }
 
@@ -49,10 +78,9 @@ export class SuccessPageComponent {
           link.click();
         },
         error: (error) => {
-          console.error('Greška prilikom preuzimanja slike:', error);
+          console.error('Error downloading photo:', error);
         }
       });
     }
   }
-  
 }
