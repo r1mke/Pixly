@@ -13,4 +13,11 @@ export class PhotoEndpointsService {
     return this.http.get<any>(`${MYCONFIG.apiUrl}/api/admin/photos`);
   }
 
+  getDataForPhotoLineChart() : Observable<any> {
+    return this.http.get<any>(`${MYCONFIG.apiUrl}/api/photos/linechart`);
+  }
+
+  getOverviewData() : Observable<any> {
+    return this.http.get<any>(`${MYCONFIG.apiUrl}/api/dashboard/overview`)
+  }
 }

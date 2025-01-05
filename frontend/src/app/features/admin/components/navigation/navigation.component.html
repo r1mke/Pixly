@@ -1,22 +1,60 @@
 <div class="navigation">
-    <div class="item" (click)="goToDashboard()" >
-        <i class="fa-solid fa-gauge"></i>
-        <span>Dashboard</span>
-    </div>
-    <div (click)="goToNewPosts()"  class="item">
-        <i class="fa-regular fa-images"></i>
-        <span>New posts</span>
-    </div>
-    <div (click)="goToUsers()" class="item">
-        <i class="fa-solid fa-users"></i>
-        <span>Users</span>
-    </div>
-    <div class="item">
-        <i class="fa-solid fa-gear"></i>
-        <span>Settings</span>
-    </div>
-    <div class="item">
-        <span>Good morning, Kerim</span>
-        <img src="../../../../assets/img/big_user_dflt.png" width="50px" height="50px" alt="">
+    <div class="container">
+        <div class="search-header">
+            <div class="search" >
+                <div class="search-bar">
+                    <input (keyup)="updateSearchWithoutValue($event)"
+                    (focus)="onFocus()" 
+                    class="search-input"
+                    [(ngModel)]="currentSearch"
+                    type="text" (keydown)="onKeyDown($event)"  placeholder="Search...">
+                    <img src="../../../../../assets/img/loupe.png" width="15px" height="15px" (click)="goToSearchPage()">
+                </div>
+
+                <ng-container *ngIf="currentSearch && isInputFocused">
+                    <div class="search-suggestions" *ngIf="Suggestions$ | async as data">
+                        <ng-container *ngIf="data.suggestionsPhotos?.length>0">
+                            <span class="photo-items">Photos:</span>
+                            <div class="search-suggestions-photos"  *ngIf="isInputFocused" >
+                                <div class="search-item" *ngFor="let suggestion of data.suggestionsPhotos, let i = index" (click)="updateSearch(suggestion)">
+                                    <span>{{suggestion}}</span>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="data.suggestionsAuthors?.length>0">
+                            <span class="photo-items">Authors:</span>
+                            <div class="search-suggestions-photos">
+                                <div class="search-item" *ngFor="let suggestion of data.suggestionsAuthors, let i = index" (click)="goToProfilePage(suggestion)">
+                                    <span>{{suggestion}}</span>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="current-admin">
+                <img [src]="user.profileImgUrl" width="35px" height="35px" style="border-radius: 50%; " alt="">
+                <span>Hello, {{user.firstName}}</span>
+            </div>
+        </div>
+        <div class="menu">
+            <div class="item" (click)="goToDashboard()" >
+                <i class="fa-solid fa-house fa-xl" style="color: #02a388;"></i>
+                <span>Dashboard</span>
+            </div>
+            <div (click)="goToNewPosts()"  class="item">
+                <i class="fa-regular fa-image fa-flip-horizontal fa-xl" style="color: #02a388;"></i>            
+                <span>Reviews</span>
+            </div>
+            <div (click)="goToUsers()" class="item">
+                <i class="fa-solid fa-users fa-xl"  style="color: #02a388;"></i>
+                <span>Users</span>
+            </div>
+            <div class="item">
+                <i class="fa-solid fa-gear fa-xl"  style="color: #02a388;"></i>
+                <span>Settings</span>
+            </div>
+        </div>
     </div>
 </div>
+

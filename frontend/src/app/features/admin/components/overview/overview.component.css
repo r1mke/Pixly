@@ -1,23 +1,49 @@
 .overview{
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
+    margin: 30px 0;
+    border: 1px solid #ccc;
 }
 
-.overview .item{
-    border-radius: 5px;
+.header{
+    width: 30%;
     display: flex;
-    border: none;
-    background-color: white;
-    padding: 20px 30px;
+    align-items: center;
+    justify-content: space-around;
+    padding: 10px 0;
+    color: #7c7c7c;
 }
 
-.overview .item .info{
+.header .menu-item{
+    display: flex;
+    justify-content: center;
+    width: 30%;
+    border: none;
+    transition: 0.3 ease;
+    cursor: pointer;
+}
+
+.menu-item.active{
+  color: #02A388; /* Boja kada je aktivna */
+  font-weight: bold;
+}
+
+.items{
+    border-top: 1px solid #ccc;
+    display: flex;
+}
+
+.item{
+    display: flex; 
+    align-items: center;
+    width: 20%;
+    justify-content: center;
+    padding: 20px 0;
+    border-right: 1px solid #ccc;
+}
+
+.info{
     display: flex;
     flex-direction: column;
-    margin-left: 30px;
-}
-
-.overview .item .info span{
-    font-size: large;
-    font-weight: 600;
+    margin-left: 10px;
 }

@@ -1,15 +1,51 @@
-.navigation{
+.container{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.search-header{
+    width: 100%;
     display: flex;
     justify-content: space-around;
+    align-items: center;
+    padding: 15px 0;
+}
+
+.current-admin{
+    color: #7c7c7c;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.current-admin img {
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.menu{
+    width: 95%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
     margin-bottom: 20px;
     padding: 15px 0;
 }
 
+
 .item{
     display: flex;
+    justify-content: center;
     align-items: center;
     cursor: pointer;
-    font-size: medium;
+    font-size: 15px;
+    font-weight: 600;
+    color: #7c7c7c;
+    width: 18%;
 }
 
 .item i{
@@ -18,4 +54,84 @@
 
 .item img{
     margin-left: 10px;
+}
+
+.item:hover span{
+    color: black;
+    transition: all 0.5s ease-in-out;
+}
+
+
+.search {
+    width: 70%;
+    border-radius: 5px;
+    padding: 15px 0;
+    background-color: #f8f8f8;
+    position: relative;
+}
+
+.search-bar{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+ .photo-items{
+    color:#7c7c7c;
+    font-size: medium;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    display: block;
+    background-color: var(--pixly-color);
+    width: 100%;
+    color: white;
+    padding: 5px;
+}
+
+.search-suggestions{
+    z-index: 100;
+    position: absolute;
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+}
+
+.search-suggestions-photos{
+    padding: 10px 10px 10px 20px;
+
+}
+
+.search-item{
+    padding: 5px 0 5px 0;
+    color:#7c7c7c;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+
+.search input{
+    width: 95%;
+    border-radius: 5px;
+    border: none;
+    color:#7c7c7c;
+    font-size: 15px;
+    font-weight: 600;
+    background-color: #f8f8f8;
+    padding: 0 10px;
+}
+
+.search input::placeholder{
+    color: #7c7c7c;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.search input:focus{
+    outline: none;
+}
+
+.search img{
+    cursor: pointer;
 }

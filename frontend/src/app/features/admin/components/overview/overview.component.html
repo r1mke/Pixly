@@ -1,31 +1,57 @@
 <div class="overview">
-    <div class="users item">
-        <i class="fa-solid fa-users  fa-3x"></i>
-        <div class="info">
-            <span>All users</span>
-            <span style="font-weight: 200;">54</span>
+    <div class="header">
+        <div 
+          class="menu-item" 
+          [ngClass]="{'active': activeMenuItem === 'Overview'}" 
+          (click)="setActive('Overview')">
+          Overview
         </div>
-    </div>
-    <div  class="posts item">
-        <i class="fa-regular fa-images  fa-3x"></i>
-        <div class="info">
-            <span>New posts</span>
-            <span class="info-number" style="font-weight: 200;">125</span>
+        <div 
+          class="menu-item" 
+          [ngClass]="{'active': activeMenuItem === 'Sales'}" 
+          (click)="setActive('Sales')">
+          Sales
         </div>
-    </div>
-    <div class="sales item">
-        <i class="fa-solid fa-chart-line fa-3x"></i>
-        <div class="info">
-            <span>All sales</span>
-            <span style="font-weight: 200;">125</span>
+        <div 
+          class="menu-item" 
+          [ngClass]="{'active': activeMenuItem === 'Purchaces'}" 
+          (click)="setActive('Purchaces')">
+          Purchaces
         </div>
-    </div>
-    <div class="users item">
-        <i class="fa-solid fa-users  fa-3x"></i>
-        <div class="info">
-            <span>Visitors</span>
-            <span style="font-weight: 200;">1344</span>
+      </div>
+      
+    <div class="items" *ngIf="data">
+        <div class="item">
+            <i class="fa-solid fa-dollar-sign fa-2x" style="color: #02A388;"></i>
+            <div class="info">
+                <span>Revenue</span>
+                <span style="font-weight: 600;">${{data.revenue}}</span>
+            </div> 
+        </div>
+        <div class="item">
+            <i class="fa-solid fa-eye fa-2x" style="color: #ff0f0f;"></i>
+            <div class="info">
+                <span>Total views</span>
+                <span style="font-weight: 600;">{{data.totalViews}}</span>
+            </div> 
+        </div>
+        <div class="item">
+            <i class="fa-solid fa-download fa-2xl" style="color: #FFD43B;"></i>            <div class="info">
+                <span>Downloads</span>
+                <span style="font-weight: 600;">{{data.downloads}}</span>
+            </div> 
+        </div>
+        <div class="item">
+            <i class="fa-solid fa-user fa-2xl" style="color: #005eff;"></i>            <div class="info">
+                <span>Total users</span>
+                <span style="font-weight: 600;">{{data.totalUsers}}</span>
+            </div> 
+        </div>
+        <div class="item" style="border:none ;">
+            <i class="fa-solid fa-image fa-2xl" style="color: #000000;"></i>            <div class="info">
+                <span>Total images</span>
+                <span style="font-weight: 600;">{{data.totalImages}}</span>
+            </div> 
         </div>
     </div>
 </div>
-

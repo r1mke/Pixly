@@ -1,0 +1,22 @@
+.chart-container {
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #fff;
+    gap: 20px;
+  }
+  
+  .chart {
+    flex: 1 1 calc(50% - 20px);
+    background-color: #f8f8f8;
+    border: 1px solid #ccc;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  
+  @media screen and (max-width: 750px) {
+    .chart {
+      flex: 1 1 100%;
+    }
+  }
+  
