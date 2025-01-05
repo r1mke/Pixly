@@ -17,12 +17,13 @@ import { UserService } from '../../services/user.service';
 import { Subject, takeUntil } from 'rxjs';
 import {PhotoEndpointsService} from '../../../admin/services/Endpoints/Photo/photo-endpoints.service';
 import { EventEmitter } from '@angular/core';
-
+import { DisplayUsersComponent } from "../../../shared/components/display-users/display-users.component";
+import { Location } from '@angular/common';
 export class AppModule {}
 @Component({
   selector: 'app-gallery',
   standalone: true,
-  imports: [CommonModule, FormsModule ],
+  imports: [CommonModule, FormsModule, DisplayUsersComponent],
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.css'
 })
@@ -68,7 +69,9 @@ export class GalleryComponent implements OnInit, OnDestroy {
 
   selectedOption: string = 'photos';
   selectedFilter: string = 'trending';
- 
+  @Output() displayUsersComponentEvent = new EventEmitter<boolean>();
+  displayUsersComponent: boolean = false;
+
   user: any | null = null;
   currentUrl : string = '';
   username: string | null = null;
@@ -97,7 +100,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
               private authService: AuthService, private router: Router, private photoService: PhotoService,
               private route: ActivatedRoute,
               private photosSearchService: PhotosSearchService, private userService: UserService,
-              private photoEndpointsService: PhotoEndpointsService
+              private photoEndpointsService: PhotoEndpointsService,private location: Location
               ) { }
  
  @Output() photosEvent = new EventEmitter<any>();
@@ -359,6 +362,15 @@ export class GalleryComponent implements OnInit, OnDestroy {
  
   selectOption(option: string) {
     this.selectedOption = option;
+    console.log(option);
+    if(this.selectedOption==='users'){
+        this.displayUsersComponent=true;
+        this.displayUsersComponentEvent.emit(this.displayUsersComponent);
+    }
+    else{
+      this.displayUsersComponent=false;
+      this.displayUsersComponentEvent.emit(this.displayUsersComponent);
+    }
   }
  
   toggleFilterDropdown() {
@@ -443,6 +455,10 @@ export class GalleryComponent implements OnInit, OnDestroy {
     }
     return true;
     this.checkQueryParams();
+  }
+
+  displayUsers(){
+    this.router.navigate(["/public/search/users"], { queryParams: { q: this.searchRequest.Title } });
   }
  
 }

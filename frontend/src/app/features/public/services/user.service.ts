@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { MYCONFIG } from '../../../my-config';
+import { HttpParams } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
@@ -22,8 +23,13 @@ export class UserService {
     return this.http.get(`${this.apiUser}/${username}/liked-photos`, {withCredentials: true});
   }
 
-  getAllUsers(): Observable<any[]> {
-    return this.http.get<any[]>(`${MYCONFIG.apiUrl}/api/users`);
+  getAllUsers(request: any): Observable<any[]> {
+    let params = new HttpParams();
+    if (request.query) {
+      params = params.append('query', request.query);
+    }
+    console.log(params); // Debugging; ukloniti u produkciji
+    return this.http.get<any[]>(`${MYCONFIG.apiUrl}/api/users`, { params });
   }
 
 

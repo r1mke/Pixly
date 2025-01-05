@@ -129,7 +129,7 @@ export const routes: Routes = [
         loadComponent: () => import('./features/public/pages/photo-page/photo-page.component').then(m => m.PhotoPageComponent)
       },
       {
-        path: 'search',
+        path: 'search/photos',
         loadComponent: () => import('./features/public/pages/search-page/search-page.component').then(m => m.SearchPageComponent)
       },
       {

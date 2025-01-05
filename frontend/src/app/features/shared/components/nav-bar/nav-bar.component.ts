@@ -86,7 +86,7 @@ export class NavBarComponent implements OnInit,OnDestroy {
 
   goToSearchPage(): void {
     if(this.currentSearch)
-    this.router.navigate(["/public/search"], { queryParams: { q: this.currentSearch } });
+    this.router.navigate(["/public/search/photos"], { queryParams: { q: this.currentSearch } });
   }
 
   goToProfilePage(name:string): void {

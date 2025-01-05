@@ -17,7 +17,8 @@ export class DisplayUsersComponent implements OnInit, OnDestroy {
   users$! : Observable<any[]>;
   private ngOnDestroy$ = new Subject<void>();
   currentUrl : string = '';
-
+  fullUrl:boolean = false;
+  searchRequest: any;
   constructor(private userService: UserService,
      private route: ActivatedRoute,
      private router: Router) {}
@@ -25,7 +26,8 @@ export class DisplayUsersComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.checkUrl();
-    this.loadUsers();
+    if(this.fullUrl && this.currentUrl.includes('users')) this.loadUsers();   
+    if(!this.fullUrl && this.currentUrl.includes('photos')) this.checkQueryParams(); 
   }
 
   ngOnDestroy(): void {
@@ -33,26 +35,44 @@ export class DisplayUsersComponent implements OnInit, OnDestroy {
     this.ngOnDestroy$.complete();
   }
 
+  checkQueryParams() {
+    console.log("poziv");
+    this.route.queryParams.pipe(takeUntil(this.ngOnDestroy$)).subscribe(params => {
+      this.searchRequest = {  
+        query: params['q'] || null,
+      };
+      this.loadSearchUsers();
+    });
+  }
+  
+  loadSearchUsers() {
+    this.users$ = this.userService.getAllUsers(this.searchRequest).pipe(takeUntil(this.ngOnDestroy$));
+    console.log(this.users$); // Debugging; ukloniti u produkciji
+  }
 
   checkUrl(): void {
     this.route.url.pipe(takeUntil(this.ngOnDestroy$)).subscribe((segment) => {  
       this.currentUrl = segment.join('/');
     })
+    this.fullUrl = this.router.url.includes('admin');
   }
 
   loadUsers(): void {
-    this.users$ = this.userService.getAllUsers().pipe(takeUntil(this.ngOnDestroy$));
-    console.log(this.users$);
+    if (!this.searchRequest || !this.searchRequest.query) {
+      console.warn('searchRequest nije pravilno inicijaliziran.');
+      this.searchRequest = { query: null }; // Postavite default vrijednosti
+    }
+  
+    this.users$ = this.userService.getAllUsers(this.searchRequest).pipe(takeUntil(this.ngOnDestroy$));
   }
 
   goToProfilePage(user : any){
-    console.log(user);
-    this.router.navigate([`admin/user/${user.username}`]);
+    if(this.fullUrl) this.router.navigate([`admin/user/${user.username}`]);
+    else this.router.navigate([`public/profile/user/${user.username}`]);
   }
 
   goToUserPhotos(user : any){
-    console.log(user);
-    this.router.navigate([`admin/user/${user.username}/gallery`]);
+    if(this.fullUrl) this.router.navigate([`admin/user/${user.username}/gallery`]);
   }
 
 }
