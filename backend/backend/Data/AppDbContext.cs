@@ -19,6 +19,10 @@ namespace backend.Data
         public DbSet<Like> Likes { get; set; }
         public DbSet<RefreshToken> RefreshTokens { get; set; }
 
+        public DbSet<Transaction> Transactions { get; set; }
+        public DbSet<AuthorEarning> AuthorEarnings { get; set; }
+        public DbSet<PlatformEarning> PlatformEarnings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Like>()

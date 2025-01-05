@@ -59,11 +59,11 @@
             <form class="w-100">
               <label class="form-check-label w-100 d-flex align-items-center justify-content-start my-3 option-label fw-medium" style="cursor: pointer;">
                 <input type="radio" name="opcija" value="opcija1" class="me-2" checked>
-                <span class="bold-text">24,00 $ for this image</span>
+                <span class="bold-text">{{photo.price}}$ for this image</span>
               </label>
-              <label class="form-check-label w-100 py-2 d-flex align-items-center justify-content-start my-0 option-label fw-medium" style="cursor: pointer;">
-                <input type="radio" name="opcija" value="opcija2" class="me-2">
-                <span>8,50 € with subscription</span>
+              <label class="form-check-label w-100 py-2 d-flex align-items-center justify-content-start my-0 option-label fw-medium text-secondary" style="cursor: pointer;">
+                <input type="radio" name="opcija" value="opcija2" class="me-2" disabled>
+                <span>8,50$ with subscription</span>
               </label>
             </form>
             <hr>

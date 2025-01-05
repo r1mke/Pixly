@@ -129,7 +129,7 @@ export const routes: Routes = [
         loadComponent: () => import('./features/public/pages/search-page/search-page.component').then(m => m.SearchPageComponent)
       },
       {
-        path: 'success/photoId/:id',
+        path: 'success/photo/:id',
         loadComponent: () => import('./features/public/pages/success-page/success-page.component').then(m => m.SuccessPageComponent)
       },
       { path: '**', redirectTo: 'home', pathMatch: 'full' }
