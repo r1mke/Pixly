@@ -103,8 +103,8 @@ export class PhotoPageComponent implements OnInit {
   purchase() {
     if (this.photo) {
       this.isLoading = true;
-      const amount = 24.00;
-      const currency = 'usd';
+      const amount = this.photo.price;
+      const currency = 'USD';
       const photoImage = this.photo.url;
       const photoDescription = this.photo.description;
       const photoId = this.photo.id;

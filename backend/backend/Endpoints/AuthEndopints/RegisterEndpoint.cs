@@ -46,7 +46,7 @@ namespace backend.Endpoints.AuthEndopints
                 Email = request.Email.ToLower(),
                 Password = hash,
                 CreatedAt = DateTime.UtcNow,
-                TwoFactorEnabled = true,
+                TwoFactorEnabled = false,
                 IsVerified = false,
                 IsCreator = false,
                 IsAdmin = false,

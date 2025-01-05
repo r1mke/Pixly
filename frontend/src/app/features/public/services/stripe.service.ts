@@ -19,10 +19,11 @@ export class StripeService {
       currency: currency,
       photoImage: photoImage,
       photoDescription: photoDescription,
-      successUrl: window.location.origin + `/public/success/photoId/${photoId}`,
+      successUrl: window.location.origin + `/public/success/photo/${photoId}?session_id={CHECKOUT_SESSION_ID}`,
       cancelUrl: window.location.origin + '/cancel'
     });
   }
+  
 
   redirectToCheckout(sessionId: string) {
     this.stripePromise.then((stripe) => {
@@ -32,6 +33,5 @@ export class StripeService {
 
   downloadPhoto(photoId: any): Observable<any> {
     return this.http.get(`${this.apiUrl}/api/stripe/download-photo/${photoId}`, { responseType: 'blob' });
-  }
-
+  } 
 }
