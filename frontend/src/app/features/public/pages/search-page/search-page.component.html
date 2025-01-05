@@ -1,6 +1,11 @@
 <app-nav-bar></app-nav-bar>
 
 <div class="container" style="margin-top: 100px;">
-    <h1>Free {{currentSearch}} Photos</h1>
-    <app-gallery></app-gallery>
+    <div *ngIf="!displayUsersComponent">
+        <h3>{{currentSearch}} Photos</h3>
+    </div>
+    <div *ngIf="displayUsersComponent">
+        <h3>{{currentSearch}} Users</h3>
+    </div>
+    <app-gallery (displayUsersComponentEvent)="receivedmeesage($event)"></app-gallery>
 </div>

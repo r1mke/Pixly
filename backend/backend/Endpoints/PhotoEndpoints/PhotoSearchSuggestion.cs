@@ -22,14 +22,14 @@ namespace backend.Endpoints.PhotoEndpoints
         {
 
             var resultPhotos = await _db.Tags
-             .Where(t => t.TagName.StartsWith(request.Title))
+             .Where(t => t.TagName.ToLower().StartsWith(request.Title.ToLower()))
              .Select(t => t.TagName)
              .Distinct()
              .Take(5)
              .ToArrayAsync(cancellationToken);
 
            var resultAuthors = await _db.Users
-                .Where(u=>u.FirstName.StartsWith(request.Title) ||  u.LastName.StartsWith(request.Title) || u.Username.StartsWith(request.Title))
+                .Where(u=>u.FirstName.ToLower().Contains(request.Title.ToLower()) ||  u.LastName.ToLower().Contains(request.Title.ToLower()) || u.Username.ToLower().Contains(request.Title.ToLower()))
                 .Select(u=>u.Username)
                 .Distinct()
                 .Take(5)

@@ -1,14 +1,17 @@
 <div class="container">
-    <app-navigation></app-navigation>
-    <div class="users-list" *ngIf="users$ | async as users">
-        <div class="user" *ngFor="let user of users">
-            <img [src]="user.profileImgUrl ? user.profileImgUrl : 'assets/img/big_user_dflt.png'" alt="">
-            <span>{{user.firstName}} {{user.lastName}}</span>
-            <div class="options">
-                <button (click)="goToProfilePage(user)" >Profile</button>
-                <button (click)="goToUserPhotos(user)">Photos</button>
+    <app-navigation *ngIf="this.fullUrl && this.currentUrl.includes('users')"></app-navigation>
+    <ng-container *ngIf="(this.currentUrl.includes('photos') && !this.fullUrl)  || (this.currentUrl.includes('users')&& this.fullUrl) ">
+        <div class="users-list" *ngIf="users$ | async as users">
+            <div class="user" *ngFor="let user of users">
+                <img [src]="user.profileImgUrl ? user.profileImgUrl : 'assets/img/big_user_dflt.png'" alt="">
+                <span>{{user.firstName}} {{user.lastName}}</span>
+                <div class="options">
+                    <button (click)="goToProfilePage(user)" >Profile</button>
+                    <button *ngIf="fullUrl" (click)="goToUserPhotos(user)">Photos</button>
+                </div>
             </div>
         </div>
-    </div>
+    </ng-container>
 </div>
+
                 

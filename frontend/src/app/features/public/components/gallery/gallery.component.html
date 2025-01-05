@@ -10,7 +10,7 @@
 			</div>
 		</div>
 
-		<div class="filter-select">
+		<div class="filter-select" *ngIf="!displayUsersComponent" >
 			<div class="dropdown-item" (click)="toggleMoreFilterDropdown()">	
 				<a (click)="$event.preventDefault()">Filters</a>
 			</div>
@@ -96,7 +96,7 @@
 		</div>
 	</div>
 </div>
-<div class="container">
+<div class="container" *ngIf="!displayUsersComponent">
 		<div class="box" *ngFor="let photo of photos; let i = index" (click)="openPhotoDetail(photo)">
 			<img
 			[attr.loading]="i === 0 ? 'eager' : 'lazy'"
@@ -140,5 +140,11 @@
 		</div>
 
 </div>
+
+
+<div style="margin-top: 20px;" *ngIf="displayUsersComponent">
+	<app-display-users></app-display-users>
+</div>
+
 
 
