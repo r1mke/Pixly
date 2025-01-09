@@ -75,6 +75,10 @@ export const routes: Routes = [
         loadComponent: () => import('./features/auth/pages/edit-photo-page/edit-photo-page.component').then(m => m.EditPhotoPageComponent),
         canActivate: [AuthGuard]
       },
+      {
+        path: 'purchased-photos',
+        loadComponent: () => import('./features/auth/pages/purchased-photos/purchased-photos.component').then(m => m.PurchasedPhotosComponent)
+      },
       { path: '**', redirectTo: 'register', pathMatch: 'full' }
     ]
   },
