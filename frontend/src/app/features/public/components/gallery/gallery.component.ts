@@ -20,6 +20,7 @@ import { EventEmitter } from '@angular/core';
 import { DisplayUsersComponent } from "../../../shared/components/display-users/display-users.component";
 import { Location } from '@angular/common';
 import { Input } from '@angular/core';
+import { PurchasedPhotosService } from '../../../auth/services/purchased-photos.service';
 export class AppModule {}
 @Component({
   selector: 'app-gallery',
@@ -102,7 +103,7 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
               private authService: AuthService, private router: Router, private photoService: PhotoService,
               private route: ActivatedRoute,
               private photosSearchService: PhotosSearchService, private userService: UserService,
-              private photoEndpointsService: PhotoEndpointsService,private location: Location
+              private photoEndpointsService: PhotoEndpointsService,private location: Location, private purchaseService : PurchasedPhotosService
               ) { }
  
  @Output() photosEvent = new EventEmitter<any>();
@@ -263,9 +264,25 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
     if(this.currentUrl.includes('home')) this.loadPopularPhotos();
     if(this.currentUrl.includes('new-posts')) this.loadAdminPhotos();
     if(this.currentUrl.includes(`gallery`) && this.isAdminPage) this.loadUserPhotosAdmin();
+    if(this.currentUrl.includes('purchased-photos')) this.loadPurchasedPhotos();
     if(this.activeTab==='Gallery') this.loadUserPhotos();
     if(this.activeTab==='Liked') this.loadLikedPhotos();
     if(this.similarObject) this.loadSimilarPhotos();
+  }
+  loadPurchasedPhotos() {
+    this.isLoading = true;
+    this.purchaseService.getPurchasedPhotos().subscribe({
+      next: (res) => {
+        this.photos = []
+        this.photos = res;
+      },
+      error: (error) => {
+        console.error('Error fetching photos:', error);
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
 
   loadSimilarPhotos(){

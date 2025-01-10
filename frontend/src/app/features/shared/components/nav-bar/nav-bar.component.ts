@@ -70,6 +70,10 @@ export class NavBarComponent implements OnInit,OnDestroy {
     this.ngOnDestroy$.complete();
   }
 
+  goToPurchasedPhotos() {
+    this.router.navigate(['/auth/purchased-photos']);
+  }
+
 
   checkUrl(): void {
       this.route.url.pipe(takeUntil(this.ngOnDestroy$)).subscribe((segment) => {

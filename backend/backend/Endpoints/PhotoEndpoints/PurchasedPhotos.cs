@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 namespace backend.Endpoints.PhotoEndpoints
 {
     [ApiController]
-    [Route("api/photos/get-purchased-photos")]
+    [Route("photos/get-purchased-photos")]
     public class PurchasedPhotos(AppDbContext db, IJwtService jwtService) : ControllerBase
     {
         [HttpGet]
