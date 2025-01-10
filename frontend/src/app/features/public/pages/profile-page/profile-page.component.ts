@@ -19,9 +19,9 @@ export class ProfilePageComponent implements OnInit {
   profileUser: any = null;
   isOwnProfile: boolean = false;
   username: string | null = null;
-
+  activeTabEvent: string = 'Gallery';
   navItems = [
-    { label: 'Gallery', active: false },
+    { label: 'Gallery', active: true },
     { label: 'Collections', active: false },
     { label: 'Liked', active: false },
     { label: 'AI', active: false },
@@ -41,9 +41,9 @@ export class ProfilePageComponent implements OnInit {
     });
     this.getCurrentUser();
 
-    this.route.url.subscribe(urlSegments => {
-      this.updateActiveTab(urlSegments);
-    });
+    // this.route.url.subscribe(urlSegments => {
+    //   this.updateActiveTab(urlSegments);
+    // });
   }
   
   getCurrentUser(): void {
@@ -89,17 +89,18 @@ export class ProfilePageComponent implements OnInit {
 
   public setActive(item: any, event: Event): void {
     event.preventDefault();
-
     this.navItems.forEach((nav) => (nav.active = false));
     item.active = true;
-
-    if (item.label === 'Liked') {
-      this.router.navigate([`public/profile/user/${this.username}/liked`]);
-    }
-
-    if (item.label === 'Gallery') {
-      this.router.navigate([`public/profile/user/${this.username}/gallery`]);
+    for(let i=0; i<this.navItems.length;i++){
+      if(this.navItems[i].label === item.label)
+      {
+        this.navItems[i].active = true
+        this.activeTabEvent = item.label;
+      
+      }
     }
   }
+
+
 }
 

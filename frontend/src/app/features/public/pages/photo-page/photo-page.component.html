@@ -116,7 +116,10 @@
     <div class="mt-5" *ngIf="photo?.tags?.length">
       <h3>More like this</h3>
       <div class="tags-container">
-        <button *ngFor="let tag of photo.tags" class="btn btn-outline-secondary me-2 bg-transparent text-black px-3 py-2">
+        <button
+          *ngFor="let tag of photo.tags"
+          (click)="goToSearchPage(tag)"
+          class="btn btn-outline-secondary me-2 bg-transparent text-black px-3 py-2">
           {{ tag }}
         </button>
       </div>
@@ -129,4 +132,4 @@
   </div>
 </div>
 
-<app-gallery></app-gallery>
+<app-gallery [similarObject]="similarObject"></app-gallery>

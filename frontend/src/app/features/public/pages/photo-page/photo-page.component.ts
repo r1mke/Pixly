@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { CustomDatePipe } from '../../helper/custom-date.pipe';
 import { Location } from '@angular/common';
 import { StripeService } from '../../services/stripe.service';
-
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-photo-page',
   standalone: true,
@@ -24,15 +24,15 @@ export class PhotoPageComponent implements OnInit {
   profileUserId: number = 0;
   isOwnProfile: boolean = false;
   public isLoading: boolean = false;
-
+  similarObject: string[] = [];
   constructor(
     private photoService: PhotoService, 
     private route: ActivatedRoute, 
     private authService: AuthService, 
     private router: Router,
     private stripeService: StripeService,
-    private location: Location) {}
-
+    private location: Location,private cdr: ChangeDetectorRef) {}
+    
   ngOnInit(): void {
      this.getPhotoById();
 
@@ -49,6 +49,12 @@ export class PhotoPageComponent implements OnInit {
     }
   }
 
+
+  goToSearchPage(tag: string): void {
+    console.log("okkkk")
+    this.router.navigate(["/public/search/photos"], { queryParams: { q: tag } });
+  }
+
   goToEditPhoto() {
     this.router.navigate([`auth/photo/${this.photo.id}/edit`]);
   }
@@ -60,12 +66,14 @@ export class PhotoPageComponent implements OnInit {
         next: (data) => {
           this.photo = data;
           this.profileUserId = data.user.id;
+          this.similarObject = [...(this.photo.tags || [])]
           this.checkIfOwnprofile();
         },
         error: (error) => {
           console.error('Error fetching photo:', error);
           this.location.back();
         }
+        
       });
     } else {
       console.error('No photo ID provided');
