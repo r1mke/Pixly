@@ -1,4 +1,4 @@
-import { Component, HostListener, Output } from '@angular/core';
+import { Component, HostListener, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { GetAllPhotosService } from '../../services/Photos/get-all-photos.service';
 import { OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -19,6 +19,7 @@ import {PhotoEndpointsService} from '../../../admin/services/Endpoints/Photo/pho
 import { EventEmitter } from '@angular/core';
 import { DisplayUsersComponent } from "../../../shared/components/display-users/display-users.component";
 import { Location } from '@angular/common';
+import { Input } from '@angular/core';
 export class AppModule {}
 @Component({
   selector: 'app-gallery',
@@ -27,7 +28,7 @@ export class AppModule {}
   templateUrl: './gallery.component.html',
   styleUrl: './gallery.component.css'
 })
-export class GalleryComponent implements OnInit, OnDestroy {
+export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
  
   searchRequest : SearchRequest = {
      Popularity: '',
@@ -77,7 +78,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
   username: string | null = null;
   param : string | null = null;
   isAdminPage: boolean = false;
- 
+  @Input()  similarObject: string[] = [];
  
   //more filters  section
   currentPopularity : string = 'Trending';
@@ -88,6 +89,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
   openMoreFiltersDropdown: string | null = null;
   isFilterDropdownOpen: boolean = false;
  
+  @Input() activeTab: string = '';
   //colors dropdown
   predefinedColors: string[] = [
     '#795548', '#F44336', '#E91E63', '#9C27B0', '#673AB7',
@@ -115,13 +117,25 @@ export class GalleryComponent implements OnInit, OnDestroy {
       if (this.param) this.loadLikedPhotos();
     });
 
+
     this.checkUser();
     this.checkQueryParams();
     this.checkUrl();
   }
 
 
+  ngOnChanges(changes: SimpleChanges): void {
 
+      if(changes['activeTab'] && changes['activeTab'].currentValue){
+        this.loadPhotos();
+      }
+    
+     if(changes['similarObject'] && changes['similarObject'].currentValue && this.similarObject.length>0){
+      console.log(this.similarObject);
+      this.loadSimilarPhotos();
+     }
+   
+  }
 
   ngOnDestroy(): void {
     this.ngOnDestory.next();
@@ -175,6 +189,7 @@ export class GalleryComponent implements OnInit, OnDestroy {
   }
  
   loadSearchPhotos() {
+
     this.isLoading = true;
     this.photos = [];
     this.searchResult.Photos = [];
@@ -246,12 +261,33 @@ export class GalleryComponent implements OnInit, OnDestroy {
   loadPhotos() {
     if(this.currentUrl.includes('search')) this.loadSearchPhotos();
     if(this.currentUrl.includes('home')) this.loadPopularPhotos();
-    if(this.currentUrl === `user/${this.username}` && !this.isAdminPage) this.loadUserPhotos();
-    if(this.currentUrl === `user/${this.username}/liked` && !this.isAdminPage) this.loadLikedPhotos();
-    if(this.currentUrl === `user/${this.username}/gallery` && !this.isAdminPage) this.loadUserPhotos();
     if(this.currentUrl.includes('new-posts')) this.loadAdminPhotos();
     if(this.currentUrl.includes(`gallery`) && this.isAdminPage) this.loadUserPhotosAdmin();
+    if(this.activeTab==='Gallery') this.loadUserPhotos();
+    if(this.activeTab==='Liked') this.loadLikedPhotos();
+    if(this.similarObject) this.loadSimilarPhotos();
+  }
 
+  loadSimilarPhotos(){
+    if (this.isLoading || this.similarObject.length===0) return;
+    this.isLoading = true;
+    const tagsString = this.similarObject.join(",");
+    console.log(this.similarObject, tagsString)
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    console.log(id);
+    this.photoService.similarPhotos(tagsString).pipe(takeUntil(this.ngOnDestory)).subscribe({
+      next: (res) => {
+        console.log(res);
+        this.photos = res.photos.filter((p:any)=> p.id !== id);
+      },
+      error: (error) => {
+        console.error('Error fetching photos:', error);
+      },
+      complete: () => {
+        this.isLoading = false;
+        this.photosEvent.emit(this.photos);
+      }
+    });
   }
 
 

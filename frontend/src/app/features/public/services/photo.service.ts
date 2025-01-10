@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { MYCONFIG } from '../../../my-config';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-
+import { HttpParams } from '@angular/common/http';
 @Injectable({
   providedIn: 'root'
 })
@@ -52,4 +52,10 @@ export class PhotoService {
   deletePhotoById(id: number): Observable<any> {
     return this.http.delete<any>(`${MYCONFIG.apiUrl}/api/photos/${id}`);
   }
+
+  similarPhotos(tags : string): Observable<any> {
+  
+      let params = new HttpParams().append('Tags', tags);
+      return this.http.get<any>(`${MYCONFIG.apiUrl}/api/photos/similar`, {params});
+    }
 }

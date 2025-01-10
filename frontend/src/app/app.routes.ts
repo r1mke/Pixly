@@ -93,16 +93,6 @@ export const routes: Routes = [
             loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent),
           },
           {
-            path: 'user/:username/liked',
-            loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent)
-            
-          },
-          {
-            path: 'user/:username/gallery',
-            loadComponent: () => import('./features/public/pages/profile-page/profile-page.component').then(m => m.ProfilePageComponent)
-          },
-         
-          {
             path: 'upload',
             loadComponent: () => import('./features/public/pages/upload-page/upload-page.component').then(m => m.UploadPageComponent),
             canActivate: [AuthGuard]
