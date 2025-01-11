@@ -290,6 +290,8 @@
 	display: flex;
 	align-items: center;
 	color: #fff;
+	max-width: 150px;
+	
 }
 
 .layout-content .row-2 span{
@@ -431,6 +433,13 @@
 		columns: 2;
 	}
 
+	.user , .download-button{
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		color: #fff;
+		max-width: 150px;
+	}
 
 }
 

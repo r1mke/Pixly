@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { OpenaiService } from '../../services/openai.service';
 import { NavBarComponent } from "../../../shared/components/nav-bar/nav-bar.component";
+import { HttpClient } from '@angular/common/http';
 @Component({
   selector: 'app-generate-image-page',
   standalone: true,
@@ -18,7 +19,7 @@ export class GenerateImagePageComponent {
     images: string[] = [];
     clicked: boolean = true;
     dropDown: boolean = false;
-    constructor(private openaiService: OpenaiService) { }
+    constructor(private openaiService: OpenaiService,private http : HttpClient) { }
 
 
     updateNumberArray() {
@@ -77,14 +78,19 @@ export class GenerateImagePageComponent {
   //   }
   // }
 
-  // downloadImage() {
-  //   if (this.imageUrl) {
-  //     const link = document.createElement('a');
-  //     link.href = this.imageUrl;
-  //     link.setAttribute('download', 'generated-image.png'); 
-  //     link.target = '_self'; 
-  //     link.click();
-  //   }
+  // downloadImage(image:any) {
+  //   this.loading = true; 
+  //   const imageUrl = `/openai/${image}`; // Preusmjeravanje prema 'https://oaidalleapiprodscus.blob.core.windows.net/{imageId}'
+  
+  // this.http.get(imageUrl, { responseType: 'blob' }).subscribe(blob => {
+  //   const url = window.URL.createObjectURL(blob); // Kreiraj URL iz Bloba
+  //   const a = document.createElement('a'); // Kreiraj <a> element
+  //   a.href = url;
+  //   a.download = 'image.png'; // Naziv datoteke
+  //   document.body.appendChild(a); // Dodaj <a> u dokument
+  //   a.click(); // Simuliraj klik
+  //   a.remove(); // Ukloni <a> element
+  // });
   // }
 
 

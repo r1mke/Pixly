@@ -26,4 +26,8 @@ export class OpenaiService {
     return this.http.post<any>(this.apiUrl, body, { headers });
   } 
 
+  downloadImage(imageUrl: string) {
+    return this.http.get(imageUrl, { responseType: 'blob' }); // Preuzimanje kao Blob
+  }
+
 }

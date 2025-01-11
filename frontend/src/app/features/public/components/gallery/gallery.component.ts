@@ -53,7 +53,7 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
  
   getAllRequest : PhotoGetAllRequest = {
     PageNumber: 1,
-    PageSize: 10
+    PageSize: 2
   }
  
   getAllResult : PhotoGetAllResult = {
@@ -109,14 +109,6 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
  @Output() photosEvent = new EventEmitter<any>();
  
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      this.username = params.get('username');
-      if (this.param) this.loadPhotos();
-      
-
-      this.param = params.get('liked')
-      if (this.param) this.loadLikedPhotos();
-    });
 
 
     this.checkUser();
@@ -128,8 +120,10 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
 
       if(changes['activeTab'] && changes['activeTab'].currentValue){
+        if(this.activeTab==="Collections" || this.activeTab ==="AI") this.photos = [];
         this.loadPhotos();
       }
+
     
      if(changes['similarObject'] && changes['similarObject'].currentValue && this.similarObject.length>0){
       console.log(this.similarObject);
@@ -146,6 +140,11 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
  
  
   checkUrl(){
+    this.route.paramMap.subscribe(params => {
+      this.username = params.get('username');
+      if (this.param) this.loadPhotos();
+    });
+
     this.route.url.pipe(takeUntil(this.ngOnDestory)).subscribe((segment) => {
       this.currentUrl = segment.map(segment => segment.path).join('/');
       this.isAdminPage = this.router.url.includes('admin');
@@ -240,6 +239,7 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
  
   loadUserPhotos(): void {
     if (!this.username) return; 
+   
     this.isLoading = true;
     this.userService.getUserByUsername(this.username).pipe(takeUntil(this.ngOnDestory)).subscribe({
       next: (res) => {
@@ -269,18 +269,21 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
     if(this.activeTab==='Liked') this.loadLikedPhotos();
     if(this.similarObject) this.loadSimilarPhotos();
   }
+
   loadPurchasedPhotos() {
     this.isLoading = true;
-    this.purchaseService.getPurchasedPhotos().subscribe({
+    this.purchaseService.getPurchasedPhotos().pipe(takeUntil(this.ngOnDestory)).subscribe({
       next: (res) => {
         this.photos = []
         this.photos = res;
+        console.log(this.photos);
       },
       error: (error) => {
         console.error('Error fetching photos:', error);
       },
       complete: () => {
         this.isLoading = false;
+        this.photosEvent.emit(this.photos);
       }
     });
   }
@@ -512,6 +515,10 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
 
   displayUsers(){
     this.router.navigate(["/public/search/users"], { queryParams: { q: this.searchRequest.Title } });
+  }
+
+  goToUserProfile(username:any){
+    this.router.navigate([`public/profile/user/${username}`])
   }
  
 }

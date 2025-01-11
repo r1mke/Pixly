@@ -58,4 +58,6 @@ export class PhotoService {
       let params = new HttpParams().append('Tags', tags);
       return this.http.get<any>(`${MYCONFIG.apiUrl}/api/photos/similar`, {params});
     }
+
+
 }

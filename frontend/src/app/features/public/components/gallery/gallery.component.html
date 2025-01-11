@@ -121,7 +121,7 @@
 					</div>
 					
 					<div class="row-2">
-						<div class="user">
+						<div class="user" (click)="goToUserProfile(photo.user.username)">
 							<img [src]="photo.user?.profileImgUrl || 'assets/img/big_user_dflt.png'" 
 								width="40px" 
 								height="40px" 

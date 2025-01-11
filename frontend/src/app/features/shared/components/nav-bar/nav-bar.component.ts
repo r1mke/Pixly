@@ -19,6 +19,7 @@ import { takeUntil } from 'rxjs/operators';
 })
 
 export class NavBarComponent implements OnInit,OnDestroy {
+  isAdmin: boolean = false;
   isScrolled: boolean = false;
   windowWidth: number = 0;
   menuOpen: boolean = false;
@@ -88,6 +89,10 @@ export class NavBarComponent implements OnInit,OnDestroy {
       }
   }
 
+  goToAdminDashboard():void {
+    this.router.navigate(["admin/dashboard"]);
+  }
+
   goToSearchPage(): void {
     if(this.currentSearch)
     this.router.navigate(["/public/search/photos"], { queryParams: { q: this.currentSearch } });
@@ -134,6 +139,7 @@ export class NavBarComponent implements OnInit,OnDestroy {
 
     this.authService.currentUser$.subscribe((user) => {
       this.user = user;
+     this.isAdmin = this.user.isAdmin;
     });
  
     if (!this.user) {

@@ -10,6 +10,7 @@ import { CustomDatePipe } from '../../helper/custom-date.pipe';
 import { Location } from '@angular/common';
 import { StripeService } from '../../services/stripe.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { Subject,takeUntil } from 'rxjs';
 @Component({
   selector: 'app-photo-page',
   standalone: true,
@@ -25,6 +26,8 @@ export class PhotoPageComponent implements OnInit {
   isOwnProfile: boolean = false;
   public isLoading: boolean = false;
   similarObject: string[] = [];
+  private ngOnDestory = new Subject<void>();
+  currentUrl:string = '';
   constructor(
     private photoService: PhotoService, 
     private route: ActivatedRoute, 
@@ -34,7 +37,7 @@ export class PhotoPageComponent implements OnInit {
     private location: Location,private cdr: ChangeDetectorRef) {}
     
   ngOnInit(): void {
-     this.getPhotoById();
+    this.checkUrl();
 
      this.authService.currentUser$.subscribe((user) => {
       this.currentUser = user;
@@ -48,6 +51,18 @@ export class PhotoPageComponent implements OnInit {
       });
     }
   }
+
+  ngOnDestroy(): void {
+    this.ngOnDestory.next();
+    this.ngOnDestory.complete();
+  }
+
+  checkUrl(){
+      this.route.url.pipe(takeUntil(this.ngOnDestory)).subscribe((segment) => {
+        this.currentUrl = segment.map(segment => segment.path).join('/');
+        this.getPhotoById();
+      })
+    }
 
 
   goToSearchPage(tag: string): void {
@@ -68,6 +83,7 @@ export class PhotoPageComponent implements OnInit {
           this.profileUserId = data.user.id;
           this.similarObject = [...(this.photo.tags || [])]
           this.checkIfOwnprofile();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         },
         error: (error) => {
           console.error('Error fetching photo:', error);

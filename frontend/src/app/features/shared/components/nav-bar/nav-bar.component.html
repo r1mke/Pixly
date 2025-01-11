@@ -97,8 +97,8 @@
                 <div class="dropdown-item" (click)="goToProfile()">
                     <a (click)="$event.preventDefault()" >Your Profile</a>
                 </div>
-                <div class="dropdown-item">
-                    <a (click)="$event.preventDefault()">Your Collection</a>
+                <div *ngIf="isAdmin" class="dropdown-item" (click)="goToAdminDashboard()">
+                    <a (click)="$event.preventDefault()" >Admin Dashboard</a>
                 </div>
                 <div class="dropdown-item" (click)="goToPurchasedPhotos()">
                     <a (click)="$event.preventDefault()">Purchased Photos</a>

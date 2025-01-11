@@ -39,11 +39,11 @@
     <div class="img-card" *ngFor="let image of images; let i = index" >
         <div class="overlaay card"></div>
         <img *ngIf="!loading" [src]="image" alt=""> 
-        <a 
+        <button
         class="download-button" 
-        [href]="image" download="image-{{i+1}}.png">
+         >
             <i class="fa-solid fa-download fa-lg"></i>
-        </a>
+        </button>
     </div> 
     <div class="image-gallery-loading" *ngIf="images.length === 0 && loading">
         <div class="loading-screen" *ngFor="let number of numberArray">

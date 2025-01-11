@@ -88,7 +88,9 @@ export class ProfilePageComponent implements OnInit {
   
 
   public setActive(item: any, event: Event): void {
+
     event.preventDefault();
+    console.log(item);
     this.navItems.forEach((nav) => (nav.active = false));
     item.active = true;
     for(let i=0; i<this.navItems.length;i++){
