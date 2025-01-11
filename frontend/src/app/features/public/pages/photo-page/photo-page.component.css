@@ -98,7 +98,6 @@ input[type="radio"]:checked {
 }
 
 
-
 hr
 {
   color: gray;
@@ -115,7 +114,15 @@ button:hover
   background-color: var(--pixly-color-hover);
 }
 
-/* Dugmad za akcije na mobilnim uređajima */
+
+.action-buttons .like-count {
+  display: inline-block; 
+  min-width: 10px; 
+  text-align: center;
+}
+
+
+/* Responsive */
 @media (max-width: 768px) {
   .photo-info {
     padding: 1rem !important;

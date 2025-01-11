@@ -106,16 +106,17 @@
 				<div class="layout-content" *ngIf="!isAdminPage">
 					<div class="row-1" >
 						<button 
-							class="like-button" 
+							class="like-button fs-5 p-0 bg-transparent" 
 							(click)="toggleLike(photo, $event)"  
 							[ngClass]="{'liked': photo.isLiked}">
 							<i 
 								class="fa" 
-								[ngClass]="photo.isLiked ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart text-secondary'">
+								[ngClass]="photo.isLiked ? 'fa-solid fa-heart liked' : 'fa-solid fa-heart not-liked'">
 							</i>
 						</button>
-						<button class="collect-button">
-							<i class="fa-regular fa-bookmark text-secondary"></i>
+
+						<button class="collect-button bg-transparent fs-5">
+							<i class="fa-regular fa-bookmark text-white"></i>
 						</button>
 					</div>
 					
