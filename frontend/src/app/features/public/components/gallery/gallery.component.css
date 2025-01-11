@@ -151,6 +151,32 @@
 	width: 100%;
 }
 
+
+.like-button {
+	background-color: transparent;
+	border: none;
+	cursor: pointer;
+}
+
+.liked {
+	color: transparent;
+	background-color: #FF3A78;
+	border-radius: 30%;
+	padding: 12.5px;
+	-webkit-text-stroke: 1.5px white;
+}
+
+.not-liked {
+	color: transparent;
+	background-color: transparent;
+	border-radius: 30%;
+	padding: 12.5px;
+	-webkit-text-stroke: 2px white;
+}
+
+
+
+
 .colors{
 	display: flex;
 	justify-content: flex-start;
