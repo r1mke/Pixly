@@ -2,9 +2,7 @@
 using backend.Data.Models;
 using backend.Data;
 using backend.Helper.Services.JwtService;
-using backend.Helper.Auth.PasswordHasher;
 using backend.Helper.Services;
-using backend.Helper.Auth.EmailSender;
 using Microsoft.EntityFrameworkCore;
 using Azure;
 using backend.Heleper.Api;
@@ -13,6 +11,8 @@ using static LoginEndpoint;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Microsoft.Extensions.Caching.Memory;
+using backend.Helper.Services.EmailSender;
+using backend.Helper.Services.PasswordHasher;
 
 [AllowAnonymous]
 [Route("auth")]
@@ -21,14 +21,14 @@ public class LoginEndpoint : MyEndpointBaseAsync
     .WithResult<UserLoginResponse>
 {
     private readonly AppDbContext _db;
-    private readonly IPasswordHasher _passwordHasher;
+    private readonly IPasswordService _passwordHasher;
     private readonly IJwtService _jwtService;
     private readonly AuthService _authService;
-    private readonly IEmailSender _emailSender;
+    private readonly IEmailService _emailSender;
     private readonly IMemoryCache _memoryCache;
 
 
-    public LoginEndpoint(AppDbContext db, IPasswordHasher passwordHasher, IJwtService jwtService, AuthService authService, IEmailSender emailSender,                      IMemoryCache memoryCache)
+    public LoginEndpoint(AppDbContext db, IPasswordService passwordHasher, IJwtService jwtService, AuthService authService, IEmailService emailSender,                      IMemoryCache memoryCache)
     {
         _db = db;
         _passwordHasher = passwordHasher;

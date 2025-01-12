@@ -1,9 +1,8 @@
-﻿using backend.Helper.String;
-using System.Globalization;
+﻿using System.Globalization;
 
-namespace backend.Helper
+namespace backend.Helper.Services.String
 {
-    public class StringHelper : IStringHelper
+    public class StringService : IStringService
     {
         public string CapitalizeFirstLetter(string input)
         {

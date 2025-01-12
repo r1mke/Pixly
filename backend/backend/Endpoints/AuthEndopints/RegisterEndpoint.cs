@@ -2,24 +2,24 @@
 using backend.Data;
 using Microsoft.EntityFrameworkCore;
 using backend.Data.Models;
-using backend.Helper.Auth.PasswordHasher;
-using backend.Helper.Auth.EmailSender;
 using System.ComponentModel.DataAnnotations;
 using static backend.Endpoints.AuthEndopints.RegisterEndpoint;
 using Microsoft.AspNetCore.Authorization;
-using backend.Helper.String;
 using System.Text.Json.Serialization;
 using backend.Helper.Services.JwtService;
 using Azure;
 using backend.Heleper.Api;
 using System.Linq;
 using backend.Helper.Services;
+using backend.Helper.Services.EmailSender;
+using backend.Helper.Services.PasswordHasher;
+using backend.Helper.Services.String;
 
 namespace backend.Endpoints.AuthEndopints
 {
     [AllowAnonymous]
     [Route("auth")]
-    public class RegisterEndpoint(AppDbContext db, IEmailSender emailSender, IPasswordHasher passwordHasher, IJwtService jwtService, IStringHelper stringHelper, AuthService authService) : MyEndpointBaseAsync
+    public class RegisterEndpoint(AppDbContext db, IEmailService emailSender, IPasswordService passwordHasher, IJwtService jwtService, IStringService stringHelper, AuthService authService) : MyEndpointBaseAsync
         .WithRequest<CreateUserRequest>
         .WithResult<UserRegistrationResponse>
     {

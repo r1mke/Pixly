@@ -8,13 +8,13 @@ using static LogoutEndpoint;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
-using backend.Helper.Auth.PasswordHasher;
 using backend.Heleper.Api;
 using Newtonsoft.Json.Linq;
 using backend.Helper.Services;
+using backend.Helper.Services.PasswordHasher;
 
 [Route("auth")]
-public class LogoutEndpoint(AppDbContext db, IPasswordHasher passwordHasher, IJwtService jwtService, AuthService authService) : ControllerBase
+public class LogoutEndpoint(AppDbContext db, IPasswordService passwordHasher, IJwtService jwtService, AuthService authService) : ControllerBase
 {
     [HttpPost("logout")]
     public async Task<IActionResult> Logout(CancellationToken cancellationToken = default)

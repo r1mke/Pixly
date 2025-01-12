@@ -12,7 +12,7 @@ using System.Text.Json.Serialization;
 namespace backend.Endpoints.UserEndpoints
 {
     [Route("user")]
-    public class UserPutEndpoint(AppDbContext db, IJwtService jwtService, PhotoService photoService) : ControllerBase
+    public class UserPutEndpoint(AppDbContext db, IJwtService jwtService, PhotoCloudinaryService photoService) : ControllerBase
     {
         [HttpPut("update-user")]
         public async Task<IActionResult> HandleAsync([FromForm] UpdateUserRequest request, CancellationToken cancellationToken = default)

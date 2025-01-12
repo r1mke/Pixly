@@ -1,9 +1,9 @@
 ﻿using BCrypt.Net;
 using Org.BouncyCastle.Crypto.Generators;
 
-namespace backend.Helper.Auth.PasswordHasher
+namespace backend.Helper.Services.PasswordHasher
 {
-    public class PasswordHasher : IPasswordHasher
+    public class PasswordService : IPasswordService
     {
         public async Task<string> Hash(string password)
         {

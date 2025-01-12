@@ -7,12 +7,12 @@ using Microsoft.Extensions.Caching.Memory;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
-using backend.Helper.Auth.EmailSender;
 using backend.Helper.Services.JwtService;
 using Newtonsoft.Json.Linq;
+using backend.Helper.Services.EmailSender;
 
 [Route("auth")]
-public class ResendVerificationCodeEndpoint(AppDbContext db, IEmailSender emailSender, IMemoryCache memoryCache, IJwtService jwtService) : ControllerBase
+public class ResendVerificationCodeEndpoint(AppDbContext db, IEmailService emailSender, IMemoryCache memoryCache, IJwtService jwtService) : ControllerBase
 
 {
     private const int RequestLimit = 1;
