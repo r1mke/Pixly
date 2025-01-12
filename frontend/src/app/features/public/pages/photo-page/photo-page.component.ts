@@ -124,6 +124,26 @@ export class PhotoPageComponent implements OnInit {
       });
   }
 
+  toggleBookmar(photo: any, event: Event) {
+    if(this.currentUser)
+      this.currentUserId = this.currentUser.userId;
+    else 
+      this.router.navigate(['auth/login']);
+
+      event.stopPropagation();
+      const action = photo.isBookmarked ? this.photoService.unbookmarkPhoto(photo.id, this.currentUser.userId) : this.photoService.bookmarkPhoto(photo.id, this.currentUser.userId);
+   
+      action.subscribe({
+        next: () => {
+          photo.isBookmarked = !photo.isBookmarked;
+          this.getPhotoById();
+        },
+        error: (err) => {
+          console.error('Error updating bookmark status:', err.error?.Message || err.message);
+        },
+      });
+  }
+
   purchase() {
     if (this.photo) {
       this.isLoading = true;

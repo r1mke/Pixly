@@ -28,6 +28,20 @@ export class PhotoService {
     );
   }
 
+
+  bookmarkPhoto(photoId: number, userId: number): Observable<any> {
+    return this.http.post<any>(
+      `${MYCONFIG.apiUrl}/photos/${photoId}/bookmark?userId=${userId}`, 
+      {}
+    );
+  }
+  
+  unbookmarkPhoto(photoId: number, userId: number): Observable<any> {
+    return this.http.delete<any>(
+      `${MYCONFIG.apiUrl}/photos/${photoId}/bookmark?userId=${userId}`
+    );
+  }
+
   updatePhoto(id:number, data: {title : string, description: string, location: string}): Observable<any> {
     const formData: FormData = new FormData();
 

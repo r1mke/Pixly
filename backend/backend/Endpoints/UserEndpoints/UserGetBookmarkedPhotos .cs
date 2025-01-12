@@ -9,10 +9,10 @@ using Microsoft.EntityFrameworkCore;
 namespace backend.Endpoints.UserEndpoints
 {
     [ApiController]
-    public class UserGetLikedPhotos(AppDbContext db, IJwtService jwtService) : ControllerBase
+    public class UserGetBookmarkedPhotos(AppDbContext db, IJwtService jwtService) : ControllerBase
     {
-        [HttpGet("user/{username}/liked-photos")]
-        public async Task<IActionResult> GetLikedPhotoByUsernameAsync(string username)
+        [HttpGet("user/{username}/bookmarked-photos")]
+        public async Task<IActionResult> GetBookmarkedPhotoByUsernameAsync(string username)
         {
             var jwtToken = Request.Cookies["jwt"];
             var refreshToken = Request.Cookies["refreshToken"];
@@ -30,7 +30,7 @@ namespace backend.Endpoints.UserEndpoints
             if (user == null)
                 return NotFound(new { Message = "User not found" });
 
-            var likedPhotos = user.Likes.Where(l=>l.Photo.Approved==true).Select(l => new PhotoDTO
+            var likedPhotos = db.Bookmarks.Where(l=>l.Photo.Approved==true).Select(l => new PhotoDTO
             {
                 Id = l.Photo.Id,
                 Title = l.Photo.Title,

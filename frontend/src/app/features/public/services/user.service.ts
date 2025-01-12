@@ -23,6 +23,10 @@ export class UserService {
     return this.http.get(`${this.apiUser}/${username}/liked-photos`, {withCredentials: true});
   }
 
+  getUserBookmarkedPhotos(username: string): Observable<any> {
+    return this.http.get(`${this.apiUser}/${username}/bookmarked-photos`, {withCredentials: true});
+  }
+
   getAllUsers(request: any): Observable<any[]> {
     let params = new HttpParams();
     if (request.query) {

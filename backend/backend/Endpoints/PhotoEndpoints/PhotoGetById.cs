@@ -55,6 +55,7 @@ namespace backend.Endpoints.PhotoEndpoints
                         .Select(r => r.Size)
                         .FirstOrDefault(),
                     IsLiked = user != null && db.Likes.Any(l => l.PhotoId == p.Id && l.UserId == user.Id),
+                    IsBookmarked = user != null && db.Bookmarks.Any(b => b.PhotoId == p.Id && b.UserId == user.Id),
                     Tags = p.PhotoTags.Select(pt => pt.Tag.TagName).ToList()
                 })
                 .FirstOrDefaultAsync(cancellationToken);
