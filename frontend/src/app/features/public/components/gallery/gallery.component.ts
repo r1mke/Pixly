@@ -267,7 +267,25 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
     if(this.currentUrl.includes('purchased-photos')) this.loadPurchasedPhotos();
     if(this.activeTab==='Gallery') this.loadUserPhotos();
     if(this.activeTab==='Liked') this.loadLikedPhotos();
+    if(this.activeTab==='Collections') this.loadUserCollections();
     if(this.similarObject) this.loadSimilarPhotos();
+  }
+  
+  loadUserCollections() {
+    if (!this.username) return;
+    this.userService.getUserLikedPhotos(this.username).pipe(takeUntil(this.ngOnDestory)).subscribe({
+      next: (res) => {
+        this.photos = []
+        this.photos = res;
+        console.log(this.photos);
+      },
+      error: (error) => {
+        console.error('Error fetching liked photos:', error);
+      },
+      complete:() =>{
+        this.photosEvent.emit(this.photos);
+      },
+    });
   }
 
   loadPurchasedPhotos() {
@@ -400,7 +418,26 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
       action.subscribe({
         next: () => {
           photo.isLiked = !photo.isLiked; // Toggle state
-          if(this.currentUrl === (`user/${this.username}/liked`)) this.loadLikedPhotos();
+          //if(this.currentUrl === (`user/${this.username}/liked`)) this.loadLikedPhotos();
+        },
+        error: (err) => {
+          console.error('Error updating like status:', err.error?.Message || err.message);
+        }
+      });
+    }
+
+
+    toggleBookmark(photo: any, event: Event) {
+      if(!this.user)
+        this.router.navigate(['auth/login']);
+      
+      event.stopPropagation();
+      const action = photo.isBookmarked ? this.photoService.unbookmarkPhoto(photo.id, this.user.userId).pipe(takeUntil(this.ngOnDestory)) : this.photoService.bookmarkPhoto(photo.id, this.user.userId).pipe(takeUntil(this.ngOnDestory));
+   
+      action.subscribe({
+        next: () => {
+          photo.isBookmarked = !photo.isBookmarked; // Toggle state
+          //if(this.currentUrl === (`user/${this.username}/liked`)) this.loadLikedPhotos();
         },
         error: (err) => {
           console.error('Error updating like status:', err.error?.Message || err.message);

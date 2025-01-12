@@ -115,8 +115,14 @@
 							</i>
 						</button>
 
-						<button class="collect-button bg-transparent fs-5">
-							<i class="fa-regular fa-bookmark text-white"></i>
+						<button 
+							class="collect-button fs-5 p-0 bg-transparent" 
+							(click)="toggleBookmark(photo, $event)"  
+							[ngClass]="{'bookmarked': photo.isBookmarked}">
+							<i 
+								class="fa" 
+								[ngClass]="photo.isBookmarked? 'fa-solid fa-bookmark liked' : 'fa-solid fa-bookmark not-liked'">
+							</i>
 						</button>
 					</div>
 					

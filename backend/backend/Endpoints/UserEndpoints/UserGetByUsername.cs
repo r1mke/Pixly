@@ -76,7 +76,8 @@ namespace backend.Endpoints.UserEndpoints
                             .FirstOrDefault(),
                         LikeCount = p.LikeCount,
                         ViewCount = p.ViewCount,
-                        IsLiked = currentUser != null && p.Likes.Any(l => l.UserId == currentUser.Id)
+                        IsLiked = currentUser != null && p.Likes.Any(l => l.UserId == currentUser.Id),
+                        IsBookmarked = currentUser != null && db.Bookmarks.Any(b => b.UserId == currentUser.Id),
                     }).ToList()
                 })
                 .FirstOrDefaultAsync();

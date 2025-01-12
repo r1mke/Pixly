@@ -19,6 +19,7 @@ namespace backend.Helper.DTO_s
         public string? Size { get; set; }
 
         public bool IsLiked { get; set; }
+        public bool IsBookmarked { get; set; }
 
         public List<string> Tags { get; set; } = new List<string>();
     }

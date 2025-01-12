@@ -67,7 +67,8 @@ namespace backend.Endpoints.PhotoEndpoints
                     // Provjera da li je korisnik lajkovao sliku
                     LikeCount = p.LikeCount,
                     ViewCount = p.ViewCount,
-                    IsLiked = user != null && db.Likes.Any(l => l.PhotoId == p.Id && l.UserId == user.Id)
+                    IsLiked = user != null && db.Likes.Any(l => l.PhotoId == p.Id && l.UserId == user.Id),
+                    IsBookmarked = user != null && db.Bookmarks.Any(b => b.PhotoId == p.Id && b.UserId == user.Id),
                 })
                 .Skip(skip)
                 .Take(request.PageSize)

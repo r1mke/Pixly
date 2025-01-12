@@ -22,10 +22,15 @@
           
             <!-- Action buttons -->
             <div class="d-flex justify-content-center justify-content-md-start flex-wrap action-buttons">
-              <button class="btn btn-outline-secondary me-2 mb-2 bg-transparent text-black">
-                <i class="fa-regular fa-bookmark text-secondary "></i> 
-                <span class="hide-text ms-2">Collect</span> 
-              </button> 
+              <button 
+                class="btn btn-outline-secondary me-2 mb-2 bg-transparent text-black" 
+                (click)="toggleBookmar(photo, $event)"
+                [ngClass]="{'bookmarked': photo.isBookmarked}">
+                <i class="fa me-1" 
+                  [ngClass]="photo.isBookmarked? 'fa-solid far fa-bookmark text-danger' : 'fa-regular far fa-bookmark text-secondary'"></i> 
+                  <span class="hide-text ms-2">Collect</span>  
+              </button>
+
               <button 
                 class="btn btn-outline-secondary me-2 mb-2 bg-transparent text-black" 
                 (click)="toggleLike(photo, $event)"
