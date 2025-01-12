@@ -1,6 +1,6 @@
-﻿namespace backend.Helper.Auth.EmailSender
+﻿namespace backend.Helper.Services.EmailSender
 {
-    public interface IEmailSender
+    public interface IEmailService
     {
         Task SendEmailAsync(string toEmail, string subject, string message);
     }

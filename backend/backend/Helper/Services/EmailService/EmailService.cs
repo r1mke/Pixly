@@ -3,13 +3,13 @@ using System.Net.Mail;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 
-namespace backend.Helper.Auth.EmailSender
+namespace backend.Helper.Services.EmailSender
 {
-    public class EmailSender : IEmailSender
+    public class EmailService : IEmailService
     {
         private readonly IConfiguration _config;
 
-        public EmailSender(IConfiguration config)
+        public EmailService(IConfiguration config)
         {
             _config = config;
         }

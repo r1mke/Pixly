@@ -1,14 +1,15 @@
 ﻿using backend.Data;
-using backend.Helper.Auth.EmailSender;
 using backend.Helper.Services.JwtService;
-using backend.Helper.String;
 using backend.Helper;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using backend.Helper.Auth.PasswordHasher;
 using backend.Helper.Services;
+using backend.Helper.Services.EmailSender;
+using backend.Helper.Services.PasswordHasher;
+using backend.Helper.Services.String;
+using backend.Helper.Services.PhotoService;
 
 
 public class Program
@@ -59,11 +60,12 @@ public class Program
         builder.Services.AddAuthorization();
 
         // Registracija servisa
-        builder.Services.AddScoped<IEmailSender, EmailSender>();
-        builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-        builder.Services.AddScoped<PhotoService>();
+        builder.Services.AddScoped<IEmailService, EmailService>();
+        builder.Services.AddScoped<IPasswordService, PasswordService>();
+        builder.Services.AddScoped<PhotoCloudinaryService>();
+        builder.Services.AddScoped<IPhotoService, PhotoService>();
         builder.Services.AddScoped<IJwtService, JwtService>();
-        builder.Services.AddScoped<IStringHelper, StringHelper>();
+        builder.Services.AddScoped<IStringService, StringService>();
         builder.Services.AddScoped<AuthService>();
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<StripeService>();

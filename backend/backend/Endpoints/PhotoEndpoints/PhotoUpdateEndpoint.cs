@@ -10,7 +10,7 @@ namespace backend.Endpoints.PhotoEndpoints
 {
     [Route("api/photos")]
     [ApiController]
-    public class PhotoUpdateEndpoint(PhotoService photoService, IJwtService jwtService, AppDbContext db) : ControllerBase
+    public class PhotoUpdateEndpoint(PhotoCloudinaryService photoService, IJwtService jwtService, AppDbContext db) : ControllerBase
     {
         [HttpPut("{photoId}")]
         public async Task<IActionResult> UpdatePhoto([FromRoute] int photoId, [FromForm] UpdatePhotoRequest request)

@@ -10,9 +10,9 @@ namespace backend.Endpoints.PhotoEndpoints
     [Route("api/photos")]
     public class PhotoPostEndpoint : MyEndpointBaseAsync.WithRequest<PostPhotoRequest>.WithResult<PostPhotoResult>
     {
-        private readonly PhotoService _photoService;
+        private readonly PhotoCloudinaryService _photoService;
 
-        public PhotoPostEndpoint(PhotoService photoService)
+        public PhotoPostEndpoint(PhotoCloudinaryService photoService)
         {
             _photoService = photoService;
         }

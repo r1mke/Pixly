@@ -9,10 +9,10 @@ namespace backend.Endpoints.PhotoEndpoints
     [Route("api/photoApproved")]
     public class PhotoApprovedEndpoint : MyEndpointBaseAsync.WithRequest<PhotoApprovedRequest>.WithResult<PhotoApprovedResult>
     {
-        private readonly PhotoService _photoService;
+        private readonly PhotoCloudinaryService _photoService;
         private readonly AppDbContext _db;
 
-        public PhotoApprovedEndpoint(PhotoService photoService, AppDbContext db)
+        public PhotoApprovedEndpoint(PhotoCloudinaryService photoService, AppDbContext db)
         {
             _photoService = photoService;
             _db = db;

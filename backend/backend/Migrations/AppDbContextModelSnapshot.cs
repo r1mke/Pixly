@@ -90,6 +90,32 @@ namespace backend.Migrations
                     b.ToTable("Transactions");
                 });
 
+            modelBuilder.Entity("backend.Data.Models.Bookmark", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PhotoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PhotoId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Bookmarks");
+                });
+
             modelBuilder.Entity("backend.Data.Models.Color", b =>
                 {
                     b.Property<int>("Id")
@@ -412,6 +438,25 @@ namespace backend.Migrations
                 });
 
             modelBuilder.Entity("Transaction", b =>
+                {
+                    b.HasOne("backend.Data.Models.Photo", "Photo")
+                        .WithMany()
+                        .HasForeignKey("PhotoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("backend.Data.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Photo");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("backend.Data.Models.Bookmark", b =>
                 {
                     b.HasOne("backend.Data.Models.Photo", "Photo")
                         .WithMany()
