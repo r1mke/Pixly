@@ -120,7 +120,7 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
 
       if(changes['activeTab'] && changes['activeTab'].currentValue){
-        if(this.activeTab==="Collections" || this.activeTab ==="AI") this.photos = [];
+        if(this.activeTab ==="AI") this.photos = [];
         this.loadPhotos();
       }
 
@@ -273,7 +273,7 @@ export class GalleryComponent implements OnInit, OnDestroy, OnChanges {
   
   loadUserCollections() {
     if (!this.username) return;
-    this.userService.getUserLikedPhotos(this.username).pipe(takeUntil(this.ngOnDestory)).subscribe({
+    this.userService.getUserBookmarkedPhotos(this.username).pipe(takeUntil(this.ngOnDestory)).subscribe({
       next: (res) => {
         this.photos = []
         this.photos = res;
