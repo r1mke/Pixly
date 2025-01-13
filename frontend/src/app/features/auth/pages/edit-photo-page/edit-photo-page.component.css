@@ -9,11 +9,12 @@
   width: 100%;
 }
 
-h3{
+h2{
   font-weight: 600;
   line-height: 40px;
   letter-spacing: 1px;
   text-align: center;
+  color: #7c7c7c;
 }
 
 p{

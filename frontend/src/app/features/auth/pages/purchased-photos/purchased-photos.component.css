@@ -1,4 +1,13 @@
 .container
 {
-  margin-top: 100px;
+  margin-top: 110px;
+}
+
+h2{
+  font-weight: 600;
+  line-height: 40px;
+  letter-spacing: 1px;
+  text-align: center;
+  color: #7c7c7c;
+  margin-bottom: 50px;
 }
