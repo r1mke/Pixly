@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { NavigationComponent } from "../../../admin/components/navigation/navigation.component";
+import { DeleteModalComponent } from '../../../shared/components/delete-modal/delete-modal.component';
 interface Approved {
   text: string;
   status: boolean;
@@ -16,7 +17,7 @@ interface Approved {
 @Component({
   selector: 'app-edit-photo-page',
   standalone: true,
-  imports: [NavBarComponent, ReactiveFormsModule, CommonModule, NgbdToast, FormsModule, NavigationComponent],
+  imports: [NavBarComponent, ReactiveFormsModule, CommonModule, NgbdToast, FormsModule, NavigationComponent, DeleteModalComponent],
   templateUrl: './edit-photo-page.component.html',
   styleUrl: './edit-photo-page.component.css'
 })
@@ -31,6 +32,7 @@ export class EditPhotoPageComponent implements OnInit {
   currentUrl : string = ''
   isAdminPage : boolean = false
   approved : Approved = {text: '', status: false}
+  
   constructor( private fb: FormBuilder, private route: ActivatedRoute,
      private photoService: PhotoService, private router: Router,
      private location: Location) { }
@@ -48,6 +50,20 @@ export class EditPhotoPageComponent implements OnInit {
     })
   }
 
+  confirmDelete(): void {
+    if (this.photo?.id) {
+      this.photoService.deletePhotoById(this.photo.id).subscribe({
+        next: () => {
+          this.ngbdToast.showMessage('Successfully deleted photo!', 'success');
+          this.location.back();
+        },
+        error: (err) => {
+          console.error('Error deleting photo:', err);
+          alert('Failed to delete the photo.');
+        }
+      });
+    }
+  }
 
   private initForm(): void {
     this.editPhotoForm = this.fb.group({

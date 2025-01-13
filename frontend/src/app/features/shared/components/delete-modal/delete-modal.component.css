@@ -1,0 +1,34 @@
+.modal-content {
+  border-radius: 16px;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.modal-body p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.btn-light {
+  background-color: #f8f9fa;
+  color: #6c757d;
+  border: 1px solid #dee2e6;
+}
+
+.btn-light:hover {
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.btn-danger {
+  background: linear-gradient(90deg, #ff4d4d, #ff3333);
+  color: white;
+  border: 0;
+}
+
+.btn-danger:hover {
+  background: linear-gradient(90deg, #ff6666, #ff4d4d);
+}
