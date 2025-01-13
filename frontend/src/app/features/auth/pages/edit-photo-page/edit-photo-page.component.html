@@ -15,7 +15,12 @@
         [disabled]="approved.text === 'Approved'" >
         {{ approved.text }}
       </button>
-      <button class="w-100 bg-danger fw-bold p-2" (click)="deletePhotoById()">Delete</button>
+      <button class="w-100 bg-danger fw-bold p-2" 
+        data-bs-toggle="modal"
+        data-bs-target="#deleteModal"
+        aria-label="Close"
+        >Delete
+      </button>
       </div>
     </div>
     <div class="image-details">
@@ -126,11 +131,23 @@
                   <span class="visually-hidden">Loading...</span>
                 </div>
           </button>
-          <button *ngIf="!isAdminPage" class="w-100 mx-1 fw-bold p-2 d-flex align-items-center justify-content-center bg-danger" (click)="deletePhotoById()">Delete</button>
+          <button  
+            data-bs-toggle="modal"
+            data-bs-target="#deleteModal"
+            aria-label="Close"  
+            *ngIf="!isAdminPage" class="w-100 mx-1 fw-bold p-2 d-flex align-items-center justify-content-center bg-danger" 
+            >Delete
+          </button>
         </div>
       </form>
     </div>
   </div>
 </div>
 
+
+<!-- Modal -->
+<app-delete-modal (deleteConfirmed)="confirmDelete()"></app-delete-modal>
+
+
+<!-- Toast -->
 <ngbd-toast/>
