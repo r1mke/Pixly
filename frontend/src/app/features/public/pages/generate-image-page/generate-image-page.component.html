@@ -1,0 +1,56 @@
+<app-nav-bar></app-nav-bar>
+
+<div class="hero-section">
+    <img src="../../../../../assets/img/aibg.webp" alt="">
+    <div class="overlay">
+        <div class="container">
+            <h2>Al Generator</h2>
+            <span>This is an AI Image Generator. It creates an image from scratch <br> from a text description.
+            </span>
+            <form action="#" class="generate-form">
+                <input type="text" placeholder="Enter a prompt..." [(ngModel)]="input" name="input">
+                <div class="controls" (click)="toggleDropdown()">
+                    <div class="dropdown">
+                        <div class="item">
+                            <a (click)="$event.preventDefault()">{{selectedQuantity}} Images</a>
+                        </div>                        
+                        <div class="dropdown-content" *ngIf="dropDown" >
+                            <div class="dropdown-item">
+                                <a (click)="$event.preventDefault()" (click)="updatedSelectedQuantity(1)" >1 Image</a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a (click)="$event.preventDefault()" (click)="updatedSelectedQuantity(2)">2 Images</a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a (click)="$event.preventDefault()" (click)="updatedSelectedQuantity(3)">3 Images</a>
+                            </div>
+                            <div class="dropdown-item">
+                                <a (click)="$event.preventDefault()" (click)="updatedSelectedQuantity(4)">4 Images</a>
+                            </div>
+                        </div>
+                    </div>
+                    <button (click)="generateImage()">Generate</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="image-gallery">
+    <div class="img-card" *ngFor="let image of images; let i = index" >
+        <div class="overlaay card"></div>
+        <img *ngIf="!loading" [src]="image" alt=""> 
+        <button
+        class="download-button" 
+         >
+            <i class="fa-solid fa-download fa-lg"></i>
+        </button>
+    </div> 
+    <div class="image-gallery-loading" *ngIf="images.length === 0 && loading">
+        <div class="loading-screen" *ngFor="let number of numberArray">
+            <img src="assets/img/loader.svg" alt="">
+        </div> 
+    </div>
+
+</div>
+
+

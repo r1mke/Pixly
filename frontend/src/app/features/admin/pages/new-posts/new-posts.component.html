@@ -1,0 +1,24 @@
+
+<div class="container" style="text-align: center;">
+    <app-navigation></app-navigation>
+
+    <div  style="margin-top: 30px;" class="explore-new-photos" *ngIf="currentUrl.includes('new-posts') && photoEvent">
+        <h3>Emphasis on Responsibility and Professionalism</h3>
+        <span>Administrators play a key role in ensuring platform quality. You are responsible for reviewing each photograph to verify its quality, licensing, and relevance. Only approved photos will be accessible to users.</span>
+    </div>
+
+    <div  style="margin-top: 30px;" class="explore-new-photos" *ngIf="currentUrl.includes('new-posts') && !photoEvent">
+        <h3 style="text-align: left;">There are currently no photos to display.</h3>
+    </div>
+
+    <div style="margin-top: 30px;" *ngIf="currentUrl.includes('gallery') && photoEvent" class="user-photo">
+        <h3 style="text-align: left;">{{username}}'s photos</h3>
+    </div>
+
+    <div style="margin-top: 30px;" *ngIf="currentUrl.includes('gallery') && !photoEvent" class="user-photo">
+        <h3 style="text-align: left;"> User {{username}} has no photos to display.</h3>
+    </div>
+
+
+<app-gallery (photosEvent)="receivedPhotos($event)"  ></app-gallery>
+</div>

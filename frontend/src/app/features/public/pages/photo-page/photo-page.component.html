@@ -1,0 +1,141 @@
+<app-nav-bar></app-nav-bar>
+
+<div class="container-fluid">
+  <div class="container">
+    <div *ngIf="photo; else loading">
+
+      <div class="row">
+        <!-- Main section with the image and author -->
+        <div class="col-12 col-md-8 photo-info p-0 p-md-4 bg-white mb-4 mb-md-0">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-center align-items-md-center mb-4">
+            <!-- Author section -->
+            <div class="d-flex align-items-center mb-3 mb-md-0">
+              <img [src]="photo.user.profileImgUrl || 'assets/img/big_user_dflt.png'"              
+                alt="Profile" 
+                class="profile-img rounded-circle me-3" 
+                />
+              <div>
+                <h6 class="m-0">{{ photo.user.firstName }} {{ photo.user.lastName }}</h6>
+                <button class="btn-follow small p-0">Follow</button>
+              </div>
+            </div>
+          
+            <!-- Action buttons -->
+            <div class="d-flex justify-content-center justify-content-md-start flex-wrap action-buttons">
+              <button 
+                class="btn btn-outline-secondary me-2 mb-2 bg-transparent text-black" 
+                (click)="toggleBookmar(photo, $event)"
+                [ngClass]="{'bookmarked': photo.isBookmarked}">
+                <i class="fa me-1" 
+                  [ngClass]="photo.isBookmarked? 'fa-solid far fa-bookmark text-danger' : 'fa-regular far fa-bookmark text-secondary'"></i> 
+                  <span class="hide-text ms-2">Collect</span>  
+              </button>
+
+              <button 
+                class="btn btn-outline-secondary me-2 mb-2 bg-transparent text-black" 
+                (click)="toggleLike(photo, $event)"
+                [ngClass]="{'liked': photo.isLiked}">
+                <i class="fa me-1" 
+                  [ngClass]="photo.isLiked ? 'fa-solid fa-heart text-danger' : 'fa-regular fa-heart text-secondary'"></i> 
+                <span class="hide-text ms-1 me-1">Like</span> 
+                <span class="like-count ms-1 text-secondary">{{ photo.likeCount }}</span>
+              </button>
+
+              <button 
+                class="btn btn-primary btn-outline-secondary text-white mb-2"  
+                (click)="isOwnProfile ? goToEditPhoto() : null">
+                <i class="fas" [ngClass]="isOwnProfile ? 'fa-edit' : 'fa-download'"></i> 
+                {{ isOwnProfile ? 'Edit photo' : 'Try preview' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Image -->
+          <div class="text-center">
+            <div class="image-container">
+              <img [src]="photo.url" class="img-fluid rounded" alt="Main Image">
+            </div>
+          </div>
+        </div>
+
+        <!-- Purchase section -->
+        <div class="col-12 col-md-4 d-flex flex-column mt-5 bg-white justify-content-center p-4">
+          <p class="small fw-semibold text-center mt-3">Find the type and plan that works best for your needs.</p>
+          <div class="border rounded p-4">
+            <form class="w-100">
+              <label class="form-check-label w-100 d-flex align-items-center justify-content-start my-3 option-label fw-medium" style="cursor: pointer;">
+                <input type="radio" name="opcija" value="opcija1" class="me-2" checked>
+                <span class="bold-text">{{photo.price}}$ for this image</span>
+              </label>
+              <label class="form-check-label w-100 py-2 d-flex align-items-center justify-content-start my-0 option-label fw-medium text-secondary" style="cursor: pointer;">
+                <input type="radio" name="opcija" value="opcija2" class="me-2" disabled>
+                <span>8,50$ with subscription</span>
+              </label>
+            </form>
+            <hr>
+            <button class="btn btn-purchase w-100 py-3 mb-2" 
+              (click)="purchase()" 
+              [disabled]="isLoading"
+            >
+              <span class="text-white" *ngIf="!isLoading">Continue with purchase</span>
+                <div *ngIf="isLoading" class="spinner-border spinner-border-sm text-light" role="status">
+                  <span class="visually-hidden">Loading...</span>
+                </div>
+            </button>
+            <button class="btn btn-outline-secondary btn-plans-and-pricing w-100 py-2 mt-2 text-secondary">View plans and pricing</button>
+          </div>
+
+          <div class="mt-4">
+            <p class="small mb-2">Includes our <a class="pixly">standard licence</a></p>
+            <p class="small mb-2 text-se">Stock photo ID: <span class="text-secondary">{{photo.id}}</span></p>
+            <p class="small mb-2 text-se">Upload date: <span class="text-secondary">{{photo.createAt | customDate}}</span></p>
+            <p class="small mb-2 text-se">Location: <span class="text-secondary">{{photo.location}}</span></p>
+            <p class="small mb-2 text-se">Views: <span class="text-secondary">{{photo.viewCount}}</span></p>
+            <p class="small mb-2 text-se">Decription: <span class="text-secondary">{{photo.description}}</span></p>
+          </div>
+        </div>
+      </div>
+      
+
+      <!-- Description section -->
+      <div class="row">
+        <div class="col-12 col-md-8 px-3 px-md-4 d-flex flex-column flex-md-row justify-content-between align-items-center bg-white">
+          <div class="d-flex align-items-center mb-2 mb-md-0">
+            <i class="fa-brands fa-creative-commons text-secondary"></i>
+            <p class="mb-0 ms-2 text-secondary fw-normal">{{ photo.title }}</p>
+          </div>
+          <div class="d-flex justify-content-around gap-2">
+            <button class="btn btn-outline-secondary bg-transparent text-black">
+              <i class="fa-solid fa-share me-1 text-secondary"></i> Share
+            </button>
+            <!-- IisOwnProfile -->
+            <button *ngIf="isOwnProfile" class="btn btn-outline-secondary bg-transparent text-black">
+              <i class="fa-solid fa-trash me-1 text-secondary"></i> Delete
+            </button>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Tags -->
+    <div class="mt-5" *ngIf="photo?.tags?.length">
+      <h3>More like this</h3>
+      <div class="tags-container">
+        <button
+          *ngFor="let tag of photo.tags"
+          (click)="goToSearchPage(tag)"
+          class="btn btn-outline-secondary me-2 bg-transparent text-black px-3 py-2">
+          {{ tag }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading template -->
+    <ng-template #loading>
+      <p class="text-center my-5">Loading...</p>
+    </ng-template>
+  </div>
+</div>
+
+<app-gallery [similarObject]="similarObject"></app-gallery>

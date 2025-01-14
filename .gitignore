@@ -4,6 +4,7 @@
 *.suo
 *.userosscache
 *.sln.docstates
+*.env
 
 # C# Build
 bin/
@@ -13,6 +14,7 @@ obj/
 .vscode/
 history/
 *.code-workspace
+*.config-env.ts
 
 # WebStorm
 .idea/
@@ -58,4 +60,5 @@ coverage/
 
 # Temporary local files
 *.log
+frontend/src/app/my-config.ts
 

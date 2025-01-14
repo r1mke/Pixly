@@ -1,0 +1,56 @@
+<!-- NavBar -->
+<app-nav-bar />
+
+<div class="container">
+  <div class="d-flex flex-column align-items-center">
+    <!-- Avatar -->
+    <div class="col-md-6 text-center text-md-end">
+      <img [src]="profileUser?.profileImgUrl || 'assets/img/user_def.png'" alt="Profile Image" class="rounded-circle profile-img">
+    </div>
+
+    <!-- User Info -->
+    <h2 class="profile-name mt-3">{{ profileUser?.firstName }} {{ profileUser?.lastName }}</h2>
+
+    <!-- Edit Profile Button -->
+    <div *ngIf="isOwnProfile; else otherProfile">
+      <button class="mt-3 mb-3 text-white py-3 px-3 px-md-4" routerLink="/auth/edit-profile">
+        <a class="text-white"><i class="fa-solid fa-pen text-center me-2"></i>Edit Profile</a>
+      </button>
+    </div>
+
+    <!-- Alternative Text for Other User -->
+    <ng-template #otherProfile>
+      <p class="text-muted mt-3">This is {{ profileUser?.username }}'s profile.</p>
+    </ng-template>
+
+    <!-- Stats -->
+    <div class="d-flex flex-row align-items-center gap-5 mt-3 text-center">
+      <div>
+        <h6 class="mb-0">Total Views</h6>
+        <p class="text-muted text-center">{{profileUser?.totalViews}}</p>
+      </div>
+      <div>
+        <h6 class="mb-0">Likes</h6>
+        <p class="text-muted text-center">{{profileUser?.totalLikes}}</p>
+      </div>
+      <div>
+        <h6 class="mb-0">Downloads</h6>
+        <p class="text-muted text-center">0</p>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="d-flex flex-row flex-wrap justify-content-evenly w-100 mt-4 overflow-auto">
+      <a
+        *ngFor="let item of navItems"
+        [ngClass]="{ active: item.active }"
+        class="nav-item text-decoration-none text-muted text-center px-2 py-1 px-md-4 py-md-2 "
+        (click)="setActive(item, $event)"
+      >
+        <span class="fw-bold">{{ item.label }}</span>
+      </a>
+    </div>
+
+    <app-gallery [activeTab]="activeTabEvent"> </app-gallery>
+  </div>
+</div>

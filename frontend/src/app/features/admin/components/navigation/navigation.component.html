@@ -1,0 +1,23 @@
+<div class="navigation">
+    <div class="container">
+        <div class="menu">
+            <div class="item" (click)="goToDashboard()" >
+                <i class="fa-solid fa-house fa-xl" style="color: #02a388;"></i>
+                <span>Dashboard</span>
+            </div>
+            <div (click)="goToNewPosts()"  class="item">
+                <i class="fa-regular fa-image fa-flip-horizontal fa-xl" style="color: #02a388;"></i>            
+                <span>Reviews</span>
+            </div>
+            <div (click)="goToUsers()" class="item">
+                <i class="fa-solid fa-users fa-xl"  style="color: #02a388;"></i>
+                <span>Users</span>
+            </div>
+            <div class="current-admin">
+                <img [src]="user.profileImgUrl ||'assets/img/user_def.png'" width="35px" height="35px" style="border-radius: 50%; " alt="">
+                <span>Hello, {{user.firstName}}</span>
+            </div>
+        </div>
+    </div>
+</div>
+

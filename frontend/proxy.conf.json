@@ -1,0 +1,14 @@
+{
+    "/api": {
+      "target": " https://localhost:5264", 
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    },
+    "/openai": {
+      "target": "https://oaidalleapiprodscus.blob.core.windows.net",
+      "secure": true,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    }
+}

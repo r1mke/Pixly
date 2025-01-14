@@ -1,49 +1,139 @@
 <nav [ngClass]="{'open': menuOpen}">
-    <div [ngClass]="windowWidth>900 ? 'container' : 'container-fluid'">
+    <div class="container">
  
         <div class="logo" (click)="goToHome()">
             <img src="../../../../../assets/img/logo.png" width="50px" height="50px" alt="">
         </div>
    
         <div class="search">
-            <input type="text" placeholder="Search...">
-            <img src="../../../../../assets/img/loupe.png" width="15px" height="15px" alt="">
+            <div class="search-bar">
+                <input (keyup)="updateSearchWithoutValue($event)"
+                (focus)="onFocus()" 
+                class="search-input"
+                [(ngModel)]="currentSearch"
+                type="text" (keydown)="onKeyDown($event)"  placeholder="Search...">
+                <img src="../../../../../assets/img/loupe.png" width="15px" height="15px" (click)="goToSearchPage()">
+            </div>
+
+            <ng-container *ngIf="currentSearch && isInputFocused">
+                <div class="search-suggestions" *ngIf="Suggestions$ | async as data">
+                    <ng-container *ngIf="data.suggestionsPhotos?.length>0">
+                        <span class="photo-items">Photos:</span>
+                        <div class="search-suggestions-photos"  *ngIf="isInputFocused" >
+                            <div class="search-item" *ngFor="let suggestion of data.suggestionsPhotos, let i = index" (click)="updateSearch(suggestion)">
+                                <span>{{suggestion}}</span>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="data.suggestionsAuthors?.length>0">
+                        <span class="photo-items">Authors:</span>
+                        <div class="search-suggestions-photos">
+                            <div class="search-item" *ngFor="let suggestion of data.suggestionsAuthors, let i = index" (click)="goToProfilePage(suggestion)">
+                                <span>{{suggestion}}</span>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
         </div>
 
-        <div class="menu" *ngIf="windowWidth>900">
-            <div class="resources">
-                <button>Explore</button>
-                <div class="dropdown-content">
-                    <a href="#">Home</a>
-                    <a href="#">Leaderboard</a>
-                    <a href="#">Popular Searches</a>
-                    <a href="#">Pricing</a>
-                </div>
+        
+        <div class="menu" >
+            <div (click)="goToAiGenerator()" class="item">
+                <a style="color:red" (click)="$event.preventDefault()">AI Generator</a>
             </div>
-            <div class="resources" *ngIf="user">
-                <button>Profile</button>
-                <div class="dropdown-content">
-                    <a href="#">Your Profile</a>
-                    <a href="#">Your Collection</a>
-                    <a href="#">Downolad History</a>
-                    <a href="#">Change Language</a>
-                    <a href="#">Settings</a>
-                    <a href="#">Log out</a>
+            
+             <div class="dropdown"
+             (mouseenter)="onMouseEnterExplore()"
+             (mouseleave)="onMouseLeaveExplore()">
+                
+                <div class="item" (click)="toggleDropdownExplore()">
+                    <a (click)="$event.preventDefault()">Explore</a>
+                    <i class="fa-solid ms-2 " style="color: #7c7c7c;" [ngClass]="dropDownExplore ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                </div>
+                <div class="dropdown-content" *ngIf="dropDownExplore" style="margin-top: 40px;">
+                    <div class="dropdown-item">
+                        <a (click)="$event.preventDefault()">Popular Searches</a>
+                    </div>
+                    <div class="dropdown-item">
+                        <a (click)="$event.preventDefault()">Home</a>
+                    </div>
+                    <div class="dropdown-item">
+                        <a (click)="$event.preventDefault()">Leaderboard</a>
+                    </div>
+                    <div class="dropdown-item">
+                        <a (click)="$event.preventDefault()">Pricing</a>
+                    </div>
                 </div>
             </div>
 
-            <div class="resources" *ngIf="!user">
-                <button>...</button>
-                <div class="dropdown-content">
-                    <a href="#">Change Language</a>
-                    <a href="#">Join</a>
+            <div class="item" *ngIf="!user">
+                <a routerLink="/public/upload" (click)="$event.preventDefault()">Upload</a>
+            </div>
+            
+
+            <div class=" text-center" *ngIf="user">
+                <i class="fa-regular fa-bell" style="font-size: 17px; color: #7c7c7c;"></i>
+            </div>
+
+           
+            <div class="dropdown" *ngIf="user"
+            (mouseenter)="onMouseEnterDropdown()"
+            (mouseleave)="onMouseLeaveDropdown()"
+               
+                >
+                <div class="profile-bar" (click)="toggleDropdown()" style="display: flex; justify-content: center; align-items: center;">
+                <div class="item profile-img "   style="display: flex; justify-content: center; align-items: center;">
+                <img [src]="user?.profileImgUrl || 'assets/img/user_def.png'" 
+                            height="30px" 
+                            width="30px" 
+                            alt="Profile" 
+                            class="profile-img rounded-circle" 
+                />
+                </div>
+                <i class="fa-solid ms-2" style="color: #7c7c7c;" [ngClass]="dropDown ? 'fa-angle-up' : 'fa-angle-down'"></i>
+                </div>
+                <div class="dropdown-content" *ngIf="dropDown" style="margin-top: 40px;">
+                <div class="dropdown-item" (click)="goToProfile()">
+                    <a (click)="$event.preventDefault()" >Your Profile</a>
+                </div>
+                <div *ngIf="isAdmin" class="dropdown-item" (click)="goToAdminDashboard()">
+                    <a (click)="$event.preventDefault()" >Admin Dashboard</a>
+                </div>
+                <div class="dropdown-item" (click)="goToPurchasedPhotos()">
+                    <a (click)="$event.preventDefault()">Purchased Photos</a>
+                </div>
+                <div class="dropdown-item">
+                    <a (click)="$event.preventDefault()">Settings</a>
+                </div>
+                <div class="dropdown-item">
+                    <a (click)="$event.preventDefault()"(click)="logout()">Log out</a>
                 </div>
             </div>
+        </div>
+
+            <div class="dropdown"  *ngIf="!user" 
+            (mouseenter)="onMouseEnterDropdown()"
+            (mouseleave)="onMouseLeaveDropdown()">
+					<i class="fa-solid fas fa-ellipsis-h" (click)="toggleDropdown()"></i>
+				<div class="dropdown-content" *ngIf="dropDown" >
+					<div class="dropdown-item">
+						<a (click)="$event.preventDefault()">Log in</a>
+					</div>
+					<div class="dropdown-item">
+						<a (click)="$event.preventDefault()">Join</a>
+					</div>
+					<div class="dropdown-item">
+						<a (click)="$event.preventDefault()">Images & Video API</a>
+					</div>
+				</div>
+			</div>
     
-            <button class="login" routerLink="/login">Log in</button>
+            <button *ngIf="user" class="upload" routerLink="/public/profile/upload">Upload</button>
+            <button *ngIf="!user" class="login" routerLink="/auth/login">Log in</button>
         </div>
    
-        <div class="menu-icon" *ngIf="windowWidth<=900" (click)="menuOpen = !menuOpen">
+        <div class="menu-icon" *ngIf="windowWidth<=900" (click)="toggleMenu()">
             <img [src]="menuOpen ? '../../../../../assets/img/more.png' :  '../../../../../assets/img/more-black.png'" [src]="menuOpen ? '../../../../../assets/img/more.png' :  '../../../../../assets/img/more-black.png'" width="30px" height="30px" alt="">
         </div>
 
@@ -56,12 +146,11 @@
             </div>
             <div class="line"></div>
             <div class="profile-user menu" *ngIf="user">
-                    <a href="#">Your Profile</a>
                     <a href="#">Your Collection</a>
                     <a href="#">Downolad History</a>
                     <a href="#">Change Language</a>
                     <a href="#">Settings</a>
-                    <a href="#">Log out</a>
+                    <a href="#" (click)="logout()">Log out</a>
             </div>
             <div class="profile-non-user menu" *ngIf="!user">
                 <a href="#">Change Language</a>

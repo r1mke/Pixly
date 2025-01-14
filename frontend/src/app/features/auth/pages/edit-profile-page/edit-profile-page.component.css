@@ -1,0 +1,76 @@
+.container {
+  max-width: 600px;
+  margin-top: 110px;
+}
+
+h2{
+  font-weight: 600;
+  line-height: 40px;
+  letter-spacing: 1px;
+  text-align: center;
+  color: #7c7c7c;
+  margin-bottom: 50px;
+}
+
+form .form-label {
+  font-weight: bold;
+}
+
+form .form-text {
+  color: gray;
+  font-size: 0.9rem;
+}
+
+button
+{
+  background-color: var(--pixly-color);
+}
+
+button:hover
+{
+  background-color: var(--pixly-color-hover);
+}
+
+.text-light2
+{
+  color: #bfbfbf;
+}
+
+.profile-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+  image-rendering: auto;
+  transform: scale(1);
+}
+
+
+
+@media (min-width: 768px) {
+  .responsive-btn {
+    width: 75%;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-img
+   {
+    width: 120px;
+    height: 120px;
+   }
+  
+   button{
+    padding: 5px;
+   }
+
+   .responsive-btn {
+    width: 51%;
+  }
+  }
+
+
+
+

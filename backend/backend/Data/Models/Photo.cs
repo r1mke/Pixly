@@ -9,12 +9,15 @@
         public int ViewCount { get; set; }
         public int Price { get; set; }
         public string Location { get; set; }
-        public int UserId { get; set; }
-        public User User { get; set; }
+        public int? UserId { get; set; }
+        public User? User { get; set; }
         public bool Approved { get; set; }
         public DateTime CreateAt { get; set; }
+        public string? Orientation { get; set; }
+        public ICollection<PhotoTag> PhotoTags { get; set; } = new List<PhotoTag>();
+        public ICollection<PhotoResolution> Resolutions { get; set; } = new List<PhotoResolution>();
 
-        public ICollection<PhotoTag> PhotoTags { get; set; }
-        public ICollection<PhotoResolution> Resolutions { get; set; }
+        public ICollection<PhotoColor> PhotoColors { get; set; } = new List<PhotoColor>();
+        public ICollection<Like> Likes { get; set;} = new List<Like>();
     }
 }

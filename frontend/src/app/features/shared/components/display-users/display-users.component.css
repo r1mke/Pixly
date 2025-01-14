@@ -1,0 +1,51 @@
+.users-list{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.user{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 5px;
+    padding: 10px;
+    width: 23%;
+    margin-bottom: 10px;
+    cursor: pointer;
+    background-color: #f8f8f8;
+    margin-right: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    flex-wrap: wrap;
+}
+
+.user img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user span{
+    margin: 10px 0;
+    font-weight: 500;
+    font-size: medium;
+}
+
+button{
+    background-color: var(--pixly-color);
+    color:white;
+    font-size: smaller;
+}
+
+button:hover{
+    background-color: #027d65;
+    transition: 0.5s;
+}
+
+.options{
+    display: flex;
+    justify-content: space-evenly;
+    width: 100%;
+}

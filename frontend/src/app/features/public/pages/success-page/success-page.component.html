@@ -1,0 +1,32 @@
+<app-nav-bar></app-nav-bar>
+
+<div class="container-fluid p-3">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-8 col-md-6 col-lg-4">
+        <div class="card">
+          <div class="card-header custom-header p-2 text-white text-center fs-3">Pixly</div>
+          <div class="card-body">
+            <h4 class="text-start fw-medium">Thank You for Your Purchase!</h4>
+            <p class="text-start m-0 small mb-3">Your transaction was successful.</p>
+            
+            <!-- Success Image -->
+            <div class="text-center">
+              <div class="image-container">
+                <img [src]="photo?.url" class="img-fluid rounded" alt="Main Image">
+              </div>
+            </div>
+  
+            <p class="mt-4 small text-center">If you have any questions, feel free to contact our support team.</p>
+  
+            <!-- Button Row -->
+            <div class="d-flex justify-content-center align-items-center gap-3">
+              <a routerLink="/" class="btn btn-primary w-50">Back to Home</a>
+              <button (click)="downloadPhoto()" class="btn btn-success w-50">Download Photo</button>
+            </div>            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

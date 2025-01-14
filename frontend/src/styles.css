@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import "primeng/resources/themes/lara-light-blue/theme.css";
+@import "primeng/resources/primeng.css";
 
 *{
   margin: 0;
@@ -9,31 +11,44 @@
   font-family: 'Poppins', sans-serif;
 }
 
+
+
+
 :root{
   --body:#000;
   --pixly-color:#02A388;
   --pixly-color-hover:#027d65;
+  --pixly-color-rbg: 2, 163, 136;
+  --bs-form-invalid-color: none;
 }
 
+input{
+  border: 1px solid #f8f8f8;
+}
+
+
+input:focus{
+  box-shadow: none;
+  outline: 0;
+  border: 1px solid #f8f8f8;
+}
 
 button
 {
-  background-color: var(--pixly-color);
-  color: white;
   border-radius: 5px;
   box-shadow: 0;
+  padding: 10px 20px 10px 20px;
+  font-weight: 600;
   border: 0;
-}
-
-button:hover{
-  background-color: var(--pixly-color-hover);
   cursor: pointer;
+  font-size: medium;
 }
 
 a{
   color: var(--pixly-color);
   text-decoration: none;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .custom-header {
