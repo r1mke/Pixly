@@ -60,4 +60,5 @@ coverage/
 
 # Temporary local files
 *.log
+frontend/src/app/my-config.ts
 
