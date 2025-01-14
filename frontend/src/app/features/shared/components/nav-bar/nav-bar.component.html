@@ -84,7 +84,7 @@
                 >
                 <div class="profile-bar" (click)="toggleDropdown()" style="display: flex; justify-content: center; align-items: center;">
                 <div class="item profile-img "   style="display: flex; justify-content: center; align-items: center;">
-                <img [src]="user.profileImgUrl || 'assets/img/user_dflt.png'" 
+                <img [src]="user?.profileImgUrl || 'assets/img/user_def.png'" 
                             height="30px" 
                             width="30px" 
                             alt="Profile" 
