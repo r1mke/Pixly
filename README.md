@@ -1,20 +1,19 @@
-# Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+This full-stack application was developed as a seminar project for the Software Development 1 course. The goal of the project was to create a modern web platform for selling digital photographs using Angular for the frontend and .NET for the backend.
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+Our topic focused on building an application for selling digital photographs, allowing creators to upload and monetize their work while buyers can explore, search, and purchase high-quality images. The emphasis was placed on an intuitive user experience, efficient content organization, and secure transactions.
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+Key Features:
+OpenAI API integration
+Advanced filtering and search with suggestions
+Profile viewing and editing
+Drag-and-drop upload system
+Automatic image compression
+PayPal integration for payments
+Reactions on posts
 
-# Contribute
-TODO: Explain how other users and developers can contribute to make your code better. 
-
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+![screencapture-localhost-4200-public-home-2025-01-16-22_22_16](https://github.com/user-attachments/assets/f6b29780-76e4-4317-b7a5-c3aa694c0ab0)
+![screencapture-localhost-4200-public-search-photos-2025-01-16-22_31_13](https://github.com/user-attachments/assets/dabf22fc-c0cb-495f-b4c9-7d03ea97de93)
+![screencapture-localhost-4200-public-profile-user-r1mke-2025-01-16-22_31_30](https://github.com/user-attachments/assets/84e60b0c-e3a0-4db1-b3fa-2ce5ac2c2e98)
+![screencapture-localhost-4200-public-photo-5-2025-01-16-22_37_35](https://github.com/user-attachments/assets/6fabf657-e64d-4525-a5f9-a1b98c944169)
+![screencapture-checkout-stripe-c-pay-cs-test-a1uHjtkqaqwq1bOpRPPvLdsKKq4dld4Xo7oTLTnV9o5nUChEFXvXBx8Nh5-2025-01-16-22_30_12](https://github.com/user-attachments/assets/e367f9a8-8d0a-4e3e-94a0-1f60dad3d474)
+![screencapture-localhost-4200-admin-dashboard-2025-01-16-22_33_07](https://github.com/user-attachments/assets/da329d90-1bee-4e45-96c1-229313877746)
