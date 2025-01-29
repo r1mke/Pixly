@@ -1,15 +1,18 @@
-This full-stack application was developed as a seminar project for the Software Development 1 course. The goal of the project was to create a modern web platform for selling digital photographs using Angular for the frontend and .NET for the backend.
+<p>This full-stack application was developed as a seminar project for the Software Development 1 course. The goal of the project was to create a modern web platform for selling digital photographs using Angular for the frontend and .NET for the backend.</p>
 
-Our topic focused on building an application for selling digital photographs, allowing creators to upload and monetize their work while buyers can explore, search, and purchase high-quality images. The emphasis was placed on an intuitive user experience, efficient content organization, and secure transactions.
+<p>Our topic focused on building an application for selling digital photographs, allowing creators to upload and monetize their work while buyers can explore, search, and purchase high-quality images. The emphasis was placed on an intuitive user experience, efficient content organization, and secure transactions.</p> 
+</br>
+<span>Key Features:</span>
+<ul>
+  <li>OpenAI API integration</li>
+  <li>Advanced filtering and search with suggestions</li>
+  <li>Profile viewing and editing</li>
+  <li>Drag-and-drop upload system</li>
+  <li>Automatic image compression</li>
+  <li>PayPal integration for payments</li>
+ <li>Reactions on posts</li>
+</ul>
 
-Key Features:
-OpenAI API integration
-Advanced filtering and search with suggestions
-Profile viewing and editing
-Drag-and-drop upload system
-Automatic image compression
-PayPal integration for payments
-Reactions on posts
 
 ![screencapture-localhost-4200-public-home-2025-01-16-22_22_16](https://github.com/user-attachments/assets/f6b29780-76e4-4317-b7a5-c3aa694c0ab0)
 ![screencapture-localhost-4200-public-search-photos-2025-01-16-22_31_13](https://github.com/user-attachments/assets/dabf22fc-c0cb-495f-b4c9-7d03ea97de93)
