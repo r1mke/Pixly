@@ -1,3 +1,4 @@
+<h4>New version --> https://github.com/r1mke/PixlyV2/blob/main/pixly-readme.md</h4>
 <p>This full-stack application was developed as a seminar project for the Software Development 1 course. The goal of the project was to create a modern web platform for selling digital photographs using Angular for the frontend and .NET for the backend.</p>
 
 <p>Our topic focused on building an application for selling digital photographs, allowing creators to upload and monetize their work while buyers can explore, search, and purchase high-quality images. The emphasis was placed on an intuitive user experience, efficient content organization, and secure transactions.</p> 
